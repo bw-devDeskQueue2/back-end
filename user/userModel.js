@@ -5,7 +5,13 @@ async function addUser(newUser) {
   const [created] = await knex("users").insert(user, ["id"]);
   //sqlite3 returns the id as a number - postgres returns an object instead
   const id = created.id || created;
+  await addRoles(id, roles);
   return getUser({ id });
+}
+
+function addRoles(user_id, roles) {
+  const rolesToInsert = roles.map(({ id: role_id }) => ({ user_id, role_id }));
+  console.log(rolesToInsert);
 }
 
 async function getUsers() {
