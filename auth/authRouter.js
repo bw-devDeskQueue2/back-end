@@ -2,7 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const { catchAsync } = require("../config/errors");
 const jwt = require("jsonwebtoken");
-const db = require("../data/userModel");
+const Users = require("../user/userModel");
 const config = require("../config/serverInfo");
 
 router.post(
@@ -20,7 +20,7 @@ router.post(
     //     });
     // }
     user.password = bcrypt.hashSync(user.password, 10);
-    const saved = await db.addUser(user);
+    const saved = await Users.addUser(user);
     const token = generateToken(saved);
     res.status(201).json({ user: { ...saved, password: "••••••••••" }, token });
   })
@@ -36,7 +36,7 @@ router.post(
     if (!bcrypt.compareSync(password, passwordHash)) {
       return res.status(401).json({ message: "Invalid password" });
     }
-    const token = generateToken(await db.getUser({ username }));
+    const token = generateToken(await Users.getUser({ username }));
     res.status(200).json({ message: "Logged in", token });
   })
 );
@@ -66,7 +66,7 @@ function validateUserObject(req, res, next) {
 
 function validateUserExists(req, res, next) {
   const { username } = req.body;
-  db.getUser({ username }).then(user => {
+  Users.getUser({ username }).then(user => {
     if (!user) {
       return res.status(404).json({
         message: `No user with username '${username}' exists`,
@@ -79,7 +79,7 @@ function validateUserExists(req, res, next) {
 
 function validateUserDoesNotExist(req, res, next) {
   const { username } = req.body;
-  db.getUser({ username }).then(user => {
+  Users.getUser({ username }).then(user => {
     if (user) {
       return res.status(400).json({
         message: `A user with username '${username}' already exists.`,

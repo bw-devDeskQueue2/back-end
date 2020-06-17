@@ -1,4 +1,3 @@
-const db = require("../data/userModel");
 const jwt = require("jsonwebtoken");
 const config = require("../config/serverInfo");
 const { catchAsync } = require("../config/errors");

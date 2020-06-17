@@ -4,8 +4,7 @@ const { catchAsync } = require("../config/errors");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    console.log(req.data);
-    res.status(200).json("Authenticated!");
+    res.status(200).json(req.data);
   })
 );
 

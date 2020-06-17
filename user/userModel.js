@@ -1,9 +1,11 @@
-const knex = require("./dbConfig");
+const knex = require("../data/dbConfig");
+const {catchAsync} = require("../config/errors");
 
 function addUser(user) {
+  const { username } = user;
   return knex("users")
     .insert(user, ["id"])
-    .then(([id]) => getUser({ id }));
+    .then(() => getUser({ username }));
 }
 
 function getUsers() {
