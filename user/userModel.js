@@ -1,5 +1,9 @@
 const knex = require("../data/dbConfig");
 
+function deleteUser(id) {
+  return knex("users").where({ id }).delete();
+}
+
 async function addUser(newUser) {
   const { roles, ...user } = newUser;
   const [created] = await knex("users").insert(user, ["id"]);
@@ -10,7 +14,7 @@ async function addUser(newUser) {
 }
 
 function addRoles(user_id, roles) {
-  const rolesToInsert = roles.map(({ id: role_id }) => ({ user_id, role_id }));
+  const rolesToInsert = roles.map(({ id }) => ({ user_id, role_id: id }));
   return knex("user_roles").insert([...rolesToInsert]);
 }
 
@@ -43,4 +47,4 @@ function getUserRoles(user_id) {
     .then(roles => roles.map(role => role.name));
 }
 
-module.exports = { addUser, getUsers, getUser, getRolesList };
+module.exports = { addUser, getUsers, getUser, getRolesList, deleteUser };

@@ -1,12 +1,29 @@
 const router = require("express").Router();
 const { catchAsync } = require("../config/errors");
 const Users = require("./userModel");
+const knexfile = require("../knexfile");
 
 router.get(
   "/",
   catchAsync(async (req, res) => {
     const { subject: id, username, roles } = req.data;
     res.status(200).json({ id, username, roles });
+  })
+);
+
+router.delete(
+  "/:idToDelete",
+  catchAsync(async (req, res) => {
+    const { idToDelete } = req.params;
+    const { id, roles } = req.data;
+    if (!(id === idToDelete || roles.includes("admin"))) {
+      res.status(403).json({
+        message: "Only admins can delete users other than themselves",
+      });
+    } else {
+      await Users.deleteUser(idToDelete);
+      res.status(204).end();
+    }
   })
 );
 
