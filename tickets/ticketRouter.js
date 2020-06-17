@@ -45,7 +45,7 @@ router.patch(
     if (!(status || rating)) {
       return res.status(400).json({
         message:
-          "You must supply something to update. Valid keys include 'status', and 'rating'.",
+          "You must supply something to update. Valid keys include 'status' and 'rating'.",
       });
     }
     res
