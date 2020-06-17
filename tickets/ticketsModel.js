@@ -1,5 +1,4 @@
 const knex = require("../data/dbConfig");
-const Users = require("../user/userModel");
 
 async function getUserTickets(id, role) {
   let ticketList = [];
@@ -15,13 +14,16 @@ async function getUserTickets(id, role) {
         .concat(await getDetailedTicket({ student_id: id }))
         .concat(await getDetailedTicket({ helper_id: id }));
       break;
+    default:
+      ticketList = null;
   }
-  if (ticketList.length === 0) return null;
   return ticketList;
 }
 
 function getTicketById(id) {
-  return getDetailedTicket({ id });
+  return getDetailedTicket({ "t.id": id }).then(ticketArray =>
+    ticketArray ? ticketArray[0] : null
+  );
 }
 
 function getDetailedTicket(query) {
