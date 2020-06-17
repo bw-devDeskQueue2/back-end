@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const config = require("../../config/serverInfo");
+const ADMIN_PASS = process.env.ADMIN_PASS;
 
 exports.seed = function (knex) {
   return knex("users").insert([
@@ -18,7 +19,7 @@ exports.seed = function (knex) {
     {
       username: "test_admin",
       password: bcrypt.hashSync(
-        process.env.ADMIN_PASSWORD || "dev_admin_password",
+        ADMIN_PASS || "dev_admin_password",
         config.BCRYPT_ROUNDS
       ),
     },
