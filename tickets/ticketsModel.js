@@ -55,4 +55,20 @@ function getDetailedTicket(query, restriction = {}) {
     );
 }
 
-module.exports = { getUserTickets, getTicketById };
+async function updateTicket(id, changes) {
+  for (property in changes) {
+    if (changes[property] === null || changes[property] === undefined)
+      delete changes[property];
+  }
+  const statuses = await knex("statuses");
+  changes.status_id = statuses.find(
+    status => status.name === changes.status
+  ).id;
+  delete changes.status;
+  return knex("tickets")
+    .where({ id })
+    .update(changes)
+    .then(() => getTicketById(id));
+}
+
+module.exports = { getUserTickets, getTicketById, updateTicket };
