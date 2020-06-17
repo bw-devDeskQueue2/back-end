@@ -4,6 +4,7 @@ const { catchAsync, AppError } = require("../config/errors");
 const jwt = require("jsonwebtoken");
 const Users = require("../user/userModel");
 const config = require("../config/serverInfo");
+const authenticate = require("./authMiddleware.js");
 
 router.post(
   "/register",
@@ -31,6 +32,31 @@ router.post(
     }
     const token = generateToken(await Users.getUser({ username }));
     res.status(200).json({ message: "Logged in", token });
+  })
+);
+
+router.patch(
+  "/change_password",
+  authenticate,
+  catchAsync(async (req, res) => {
+    const { subject: id } = req.data;
+    let { password } = req.body;
+    if (!password) {
+      res.status(400).json({ message: "You must include a password" });
+    } else {
+      password = bcrypt.hashSync(password, config.BCRYPT_ROUNDS);
+      const changedEntries = await Users.changePassword(id, password);
+      if (changedEntries == 0) {
+        return next(
+          new AppError(
+            `A database error occurred when trying to update the password`,
+            500
+          )
+        );
+      }
+      const token = generateToken(await Users.getUser({ id }));
+      res.status(200).json({ message: "Password successfully changed", token });
+    }
   })
 );
 

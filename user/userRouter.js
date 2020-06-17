@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { catchAsync } = require("../config/errors");
 const Users = require("./userModel");
-const knexfile = require("../knexfile");
 
 router.get(
   "/",

@@ -4,6 +4,10 @@ function deleteUser(id) {
   return knex("users").where({ id }).delete();
 }
 
+function changePassword(id, password) {
+  return knex("users").where({ id }).update({ password });
+}
+
 async function addUser(newUser) {
   const { roles, ...user } = newUser;
   const [created] = await knex("users").insert(user, ["id"]);
@@ -47,4 +51,11 @@ function getUserRoles(user_id) {
     .then(roles => roles.map(role => role.name));
 }
 
-module.exports = { addUser, getUsers, getUser, getRolesList, deleteUser };
+module.exports = {
+  deleteUser,
+  changePassword,
+  addUser,
+  getUsers,
+  getUser,
+  getRolesList,
+};
