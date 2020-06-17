@@ -17,7 +17,10 @@ exports.seed = function (knex) {
     },
     {
       username: "test_admin",
-      password: bcrypt.hashSync("password", config.BCRYPT_ROUNDS),
+      password: bcrypt.hashSync(
+        process.env.ADMIN_PASSWORD || "dev_admin_password",
+        config.BCRYPT_ROUNDS
+      ),
     },
   ]);
 };
