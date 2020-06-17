@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
+const Users = require("../user/userModel");
 
 router.get(
   "/",
@@ -28,7 +29,7 @@ router.get(
 
 router.get(
   "/:ticketId",
-  validateTicketPermissions,
+  catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res.status(200).json(await Tickets.getTicketById(ticketId));
@@ -37,7 +38,7 @@ router.get(
 
 router.patch(
   "/:ticketId/update",
-  validateTicketPermissions,
+  catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     const { status, rating } = req.body;
@@ -55,44 +56,56 @@ router.patch(
 
 router.patch(
   "/:ticketId/reassign",
-  validateTicketPermissions,
+  catchAsync(validateTicketPermissions),
+  catchAsync(lookupNewHelper),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
-    const { id, username } = req.body;
-    if (!(id || username)) {
-      return res.status(400).json({
-        message:
-          "In order to modify the helper, you must include either an 'id' key or a 'username' key.",
-      });
-    }
+    const { id: helper_id } = req.newHelper;
+    res.status(200).json(await Tickets.updateTicket(ticketId, { helper_id }));
   })
 );
 
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
-function validateTicketPermissions(req, res, next) {
+async function validateTicketPermissions(req, res, next) {
   const { id: userId, roles } = req.data;
   const { ticketId } = req.params;
-  Tickets.getTicketById(ticketId).then(ticket => {
-    if (!ticket) {
-      return res
-        .status(404)
-        .json({ message: `No ticket found with id '${ticketId}'.` });
-    }
-    if (
-      !(
-        ticket.student.id == userId ||
-        ticket.helper.id == userId ||
-        roles.includes("admin")
-      )
-    ) {
-      return res.status(403).json({
+  const ticket = await Tickets.getTicketById(ticketId);
+  if (!ticket) {
+    return res
+      .status(404)
+      .json({ message: `No ticket found with id '${ticketId}'.` });
+  }
+  return !(
+    ticket.student.id == userId ||
+    ticket.helper.id == userId ||
+    roles.includes("admin")
+  )
+    ? res.status(403).json({
         message: "You don't have permission to view or modify this ticket",
-      });
-    }
+      })
+    : next();
+}
+
+async function lookupNewHelper(req, res, next) {
+  const { id, username } = req.body;
+  if (!(id || username)) {
+    return res.status(400).json({
+      message:
+        "In order to modify the helper, you must include either an 'id' key or a 'username' key.",
+    });
+  }
+  const search = id ? { id } : { username };
+  const helper = await Users.getUser(search);
+  if (!helper) {
+    res.status(404).json({
+      message: `No helper found with username '${username}' or id '${id}'.`,
+    });
+  } else {
+    req.newHelper = helper;
     next();
-  });
+  }
 }
 
 module.exports = router;

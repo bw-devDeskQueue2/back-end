@@ -60,11 +60,13 @@ async function updateTicket(id, changes) {
     if (changes[property] === null || changes[property] === undefined)
       delete changes[property];
   }
-  const statuses = await knex("statuses");
-  changes.status_id = statuses.find(
-    status => status.name === changes.status
-  ).id;
-  delete changes.status;
+  if (changes.status) {
+    const statuses = await knex("statuses");
+    changes.status_id = statuses.find(
+      status => status.name === changes.status
+    ).id;
+    delete changes.status;
+  }
   return knex("tickets")
     .where({ id })
     .update(changes)
