@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const { catchAsync } = require("../config/errors");
+const { catchAsync, AppError } = require("../config/errors");
 const jwt = require("jsonwebtoken");
 const Users = require("../user/userModel");
 const config = require("../config/serverInfo");
@@ -8,17 +8,10 @@ const config = require("../config/serverInfo");
 router.post(
   "/register",
   validateUserObject,
+  catchAsync(validateUserRoles),
   validateUserDoesNotExist,
   catchAsync(async (req, res, next) => {
     const user = req.body;
-    // if (!user.role) {
-    //   return res
-    //     .status(400)
-    //     .json({
-    //       message:
-    //         "New user registrations require a 'role': 'student', 'helper' or 'both'",
-    //     });
-    // }
     user.password = bcrypt.hashSync(user.password, config.BCRYPT_ROUNDS);
     const saved = await Users.addUser(user);
     const token = generateToken(saved);
@@ -62,6 +55,25 @@ function validateUserObject(req, res, next) {
     : res.status(400).json({
         message: "User object requires both 'username' and 'password' fields",
       });
+}
+
+async function validateUserRoles(req, res, next) {
+  const { roles } = req.body;
+  if (!roles) {
+    return res
+      .status(400)
+      .json({ message: "New users must include a 'roles' array." });
+  }
+  const rolesList = await Users.getRolesList();
+  const rolesWithId = roles.map(userRole => {
+    const found = rolesList.find(role => role.name === userRole);
+    if (!found) {
+      next(new AppError(`Error: ${userRole} is not a valid role name.`, 400));
+    }
+    return found;
+  });
+  req.body.roles = rolesWithId;
+  next();
 }
 
 function validateUserExists(req, res, next) {

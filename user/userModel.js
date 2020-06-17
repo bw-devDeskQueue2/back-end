@@ -1,9 +1,11 @@
 const knex = require("../data/dbConfig");
 
-async function addUser(user) {
-  const { username } = user;
-  const created = await knex("users").insert(user);
-  return getUser({ username });
+async function addUser(newUser) {
+  const { roles, ...user } = newUser;
+  const [created] = await knex("users").insert(user, ["id"]);
+  //sqlite3 returns the id as a number - postgres returns an object instead
+  const id = created.id || created;
+  return getUser({ id });
 }
 
 async function getUsers() {
@@ -18,8 +20,13 @@ async function getUsers() {
 
 async function getUser(search) {
   const user = await knex("users").where(search).first();
+  if (!user) return null;
   const roles = await getUserRoles(user.id);
   return { ...user, roles };
+}
+
+function getRolesList() {
+  return knex("roles");
 }
 
 function getUserRoles(user_id) {
@@ -30,4 +37,4 @@ function getUserRoles(user_id) {
     .then(roles => roles.map(role => role.name));
 }
 
-module.exports = { addUser, getUsers, getUser };
+module.exports = { addUser, getUsers, getUser, getRolesList };
