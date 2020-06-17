@@ -2,7 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const { catchAsync } = require("../config/errors");
 const jwt = require("jsonwebtoken");
-const db = require("../database/userModel");
+const db = require("../data/userModel");
 const config = require("../config/serverInfo");
 
 router.post(
