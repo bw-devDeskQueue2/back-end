@@ -5,18 +5,24 @@ const { catchAsync, AppError } = require("../config/errors");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    let { role = "both" } = req.query;
+    let { role = "both", status = "both" } = req.query;
     const { roles, id } = req.data;
     if (roles.length === 1) {
       role = roles[0];
     }
     const validRoles = ["student", "helper", "both"];
+    const validStatuses = ["open", "closed", "both"];
     if (!validRoles.includes(role)) {
       res.status(400).json({
         message:
           "Error: invalid role. Must be one of 'student', 'helper', or 'both'.",
       });
-    } else res.status(200).json(await Tickets.getUserTickets(id, role));
+    } else if (!validStatuses.includes(status)) {
+      res.status(400).json({
+        message:
+          "Error: invalid status. Must be one of 'open', 'closed', or 'both'.",
+      });
+    } else res.status(200).json(await Tickets.getUserTickets(id, role, status));
   })
 );
 
@@ -28,6 +34,37 @@ router.get(
     res.status(200).json(await Tickets.getTicketById(ticketId));
   })
 );
+
+router.patch(
+  "/:ticketId/update",
+  validateTicketPermissions,
+  catchAsync(async (req, res) => {
+    const { ticketId } = req.params;
+    const { helper, status, rating } = req.body;
+    if (!(status || rating)) {
+      return res.status(400).json({
+        message:
+          "You must supply something to update. Valid keys include 'status', and 'rating'.",
+      });
+    }
+  })
+);
+
+router.patch(
+  "/:ticketId/reassign",
+  validateTicketPermissions,
+  catchAsync(async (req, res) => {
+    const { ticketId } = req.params;
+    const { id, username } = req.body;
+    if (!(id || username)) {
+      return res.status(400).json({
+        message:
+          "In order to modify the helper, you must include either an 'id' key or a 'username' key.",
+      });
+    }
+  })
+);
+
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/

@@ -1,18 +1,19 @@
 const knex = require("../data/dbConfig");
 
-async function getUserTickets(id, role) {
+async function getUserTickets(id, role, status) {
   let ticketList = [];
+  const restriction = status === "both" ? {} : { status };
   switch (role) {
     case "student":
-      ticketList = await getDetailedTicket({ student_id: id });
+      ticketList = await getDetailedTicket({ student_id: id }, restriction);
       break;
     case "helper":
-      ticketList = await getDetailedTicket({ helper_id: id });
+      ticketList = await getDetailedTicket({ helper_id: id }, restriction);
       break;
     case "both":
       ticketList = ticketList
-        .concat(await getDetailedTicket({ student_id: id }))
-        .concat(await getDetailedTicket({ helper_id: id }));
+        .concat(await getDetailedTicket({ student_id: id }, restriction))
+        .concat(await getDetailedTicket({ helper_id: id }, restriction));
       break;
     default:
       ticketList = null;
@@ -20,13 +21,13 @@ async function getUserTickets(id, role) {
   return ticketList;
 }
 
-function getTicketById(id) {
+function getTicketById(id, restriction) {
   return getDetailedTicket({ "t.id": id }).then(ticketArray =>
     ticketArray ? ticketArray[0] : null
   );
 }
 
-function getDetailedTicket(query) {
+function getDetailedTicket(query, restriction = {}) {
   return knex("tickets as t")
     .where(query)
     .join("statuses", "t.status_id", "statuses.id")
@@ -39,8 +40,10 @@ function getDetailedTicket(query) {
       "s.username as student_name",
       "t.helper_id",
       "h.username as helper_name",
-      "statuses.name as status"
+      "statuses.name as status",
+      "t.rating"
     )
+    .where(restriction)
     .then(tickets =>
       tickets.map(
         ({ student_id, student_name, helper_id, helper_name, ...ticket }) => ({
