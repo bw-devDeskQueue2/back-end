@@ -19,7 +19,7 @@ router.post(
     //         "New user registrations require a 'role': 'student', 'helper' or 'both'",
     //     });
     // }
-    user.password = bcrypt.hashSync(user.password, 10);
+    user.password = bcrypt.hashSync(user.password, config.BCRYPT_ROUNDS);
     const saved = await Users.addUser(user);
     const token = generateToken(saved);
     res.status(201).json({ user: { ...saved, password: "••••••••••" }, token });
