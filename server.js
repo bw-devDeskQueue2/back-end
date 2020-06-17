@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const config = require("../config/serverInfo");
+const config = require("./config/serverInfo");
 
 const session = require("express-session");
 const knexSessionStore = require("connect-session-knex")(session);
@@ -20,7 +20,7 @@ const sessionConfig = {
   saveUninitialized: false,
 
   store: new knexSessionStore({
-    knex: require("../database/dbConfig"),
+    knex: require("./database/dbConfig"),
     tableName: "session",
     sidfieldname: "sid",
     createtable: true,
@@ -28,9 +28,9 @@ const sessionConfig = {
   }),
 };
 
-const authenticate = require('../auth/authenticate-middleware.js');
-const authRouter = require('../auth/auth-router.js');
-const { custom404, errorHandling } = require("../config/errors");
+const authenticate = require('./auth/authenticate-middleware.js');
+const authRouter = require('./auth/auth-router.js');
+const { custom404, errorHandling } = require("./config/errors");
 
 
 const server = express();

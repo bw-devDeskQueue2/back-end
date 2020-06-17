@@ -10,6 +10,11 @@ router.post(
   validateUserDoesNotExist,
   catchAsync(async (req, res, next) => {
     const user = req.body;
+    if (!user.role) {
+      return res
+        .status(400)
+        .json({ message: "New user registrations require a 'role': 'student', 'helper' or 'both'" });
+    }
     user.password = bcrypt.hashSync(user.password, 10);
     req.user = await db.addUser(user);
     next();

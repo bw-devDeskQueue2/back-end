@@ -12,8 +12,8 @@ function getUsers() {
   );
 }
 
-function getUser(user) {
-  return knex("users").where(user).first();
+function getUser(search) {
+  return knex("users").where(search).first();
 }
 
 module.exports = { addUser, getUsers, getUser };

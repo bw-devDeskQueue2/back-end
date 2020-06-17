@@ -1,5 +1,5 @@
 module.exports = {
-  COOKIE_NAME: "sprint-challenge-authentication-session",
+  COOKIE_NAME: "devdesk-queue-2-session",
   SESSION_SECRET:
-    "the magenta orangutan persisted on a diet of ironic dichromaticism",
+    process.env.SESSION_SECRET || "the magenta orangutan persisted on a diet of ironic dichromaticism",
 };
