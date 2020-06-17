@@ -1,15 +1,18 @@
 const knex = require("../data/dbConfig");
 
-function addUser(user) {
+async function addUser(user) {
   const { username } = user;
-  return knex("users")
-    .insert(user, ["id"])
-    .then(() => getUser({ username }));
+  const created = await knex("users").insert(user);
+  return getUser({ username });
 }
 
-function getUsers() {
-  return knex("users").then(users =>
-    users.map(({ password, ...user }) => user)
+async function getUsers() {
+  const users = await knex("users");
+  return Promise.all(
+    users.map(async user => ({
+      ...user,
+      roles: await getUserRoles(user.id),
+    }))
   );
 }
 
