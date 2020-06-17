@@ -15,7 +15,7 @@ router.delete(
   catchAsync(async (req, res) => {
     const { idToDelete } = req.params;
     const { id, roles } = req.data;
-    if (!(id === idToDelete || roles.includes("admin"))) {
+    if (!(id == idToDelete || roles.includes("admin"))) {
       res.status(403).json({
         message: "Only admins can delete users other than themselves",
       });
