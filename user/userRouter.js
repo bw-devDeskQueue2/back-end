@@ -5,7 +5,7 @@ const Users = require("./userModel");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    const { subject: id, username, roles } = req.data;
+    const { id, username, roles } = req.data;
     res.status(200).json({ id, username, roles });
   })
 );

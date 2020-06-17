@@ -39,7 +39,7 @@ router.patch(
   "/change_password",
   authenticate,
   catchAsync(async (req, res) => {
-    const { subject: id } = req.data;
+    const { id } = req.data;
     let { password } = req.body;
     if (!password) {
       res.status(400).json({ message: "You must include a password" });
@@ -63,11 +63,11 @@ router.patch(
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
-function generateToken(user) {
+function generateToken(theUser) {
+  const { password, ...user } = theUser;
   const payload = {
     subject: user.id,
-    username: user.username,
-    roles: user.roles,
+    ...user,
   };
   const options = {
     expiresIn: "7d",
