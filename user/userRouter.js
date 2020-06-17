@@ -4,7 +4,8 @@ const { catchAsync } = require("../config/errors");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    res.status(200).json(req.data);
+    const { subject: id, username, roles } = req.data;
+    res.status(200).json({ id, username, roles });
   })
 );
 
