@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const { catchAsync } = require("../config/errors");
+const jwt = require("jsonwebtoken");
 const db = require("../database/userModel");
 const config = require("../config/serverInfo");
 
@@ -10,19 +11,19 @@ router.post(
   validateUserDoesNotExist,
   catchAsync(async (req, res, next) => {
     const user = req.body;
-    if (!user.role) {
-      return res
-        .status(400)
-        .json({ message: "New user registrations require a 'role': 'student', 'helper' or 'both'" });
-    }
+    // if (!user.role) {
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       message:
+    //         "New user registrations require a 'role': 'student', 'helper' or 'both'",
+    //     });
+    // }
     user.password = bcrypt.hashSync(user.password, 10);
-    req.user = await db.addUser(user);
-    next();
-  }),
-  function loginAfterRegistration(req, res) {
-    req.session.user = req.user;
-    res.status(201).json({ ...req.user, password: "••••••••••" });
-  }
+    const saved = await db.addUser(user);
+    const token = generateToken(saved);
+    res.status(201).json({ user: { ...saved, password: "••••••••••" }, token });
+  })
 );
 
 router.post(
@@ -30,32 +31,30 @@ router.post(
   validateUserObject,
   validateUserExists,
   catchAsync(async (req, res) => {
-    const { password } = req.body;
+    const { username, password } = req.body;
     const { password: passwordHash } = req.user;
     if (!bcrypt.compareSync(password, passwordHash)) {
       return res.status(401).json({ message: "Invalid password" });
     }
-    req.session.user = req.user;
-    res.status(200).json({ message: "Logged in" });
+    const token = generateToken(await db.getUser({ username }));
+    res.status(200).json({ message: "Logged in", token });
   })
 );
 
-router.get(
-  "/logout",
-  catchAsync(async (req, res, next) => {
-    if (req.session.user) {
-      res.clearCookie(config.COOKIE_NAME);
-      req.session.destroy(err =>
-        err ? next(err) : res.status(200).json({ message: "Logged out" })
-      );
-    } else {
-      res.status(400).json({ message: "You are not logged in." });
-    }
-  })
-);
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+function generateToken(user) {
+  const payload = {
+    subject: user.id,
+    username: user.username,
+    role: user.role,
+  };
+  const options = {
+    expiresIn: "7d",
+  };
+  return jwt.sign(payload, config.JWT_SECRET, options);
+}
 function validateUserObject(req, res, next) {
   const { username, password } = req.body;
   username && password
