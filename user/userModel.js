@@ -11,7 +11,7 @@ async function addUser(newUser) {
 
 function addRoles(user_id, roles) {
   const rolesToInsert = roles.map(({ id: role_id }) => ({ user_id, role_id }));
-  console.log(rolesToInsert);
+  return knex("user_roles").insert([...rolesToInsert]);
 }
 
 async function getUsers() {
