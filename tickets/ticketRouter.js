@@ -3,6 +3,7 @@ const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
 const messagesRouter = require("../messages/messagesRouter");
+const Validator = require("jsonschema").Validator;
 
 router.get(
   "/",
@@ -34,6 +35,17 @@ router.get(
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res.status(200).json(await Tickets.getTicketById(ticketId));
+  })
+);
+
+router.post(
+  "/",
+  catchAsync(validateTicketObject),
+  catchAsync(async (req, res) => {
+    const { id: sender_id } = req.data;
+    console.log(sender_id);
+    const { subject, body, tags } = req.body;
+    res.status(204).end();
   })
 );
 
@@ -80,6 +92,22 @@ router.use(
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+const ticketSchema = {
+  type: "object",
+  properties: {
+    subject: { type: "string" },
+    body: { type: "string" },
+    tags: { type: "array", items: { type: "string" } },
+  },
+  additionalProperties: false,
+  required: ["subject", "body"],
+};
+async function validateTicketObject(req, res, next) {
+  const v = new Validator();
+  const { errors } = v.validate(req.body, ticketSchema);
+  errors.length === 0 ? next() : next(errors);
+}
+
 async function validateTicketPermissions(req, res, next) {
   const { id: userId, roles } = req.data;
   const { ticketId } = req.params;
