@@ -1,5 +1,6 @@
 const knex = require("../data/dbConfig");
-const Tickets = require("../tags/tagsModel");
+const Tags = require("../tags/tagsModel");
+const Messages = require("../messages/messagesModel");
 
 async function getUserTickets(id, role, status) {
   let ticketList = [];
@@ -58,7 +59,8 @@ function getDetailedTicket(query, restriction = {}) {
             ...ticket,
             student: { id: student_id, username: student_name },
             helper: { id: helper_id, username: helper_name },
-            tags: await Tickets.getTicketTags(ticket.id),
+            tags: await Tags.getTicketTags(ticket.id),
+            messages: await Messages.getTicketMessages(ticket.id),
           })
         )
       )
