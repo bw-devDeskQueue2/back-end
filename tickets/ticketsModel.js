@@ -77,7 +77,7 @@ function getDetailedTicket(query, restriction = {}) {
 
 async function updateTicket(id, changes) {
   for (property in changes) {
-    if (changes[property] === null || changes[property] === undefined)
+    if (changes[property] === undefined)
       delete changes[property];
   }
   if (changes.status) {
@@ -86,6 +86,10 @@ async function updateTicket(id, changes) {
       status => status.name === changes.status
     ).id;
     delete changes.status;
+  }
+  if (changes.tags){
+    console.log(changes.tags);
+    delete changes.tags;
   }
   return knex("tickets")
     .where({ id })
