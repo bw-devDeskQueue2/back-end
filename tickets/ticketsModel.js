@@ -4,7 +4,7 @@ const Messages = require("../messages/messagesModel");
 
 async function getUserTickets(id, role, status) {
   let ticketList = [];
-  const restriction = status === "both" ? {} : { status };
+  const restriction = status === "both" ? {} : { "statuses.name": status };
   switch (role) {
     case "student":
       ticketList = await getDetailedTicket({ student_id: id }, restriction);
@@ -77,8 +77,7 @@ function getDetailedTicket(query, restriction = {}) {
 
 async function updateTicket(id, changes) {
   for (property in changes) {
-    if (changes[property] === null || changes[property] === undefined)
-      delete changes[property];
+    if (changes[property] === undefined) delete changes[property];
   }
   if (changes.status) {
     const statuses = await knex("statuses");
@@ -86,6 +85,25 @@ async function updateTicket(id, changes) {
       status => status.name === changes.status
     ).id;
     delete changes.status;
+  }
+  if (changes.tags) {
+    //clear all existing ticket tags
+    await knex("ticket_tags").where({ ticket_id: id }).delete();
+    //add ticket tags, creating new tags as necessary
+    const existingTags = await Tags.getTags();
+    await Promise.all(
+      changes.tags.map(async tag => {
+        const found = existingTags.find(eT => eT.name === tag.toLowerCase());
+        if (found) {
+          await Tags.addTicketTag(id, found.id);
+        } else {
+          const newTag = await Tags.addTag(tag.toLowerCase());
+          await Tags.addTicketTag(id, newTag.id);
+        }
+      })
+    );
+    //remove the tags property so it doesn't interfere with the next step
+    delete changes.tags;
   }
   return knex("tickets")
     .where({ id })

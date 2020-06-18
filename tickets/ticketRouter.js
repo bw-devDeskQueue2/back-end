@@ -57,16 +57,16 @@ router.patch(
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
-    const { status, rating } = req.body;
-    if (!(status || rating)) {
+    const { status, rating, tags } = req.body;
+    if (!(status || rating || tags)) {
       return res.status(400).json({
         message:
-          "You must supply something to update. Valid keys include 'status' and 'rating'.",
+          "You must supply something to update. Valid keys include 'status', 'rating', and 'tags'.",
       });
     }
     res
       .status(200)
-      .json(await Tickets.updateTicket(ticketId, { status, rating }));
+      .json(await Tickets.updateTicket(ticketId, { status, rating, tags }));
   })
 );
 
@@ -123,7 +123,8 @@ async function validateTicketPermissions(req, res, next) {
   return !(
     ticket.student.id == userId ||
     ticket.helper.id == userId ||
-    roles.includes("admin")
+    roles.includes("admin") ||
+    (roles.includes("helper") && ticket.helper.id === null)
   )
     ? res.status(403).json({
         message: "You don't have permission to view or modify this ticket",
@@ -145,6 +146,12 @@ async function lookupNewHelper(req, res, next) {
     res.status(404).json({
       message: `No helper found with username '${username}' or id '${id}'.`,
     });
+  } else if (!helper.roles.includes("helper")) {
+    res
+      .status(400)
+      .json({
+        message: `Error: Tickets can only be assigned to users with the 'helper' role.`,
+      });
   } else {
     req.newHelper = helper;
     next();
