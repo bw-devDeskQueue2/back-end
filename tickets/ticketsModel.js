@@ -88,7 +88,7 @@ async function updateTicket(id, changes) {
   }
   if (changes.tags) {
     //clear all existing ticket tags
-    await knex("ticket_tags").where({ tag_id: id }).delete();
+    await knex("ticket_tags").where({ ticket_id: id }).delete();
     //add ticket tags, creating new tags as necessary
     const existingTags = await Tags.getTags();
     await Promise.all(
