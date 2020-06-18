@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
+const messagesRouter = require("../messages/messagesRouter");
 
 router.get(
   "/",
@@ -63,6 +64,17 @@ router.patch(
     const { id: helper_id } = req.newHelper;
     res.status(200).json(await Tickets.updateTicket(ticketId, { helper_id }));
   })
+);
+
+router.use(
+  "/:ticketId/messages",
+  catchAsync(validateTicketPermissions),
+  catchAsync(async (req, res, next) => {
+    const { ticketId } = req.params;
+    req.ticket = await Tickets.getTicketById(ticketId);
+    next();
+  }),
+  messagesRouter
 );
 
 /*----------------------------------------------------------------------------*/

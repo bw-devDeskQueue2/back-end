@@ -19,7 +19,6 @@ server.use(express.json());
 server.use("/api/user", authRouter);
 server.use("/api/user", authenticate, userRouter);
 server.use("/api/tickets", authenticate, ticketRouter);
-server.use("/api/messages", authenticate, messagesRouter);
 server.use("/api/tags", tagsRouter);
 
 server.all("*", custom404);

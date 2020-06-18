@@ -5,7 +5,8 @@ const { catchAsync, AppError } = require("../config/errors");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    res.status(200).json(await Messages.getMessages());
+    const { id } = req.ticket;
+    res.status(200).json(await Messages.getTicketMessages(id));
   })
 );
 
