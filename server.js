@@ -16,6 +16,19 @@ server.use(helmet());
 server.use(cors());
 server.use(express.json());
 
+server.get("/", (req, res) => {
+  res.status(200).json({
+    api_status: "up",
+  });
+});
+
+server.get("/api", (req, res) => {
+  res.status(200).json({
+    documentation_link:
+      "https://documenter.getpostman.com/view/11312100/SzzkcHLZ",
+  });
+});
+
 server.use("/api/user", authRouter);
 server.use("/api/user", authenticate, userRouter);
 server.use("/api/tickets", authenticate, ticketRouter);
