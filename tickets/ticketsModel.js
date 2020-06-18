@@ -5,6 +5,7 @@ const Messages = require("../messages/messagesModel");
 async function getUserTickets(id, role, status) {
   let ticketList = [];
   const restriction = status === "both" ? {} : { status };
+  console.log(role);
   switch (role) {
     case "student":
       ticketList = await getDetailedTicket({ student_id: id }, restriction);
