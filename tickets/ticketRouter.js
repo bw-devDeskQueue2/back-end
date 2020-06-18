@@ -123,7 +123,8 @@ async function validateTicketPermissions(req, res, next) {
   return !(
     ticket.student.id == userId ||
     ticket.helper.id == userId ||
-    roles.includes("admin")
+    roles.includes("admin") ||
+    (roles.includes("helper") && ticket.helper.id === null)
   )
     ? res.status(403).json({
         message: "You don't have permission to view or modify this ticket",
