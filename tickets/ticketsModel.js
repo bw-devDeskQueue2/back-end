@@ -1,4 +1,5 @@
 const knex = require("../data/dbConfig");
+const Tickets = require("../tags/tagsModel");
 
 async function getUserTickets(id, role, status) {
   let ticketList = [];
@@ -45,12 +46,21 @@ function getDetailedTicket(query, restriction = {}) {
     )
     .where(restriction)
     .then(tickets =>
-      tickets.map(
-        ({ student_id, student_name, helper_id, helper_name, ...ticket }) => ({
-          ...ticket,
-          student: { id: student_id, username: student_name },
-          helper: { id: helper_id, username: helper_name },
-        })
+      Promise.all(
+        tickets.map(
+          async ({
+            student_id,
+            student_name,
+            helper_id,
+            helper_name,
+            ...ticket
+          }) => ({
+            ...ticket,
+            student: { id: student_id, username: student_name },
+            helper: { id: helper_id, username: helper_name },
+            tags: await Tickets.getTicketTags(ticket.id),
+          })
+        )
       )
     );
 }
