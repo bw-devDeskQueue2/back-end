@@ -146,7 +146,7 @@ async function lookupNewHelper(req, res, next) {
     res.status(404).json({
       message: `No helper found with username '${username}' or id '${id}'.`,
     });
-  } else if (!roles.includes("helper")) {
+  } else if (!helper.roles.includes("helper")) {
     res
       .status(400)
       .json({
