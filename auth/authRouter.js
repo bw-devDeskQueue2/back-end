@@ -90,6 +90,11 @@ async function validateUserRoles(req, res, next) {
       .status(400)
       .json({ message: "New users must include a 'roles' array." });
   }
+  if (roles.includes("admin")) {
+    return res.status(403).json({
+      message: "Admin users cannot be created through this endpoint.",
+    });
+  }
   const rolesList = await Users.getRolesList();
   const rolesWithId = roles.map(userRole => {
     const found = rolesList.find(role => role.name === userRole);
@@ -104,27 +109,31 @@ async function validateUserRoles(req, res, next) {
 
 function validateUserExists(req, res, next) {
   const { username } = req.body;
-  Users.getUser({ username }).then(user => {
-    if (!user) {
-      return res.status(404).json({
-        message: `No user with username '${username}' exists`,
-      });
-    }
-    req.user = user;
-    return next();
-  });
+  Users.getUser({ username })
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({
+          message: `No user with username '${username}' exists`,
+        });
+      }
+      req.user = user;
+      return next();
+    })
+    .catch(e => next(e));
 }
 
 function validateUserDoesNotExist(req, res, next) {
   const { username } = req.body;
-  Users.getUser({ username }).then(user => {
-    if (user) {
-      return res.status(400).json({
-        message: `A user with username '${username}' already exists.`,
-      });
-    }
-    return next();
-  });
+  Users.getUser({ username })
+    .then(user => {
+      if (user) {
+        return res.status(400).json({
+          message: `A user with username '${username}' already exists.`,
+        });
+      }
+      return next();
+    })
+    .catch(e => next(e));
 }
 
 /* Export --------------------------------------------------------------------*/

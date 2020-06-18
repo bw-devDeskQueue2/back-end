@@ -1,4 +1,6 @@
 const knex = require("../data/dbConfig");
+const Tags = require("../tags/tagsModel");
+const Messages = require("../messages/messagesModel");
 
 async function getUserTickets(id, role, status) {
   let ticketList = [];
@@ -21,9 +23,17 @@ async function getUserTickets(id, role, status) {
   return ticketList;
 }
 
-function getTicketById(id, restriction) {
+function getTicketById(id) {
   return getDetailedTicket({ "t.id": id }).then(ticketArray =>
     ticketArray ? ticketArray[0] : null
+  );
+}
+
+async function getTicketsByTag(tag_id) {
+  const ticketTags = await knex("ticket_tags").where({ tag_id });
+  if (ticketTags.length === 0) return null;
+  return Promise.all(
+    ticketTags.map(({ ticket_id }) => getTicketById(ticket_id))
   );
 }
 
@@ -45,12 +55,22 @@ function getDetailedTicket(query, restriction = {}) {
     )
     .where(restriction)
     .then(tickets =>
-      tickets.map(
-        ({ student_id, student_name, helper_id, helper_name, ...ticket }) => ({
-          ...ticket,
-          student: { id: student_id, username: student_name },
-          helper: { id: helper_id, username: helper_name },
-        })
+      Promise.all(
+        tickets.map(
+          async ({
+            student_id,
+            student_name,
+            helper_id,
+            helper_name,
+            ...ticket
+          }) => ({
+            ...ticket,
+            student: { id: student_id, username: student_name },
+            helper: { id: helper_id, username: helper_name },
+            tags: await Tags.getTicketTags(ticket.id),
+            messages: await Messages.getTicketMessages(ticket.id),
+          })
+        )
       )
     );
 }
@@ -73,4 +93,36 @@ async function updateTicket(id, changes) {
     .then(() => getTicketById(id));
 }
 
-module.exports = { getUserTickets, getTicketById, updateTicket };
+async function addTicket({ body, tags, ...ticket }) {
+  const [created] = await knex("tickets").insert(ticket, ["id"]);
+  //sqlite3 returns the id as a number - postgres returns an object instead
+  const id = created.id || created;
+  await Messages.addMessage({
+    ticket_id: id,
+    sender_id: ticket.student_id,
+    body,
+  });
+  const existingTags = await Tags.getTags();
+  if (tags && tags.length !== 0) {
+    await Promise.all(
+      tags.map(async tag => {
+        const found = existingTags.find(eT => eT.name === tag.toLowerCase());
+        if (found) {
+          await Tags.addTicketTag(id, found.id);
+        } else {
+          const newTag = await Tags.addTag(tag.toLowerCase());
+          await Tags.addTicketTag(id, newTag.id);
+        }
+      })
+    );
+  }
+  return getTicketById(id);
+}
+
+module.exports = {
+  getUserTickets,
+  getTicketById,
+  getTicketsByTag,
+  updateTicket,
+  addTicket,
+};

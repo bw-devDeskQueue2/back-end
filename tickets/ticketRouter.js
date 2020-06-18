@@ -2,6 +2,8 @@ const router = require("express").Router();
 const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
+const messagesRouter = require("../messages/messagesRouter");
+const Validator = require("jsonschema").Validator;
 
 router.get(
   "/",
@@ -36,6 +38,20 @@ router.get(
   })
 );
 
+router.post(
+  "/",
+  catchAsync(validateTicketObject),
+  catchAsync(async (req, res, next) => {
+    const { id: student_id } = req.data;
+    const ticket = await Tickets.addTicket({ ...req.body, student_id });
+    if (!ticket) {
+      next(
+        new AppError(`Internal server error while creating the ticket`, 500)
+      );
+    } else res.status(201).json(ticket);
+  })
+);
+
 router.patch(
   "/:ticketId/update",
   catchAsync(validateTicketPermissions),
@@ -65,9 +81,36 @@ router.patch(
   })
 );
 
+router.use(
+  "/:ticketId/messages",
+  catchAsync(validateTicketPermissions),
+  catchAsync(async (req, res, next) => {
+    const { ticketId } = req.params;
+    req.ticket = await Tickets.getTicketById(ticketId);
+    next();
+  }),
+  messagesRouter
+);
+
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+const ticketSchema = {
+  type: "object",
+  properties: {
+    subject: { type: "string" },
+    body: { type: "string" },
+    tags: { type: "array", items: { type: "string" } },
+  },
+  additionalProperties: false,
+  required: ["subject", "body"],
+};
+async function validateTicketObject(req, res, next) {
+  const v = new Validator();
+  const { errors } = v.validate(req.body, ticketSchema);
+  errors.length === 0 ? next() : next(errors);
+}
+
 async function validateTicketPermissions(req, res, next) {
   const { id: userId, roles } = req.data;
   const { ticketId } = req.params;
