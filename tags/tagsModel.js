@@ -1,7 +1,8 @@
 const knex = require("../data/dbConfig");
+const Tickets = require("../tickets/ticketsModel");
 
-function getTags() {
-  return knex("tags");
+function getTags(query = {}) {
+  return knex("tags").where(query);
 }
 
 function getTicketTags(ticket_id) {

@@ -29,6 +29,14 @@ function getTicketById(id) {
   );
 }
 
+async function getTicketsByTag(tag_id) {
+  const ticketTags = await knex("ticket_tags").where({ tag_id });
+  if (ticketTags.length === 0) return null;
+  return Promise.all(
+    ticketTags.map(({ ticket_id }) => getTicketById(ticket_id))
+  );
+}
+
 function getDetailedTicket(query, restriction = {}) {
   return knex("tickets as t")
     .where(query)
@@ -111,4 +119,10 @@ async function addTicket({ body, tags, ...ticket }) {
   return getTicketById(id);
 }
 
-module.exports = { getUserTickets, getTicketById, updateTicket, addTicket };
+module.exports = {
+  getUserTickets,
+  getTicketById,
+  getTicketsByTag,
+  updateTicket,
+  addTicket,
+};
