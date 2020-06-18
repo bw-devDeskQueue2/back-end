@@ -48,7 +48,7 @@ router.post(
       next(
         new AppError(`Internal server error while creating the ticket`, 500)
       );
-    } else res.status(200).json(ticket);
+    } else res.status(201).json(ticket);
   })
 );
 

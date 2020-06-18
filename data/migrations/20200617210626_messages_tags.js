@@ -16,7 +16,7 @@ exports.up = function (knex) {
         .onDelete("SET NULL")
         .onUpdate("CASCADE");
       tbl.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
-      tbl.string("body").notNullable();
+      tbl.string("body", 1000).notNullable();
     })
     .createTable("ticket_tags", tbl => {
       tbl
