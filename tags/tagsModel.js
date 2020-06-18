@@ -12,4 +12,17 @@ function getTicketTags(ticket_id) {
     .then(tags => tags.map(tag => tag.name));
 }
 
-module.exports = { getTags, getTicketTags };
+function addTag(name) {
+  return knex("tags")
+    .insert({ name }, ["id"])
+    .then(([returned]) => {
+      const id = returned.id || returned;
+      return knex("tags").where({ id }).first();
+    });
+}
+
+function addTicketTag(ticket_id, tag_id) {
+  return knex("ticket_tags").insert({ ticket_id, tag_id });
+}
+
+module.exports = { getTags, getTicketTags, addTag, addTicketTag };

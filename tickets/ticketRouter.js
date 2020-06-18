@@ -41,11 +41,14 @@ router.get(
 router.post(
   "/",
   catchAsync(validateTicketObject),
-  catchAsync(async (req, res) => {
-    const { id: sender_id } = req.data;
-    console.log(sender_id);
-    const { subject, body, tags } = req.body;
-    res.status(204).end();
+  catchAsync(async (req, res, next) => {
+    const { id: student_id } = req.data;
+    const ticket = await Tickets.addTicket({ ...req.body, student_id });
+    if (!ticket) {
+      next(
+        new AppError(`Internal server error while creating the ticket`, 500)
+      );
+    } else res.status(200).json(ticket);
   })
 );
 

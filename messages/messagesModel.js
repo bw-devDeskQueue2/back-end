@@ -21,4 +21,13 @@ function getDetailedMessages(query) {
     );
 }
 
-module.exports = { getMessages, getTicketMessages };
+function addMessage(message) {
+  return knex("messages")
+    .insert(message, ["id"])
+    .then(([returned]) => {
+      const id = returned.id || returned;
+      return knex("messages").where({ id });
+    });
+}
+
+module.exports = { getMessages, getTicketMessages, addMessage };
