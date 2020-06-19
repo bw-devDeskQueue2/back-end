@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=testing jest --watch",
+    "@comment test": "Requires a .env file with 'DB_ENV=test' and either a TEST_DB_URL or DB_HOST, DB_NAME, DB_USER, and DB_PASS",
+    "test": "jest --watch --setupFiles dotenv/config",
+    "knexmake": "knex migrate:rollback && knex migrate:latest && knex seed:run",
     "start": "node index.js",
-    "server": "nodemon index.js"
+    "server": "NODE_ENV=development DB_ENV=development nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,7 @@
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
     "supertest": "^4.0.2"
