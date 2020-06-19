@@ -16,7 +16,6 @@ const registerNewUser = () =>
       roles: ["student"],
     });
 
-const getNewUserToken = () => registerNewUser().then(r => r.body.token);
 const getStudentToken = () =>
   logInAs("test_student", "password").then(r => r.body.token);
 const getHelperToken = () =>
@@ -25,6 +24,7 @@ const getBothToken = () =>
   logInAs("test_both", "password").then(r => r.body.token);
 const getAdminToken = () =>
   logInAs("test_admin", "dev_admin_pass").then(r => r.body.token);
+const getNewUserToken = () => registerNewUser().then(r => r.body.token);
 
 module.exports = {
   logInAs,
