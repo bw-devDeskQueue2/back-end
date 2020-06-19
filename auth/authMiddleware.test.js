@@ -1,9 +1,11 @@
 const request = require("supertest");
 const server = require("../server");
+const knex = require("../data/dbConfig");
 const { getStudentToken } = require("./authTestHelperFunctions");
 
 describe("authMiddleware", () => {
   const bU = "/api/auth_test";
+  beforeAll(() => knex.seed.run());
   it("Returns an error to users who don't send a token", () =>
     request(server)
       .get(bU)
