@@ -1,22 +1,8 @@
 const request = require("supertest");
 const server = require("../server");
 const knex = require("../data/dbConfig");
-
+const { logInAs, registerNewUser } = require("./authTestHelperFunctions");
 const bU = "/api/user";
-
-const logInAs = (username, password) =>
-  request(server)
-    .post(bU + "/login")
-    .send({ username, password });
-
-const registerNewUser = () =>
-  request(server)
-    .post(bU + "/register")
-    .send({
-      username: "new_user",
-      password: "password",
-      roles: ["student"],
-    });
 
 describe("authRouter", () => {
   beforeAll(() => knex.seed.run());
@@ -79,21 +65,3 @@ describe("authRouter", () => {
         }));
   });
 });
-
-const getNewUserToken = () => registerNewUser().then(r => r.body.token);
-const getStudentToken = () =>
-  logInAs("test_student", "password").then(r => r.body.token);
-const getHelperToken = () =>
-  logInAs("test_helper", "password").then(r => r.body.token);
-const getBothToken = () =>
-  logInAs("test_both", "password").then(r => r.body.token);
-const getAdminToken = () =>
-  logInAs("test_admin", "dev_admin_pass").then(r => r.body.token);
-
-module.exports = {
-  getStudentToken,
-  getHelperToken,
-  getBothToken,
-  getAdminToken,
-  getNewUserToken,
-};

@@ -2,7 +2,7 @@ const request = require("supertest");
 const server = require("../server");
 const knex = require("../data/dbConfig");
 
-const { getStudentToken, getHelperToken } = require("../auth/authRouter.test");
+const { getStudentToken, getHelperToken } = require("../auth/authTestHelperFunctions");
 
 describe("tags", () => {
   beforeAll(() => knex.seed.run());
