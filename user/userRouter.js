@@ -25,7 +25,7 @@ router.delete(
         ? res.status(204).end()
         : res
             .status(404)
-            .json({ message: `No user found with it ${idToDelete}` });
+            .json({ message: `No user found with id ${idToDelete}` });
     }
   })
 );

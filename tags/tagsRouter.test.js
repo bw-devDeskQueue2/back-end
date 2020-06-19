@@ -2,10 +2,20 @@ const request = require("supertest");
 const server = require("../server");
 const knex = require("../data/dbConfig");
 
-const { getStudentToken, getHelperToken } = require("../auth/authTestHelperFunctions");
+const {
+  getStudentToken,
+  getHelperToken,
+} = require("../auth/authTestHelperFunctions");
 
 describe("tags", () => {
-  beforeAll(() => knex.seed.run());
+  let helperToken;
+  let studentToken;
+  beforeAll(async done => {
+    await knex.seed.run();
+    helperToken = await getHelperToken();
+    studentToken = await getStudentToken();
+    done();
+  });
   const bU = "/api/tags";
   describe(`GET ${bU}/`, () => {
     it("Returns a list of tags", () =>
@@ -15,28 +25,22 @@ describe("tags", () => {
         .then(res => expect(res.body).toHaveLength(7)));
   });
   describe(`GET ${bU}/:tagname`, () => {
-    it("Forbids access to tickets by tag to students", async () => {
-      const studentToken = await getStudentToken();
+    it("Forbids access to tickets by tag to students", () =>
       request(server)
         .get(bU + "/account")
         .set("Authorization", "Bearer " + studentToken)
-        .expect(403);
-    });
-    it("Returns a list of tickets to admins or helpers", async () => {
-      const helperToken = await getHelperToken();
-      return request(server)
+        .expect(403));
+    it("Returns a list of tickets to admins or helpers", () =>
+      request(server)
         .get(bU + "/account")
         .set("Authorization", "Bearer " + helperToken)
         .expect(200)
-        .then(res => expect(res.body.length).toBe(2));
-    });
-    it("Returns an error for an invalid tag name", async () => {
-      const helperToken = await getHelperToken();
-      return request(server)
+        .then(res => expect(res.body.length).toBe(2)));
+    it("Returns an error for an invalid tag name", () =>
+      request(server)
         .get(bU + "/nonexistent_tag")
         .set("Authorization", "Bearer " + helperToken)
         .expect(404)
-        .then(res => expect(res.body.message).toBeDefined());
-    });
+        .then(res => expect(res.body.message).toBeDefined()));
   });
 });

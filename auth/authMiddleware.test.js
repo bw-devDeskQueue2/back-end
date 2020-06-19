@@ -5,7 +5,11 @@ const { getStudentToken } = require("./authTestHelperFunctions");
 
 describe("authMiddleware", () => {
   const bU = "/api/auth_test";
-  beforeAll(() => knex.seed.run());
+  beforeAll(async done => {
+    await knex.seed.run();
+    studentToken = await getStudentToken();
+    done();
+  });
   it("Returns an error to users who don't send a token", () =>
     request(server)
       .get(bU)
@@ -21,9 +25,8 @@ describe("authMiddleware", () => {
       .then(r => {
         expect(r.body.message).toContain("malformed");
       }));
-  it("Allows users to proceed with a valid token", async () => {
-    const studentToken = await getStudentToken();
-    return request(server)
+  it("Allows users to proceed with a valid token", () =>
+    request(server)
       .get(bU)
       .set("Authorization", "Bearer " + studentToken)
       .expect(200)
@@ -31,6 +34,5 @@ describe("authMiddleware", () => {
         expect(body.id).toBe(1);
         expect(body.username).toBe("test_student");
         expect(body.roles).toEqual(["student"]);
-      });
-  });
+      }));
 });
