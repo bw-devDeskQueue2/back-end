@@ -25,6 +25,24 @@ describe("userRouter", () => {
         });
     });
   });
+  describe(`GET ${bU}/all`, () => {
+    it("Returns an error to non-admins", async () => {
+      const studentToken = await getStudentToken();
+      return request(server)
+        .get(`${bU}/all`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toContain("admin"));
+    });
+    it("Returns a list of users to admins", async () => {
+      const adminToken = await getAdminToken();
+      return request(server)
+        .get(`${bU}/all`)
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200)
+        .then(r => expect(r.body).toHaveLength(maxExistingUserID));
+    });
+  });
   describe(`DELETE ${bU}/:id`, () => {
     it("Returns an error if not authorized", async () => {
       const studentToken = await getStudentToken();
