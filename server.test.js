@@ -28,7 +28,7 @@ describe("server", () => {
   });
   describe("tags", () => {
     const bU = "/api/tags";
-    describe("GET /", () => {
+    describe(`GET ${bU}/`, () => {
       it("Returns a list of tags", () =>
         request(server)
           .get(bU)
