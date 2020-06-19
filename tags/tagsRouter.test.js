@@ -1,8 +1,11 @@
 const request = require("supertest");
 const server = require("../server");
+const knex = require("../data/dbConfig");
+
 const { getStudentToken, getHelperToken } = require("../auth/authRouter.test");
 
 describe("tags", () => {
+  beforeAll(() => knex.seed.run());
   const bU = "/api/tags";
   describe(`GET ${bU}/`, () => {
     it("Returns a list of tags", () =>
