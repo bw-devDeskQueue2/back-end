@@ -8,6 +8,7 @@ const {
 } = require("../auth/authTestHelperFunctions");
 
 describe("userRouter", () => {
+  const maxExistingUserID = 4;
   const bU = "/api/user";
   beforeAll(() => knex.seed.run());
   describe(`GET ${bU}/`, () => {
@@ -28,7 +29,7 @@ describe("userRouter", () => {
     it("Returns an error if not authorized", async () => {
       const studentToken = await getStudentToken();
       return request(server)
-        .delete(bU + "/7")
+        .delete(`${bU}/${maxExistingUserID}`)
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toContain("admin"));
@@ -36,10 +37,25 @@ describe("userRouter", () => {
     it("Returns an error when trying to delete a nonexistent user", async () => {
       const adminToken = await getAdminToken();
       return request(server)
-        .delete(bU + "/7")
+        .delete(`${bU}/${maxExistingUserID + 5}`)
         .set("Authorization", "Bearer " + adminToken)
         .expect(404)
-        .then(r => expect(r.body.message).toContain("7"));
+        .then(r => expect(r.body.message).toContain(maxExistingUserID + 5));
+    });
+    it("Allows a user to delete themselves", async () => {
+      const newUserToken = await getNewUserToken();
+      return request(server)
+        .delete(`${bU}/${maxExistingUserID + 1}`)
+        .set("Authorization", "Bearer " + newUserToken)
+        .expect(204);
+    });
+    it("Allow an admin to delete any user", async () => {
+      const adminToken = await getAdminToken();
+      await getNewUserToken();
+      return request(server)
+        .delete(`${bU}/${maxExistingUserID + 2}`)
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(204);
     });
   });
 });
