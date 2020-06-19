@@ -11,6 +11,10 @@ describe("server", () => {
     request(server)
       .get(bU)
       .expect(200)
-      .expect(res.body.message)
-      .toContain("dooo"));
+      .then(res => expect(res.body.documentation_link).toBeDefined()));
+  it("Responds with an appropriate 404 object", () =>
+    request(server)
+      .get(`${bU}/bad_request_url`)
+      .expect(404)
+      .then(res => expect(res.body.message).toContain("bad_request_url")));
 });
