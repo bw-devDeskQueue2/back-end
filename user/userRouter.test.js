@@ -9,7 +9,6 @@ const {
 
 describe("userRouter", () => {
   const bU = "/api/user";
-  let studentToken;
   beforeAll(() => knex.seed.run());
   describe(`GET ${bU}/`, () => {
     it("Returns a user object to logged-in users", async () => {
