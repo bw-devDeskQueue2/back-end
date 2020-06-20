@@ -237,22 +237,22 @@ describe("ticketRouter", () => {
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_helper")));
   });
-  describe(`PATCH ${bU}/:id/close`, () => {
+  describe(`DELETE ${bU}/:id`, () => {
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
-        .patch(`${bU}/not_an_id/close`)
+        .delete(`${bU}/not_an_id`)
         .set("Authorization", "Bearer " + studentToken)
         .expect(404)
         .then(r => expect(r.body.message).toContain("not_an_id")));
     it("Forbids non-admins from closing tickets that aren't their own", () =>
       request(server)
-        .patch(`${bU}/2/close`)
+        .delete(`${bU}/2`)
         .set("Authorization", "Bearer " + bothToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
     it("Allows users to close their own tickets", () =>
       request(server)
-        .patch(`${bU}/2/close`)
+        .delete(`${bU}/2`)
         .set("Authorization", "Bearer " + studentToken)
         .expect(200)
         .then(r => {

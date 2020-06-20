@@ -81,8 +81,8 @@ router.patch(
   })
 );
 
-router.patch(
-  "/:ticketId/close",
+router.delete(
+  "/:ticketId",
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
