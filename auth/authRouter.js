@@ -84,6 +84,7 @@ function validateUserObject(req, res, next) {
 }
 
 async function validateUserRoles(req, res, next) {
+  let encounteredErrors = false;
   const { roles } = req.body;
   if (!roles) {
     return res
@@ -96,15 +97,21 @@ async function validateUserRoles(req, res, next) {
     });
   }
   const rolesList = await Users.getRolesList();
+  if (!Array.isArray(roles)) {
+    return res.status(400).json({ message: "'roles' must be an array" });
+  }
   const rolesWithId = roles.map(userRole => {
     const found = rolesList.find(role => role.name === userRole);
     if (!found) {
-      next(new AppError(`Error: ${userRole} is not a valid role name.`, 400));
+      encounteredErrors = true;
+      res
+        .status(400)
+        .json({ message: `Error: ${userRole} is not a valid role name.` });
     }
     return found;
   });
   req.body.roles = rolesWithId;
-  next();
+  if (!encounteredErrors) next();
 }
 
 function validateUserExists(req, res, next) {

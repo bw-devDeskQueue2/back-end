@@ -20,8 +20,12 @@ router.delete(
         message: "Only admins can delete users other than themselves",
       });
     } else {
-      await Users.deleteUser(idToDelete);
-      res.status(204).end();
+      const count = await Users.deleteUser(idToDelete);
+      count == 1
+        ? res.status(204).end()
+        : res
+            .status(404)
+            .json({ message: `No user found with id ${idToDelete}` });
     }
   })
 );

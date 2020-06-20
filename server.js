@@ -33,6 +33,10 @@ server.use("/api/user", authRouter);
 server.use("/api/user", authenticate, userRouter);
 server.use("/api/tickets", authenticate, ticketRouter);
 server.use("/api/tags", tagsRouter);
+process.env.NODE_ENV === "test" &&
+  server.get("/api/auth_test", authenticate, (req, res) =>
+    res.status(200).json(req.data)
+  );
 
 server.all("*", custom404);
 server.use(errorHandling);

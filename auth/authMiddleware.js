@@ -4,7 +4,7 @@ const { catchAsync } = require("../config/errors");
 async function checkUserAuthorization(req, res, next) {
   const { authorization } = req.headers;
   if (!authorization) {
-    return res.status(403).json({
+    return res.status(401).json({
       message: "Please include your token in an Authorization header",
     });
   }
