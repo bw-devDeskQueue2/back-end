@@ -5,8 +5,9 @@ const crypto = require("crypto");
 
 //router.use(verifySignature);
 
-router.post("/events_verify", (req, res) => {
-  res.status(200).json({ challenge: req.challenge });
+router.post("/verify_challenge", (req, res) => {
+  const { challenge } = req.body;
+  res.status(200).json({ challenge });
 });
 
 /*----------------------------------------------------------------------------*/
