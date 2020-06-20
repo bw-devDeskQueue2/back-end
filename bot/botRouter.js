@@ -4,10 +4,14 @@ const config = require("../config/serverInfo");
 const crypto = require("crypto");
 
 router.use(verifySignature);
-
-router.post("/verify_challenge", (req, res) => {
+router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
-  res.status(200).json({ challenge });
+  challenge ? res.status(200).json({ challenge }) : next();
+});
+
+router.post("/events", (req, res) => {
+  console.log(req.body);
+  res.status(204).end();
 });
 
 /*----------------------------------------------------------------------------*/
