@@ -15,6 +15,10 @@ router.post("/events", (req, res) => {
   res.status(204).end();
 });
 
+router.post("/testing", (req, res) => {
+  res.status(204).end();
+});
+
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
@@ -34,7 +38,7 @@ function verifySignature(req, res, next) {
 
   tsscmp(hash, hmac.digest("hex"))
     ? next()
-    : res.status(403).json({ message: "invalid signature" });
+    : res.status(403).json({ message: "Invalid signature" });
 }
 
 module.exports = router;
