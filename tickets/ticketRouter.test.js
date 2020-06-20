@@ -167,7 +167,7 @@ describe("ticketRouter", () => {
         .then(r => expect(r.body.message).toBeDefined()));
     it("Correctly updates information", async () => {
       const updates = {
-        subject :"New subject",
+        subject: "New subject",
         status: "closed",
         rating: 10,
         tags: ["web", "account"],
