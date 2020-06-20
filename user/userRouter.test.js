@@ -120,4 +120,24 @@ describe("userRouter", () => {
           expect(r.body.roles).toContain("admin");
         }));
   });
+  describe(`PATCH ${bU}/roles`, () => {
+    it("Does not allow the 'admin' role to be set", () =>
+      request(server)
+        .patch(`${bU}/4/roles`)
+        .send({ roles: ["admin"] })
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(403));
+    it("Returns the new user object for a successful request", () =>
+      request(server)
+        .patch(`${bU}/roles`)
+        .send({ roles: ["student", "helper"] })
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(200)
+        .then(r => {
+          expect(r.body.roles).toHaveLength(2);
+          expect(r.body.id).toBe(1);
+          expect(r.body.roles).toContain("student");
+          expect(r.body.roles).toContain("helper");
+        }));
+  });
 });

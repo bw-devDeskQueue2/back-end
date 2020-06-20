@@ -60,6 +60,18 @@ router.patch(
   })
 );
 
+router.patch(
+  "/roles",
+  catchAsync(validateUserRoles),
+  catchAsync(async (req, res) => {
+    const { id } = req.data;
+    let { roles } = req.body;
+    await Users.addRoles(id, roles);
+    const { password, ...user } = await Users.getUser({ id });
+    res.status(200).json(user);
+  })
+);
+
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
