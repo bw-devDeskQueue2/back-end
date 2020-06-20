@@ -54,4 +54,15 @@ describe("botRouter", () => {
       .expect(200)
       .then(r => expect(r.body).toEqual(body));
   });
+  describe(`POST ${bU}/events`, () => {
+    it("Does nothing yet", () => {
+      const body = { message: "testing" };
+      return request(server)
+        .post(`${bU}/events`)
+        .send(body)
+        .set("X-Slack-Request-Timestamp", timestamp)
+        .set("X-Slack-Signature", createSignature(body))
+        .expect(204);
+    });
+  });
 });
