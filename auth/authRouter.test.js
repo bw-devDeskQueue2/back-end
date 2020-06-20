@@ -61,6 +61,7 @@ describe("authRouter", () => {
         .then(({ body }) => {
           expect(body.user).toBeDefined();
           expect(body.user.id).toBe(5);
+          expect(body.user.roles).toEqual(["student"]);
           expect(body.token).toBeDefined();
         }));
   });

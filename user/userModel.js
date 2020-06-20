@@ -17,9 +17,14 @@ async function addUser(newUser) {
   return getUser({ id });
 }
 
-function addRoles(user_id, roles) {
+async function addRoles(user_id, roles) {
+  await deleteRoles(user_id);
   const rolesToInsert = roles.map(({ id }) => ({ user_id, role_id: id }));
   return knex("user_roles").insert([...rolesToInsert]);
+}
+
+function deleteRoles(user_id) {
+  return knex("user_roles").where({ user_id }).del();
 }
 
 async function getUsers() {
@@ -55,6 +60,7 @@ module.exports = {
   deleteUser,
   changePassword,
   addUser,
+  addRoles,
   getUsers,
   getUser,
   getRolesList,

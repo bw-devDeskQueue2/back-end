@@ -1,12 +1,14 @@
 const router = require("express").Router();
 const { catchAsync } = require("../config/errors");
+const { generateToken, validateUserRoles } = require("../auth/authRouter");
 const Users = require("./userModel");
 
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    const { id, username, roles } = req.data;
-    res.status(200).json({ id, username, roles });
+    const { id } = req.data;
+    const { password, ...user } = await Users.getUser({ id });
+    res.status(200).json({ ...user, token: generateToken(user) });
   })
 );
 
@@ -43,9 +45,48 @@ router.get(
     res.status(200).json(userList.map(({ password, ...user }) => user));
   })
 );
+
+router.patch(
+  "/:id/roles",
+  catchAsync(validateUserExists),
+  restrictToAdmin,
+  catchAsync(validateUserRoles),
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    let { roles } = req.body;
+    await Users.addRoles(id, roles);
+    const { password, ...user } = await Users.getUser({ id });
+    res.status(200).json(user);
+  })
+);
+
+router.patch(
+  "/roles",
+  catchAsync(validateUserRoles),
+  catchAsync(async (req, res) => {
+    const { id } = req.data;
+    let { roles } = req.body;
+    await Users.addRoles(id, roles);
+    const { password, ...user } = await Users.getUser({ id });
+    res.status(200).json(user);
+  })
+);
+
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+async function validateUserExists(req, res, next) {
+  const { id } = req.params;
+  if (!Number.isInteger(parseInt(id))) {
+    return res
+      .status(404)
+      .json({ message: `Invalid id '${id} - must be an integer.'` });
+  }
+  req.user = await Users.getUser({ id });
+  req.user
+    ? next()
+    : res.status(404).json({ message: `No user with id '${id}' found.` });
+}
 function restrictToAdmin(req, res, next) {
   const { roles } = req.data;
   if (!roles.includes("admin")) {
