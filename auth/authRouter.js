@@ -91,8 +91,12 @@ async function validateUserRoles(req, res, next) {
       .status(400)
       .json({ message: "New users must include a 'roles' array." });
   }
-  //Only allow admin to be added to roles if the request originates from userRouter's "roles" endpoint
-  if (roles.includes("admin") && !req.originalUrl.includes("roles")) {
+
+  if (
+    roles.includes("admin") &&
+    //Only allow admin to be added to roles if the request originates from userRouter's "/:id/roles" endpoint
+    !(req.originalUrl.includes("roles") && req.params.id)
+  ) {
     return res.status(403).json({
       message: "Admin users cannot be created through this endpoint.",
     });
