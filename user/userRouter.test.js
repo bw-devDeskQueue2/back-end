@@ -28,6 +28,7 @@ describe("userRouter", () => {
           expect(body.id).toBe(1);
           expect(body.username).toBe("test_student");
           expect(body.roles).toEqual(["student"]);
+          expect(body.token).toBeDefined();
         }));
   });
   describe(`GET ${bU}/all`, () => {
@@ -72,5 +73,51 @@ describe("userRouter", () => {
         .set("Authorization", "Bearer " + adminToken)
         .expect(204);
     });
+  });
+  describe(`PATCH ${bU}/:id/roles`, () => {
+    it("Isn't usable by non-admins", () =>
+      request(server)
+        .patch(`${bU}/4/roles`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toContain("admin")));
+    it("Returns an error for a malformed roles object", () =>
+      request(server)
+        .patch(`${bU}/4/roles`)
+        .send({ bad_key: "value" })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(400)
+        .then(r => expect(r.body.message).toContain("roles")));
+    it("Returns an error when trying to modify a nonexistent user", () =>
+      request(server)
+        .patch(`${bU}/999/roles`)
+        .send({ roles: ["student"] })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(404)
+        .then(r => expect(r.body.message).toContain("999")));
+    it("Returns an error when trying to add an invalid role", () =>
+      request(server)
+        .patch(`${bU}/4/roles`)
+        .send({ roles: ["hello"] })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(400)
+        .then(r => expect(r.body.message).toContain("hello")));
+    it("Allows the 'admin' role to be set", () =>
+      request(server)
+        .patch(`${bU}/4/roles`)
+        .send({ roles: ["admin"] })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200));
+    it("Returns the new user object for a successful request", () =>
+      request(server)
+        .patch(`${bU}/1/roles`)
+        .send({ roles: ["student", "admin"] })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200)
+        .then(r => {
+          expect(r.body.roles).toHaveLength(2);
+          expect(r.body.roles).toContain("student");
+          expect(r.body.roles).toContain("admin");
+        }));
   });
 });

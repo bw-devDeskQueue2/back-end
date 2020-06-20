@@ -91,7 +91,8 @@ async function validateUserRoles(req, res, next) {
       .status(400)
       .json({ message: "New users must include a 'roles' array." });
   }
-  if (roles.includes("admin")) {
+  //Only allow admin to be added to roles if the request originates from userRouter's "roles" endpoint
+  if (roles.includes("admin") && !req.originalUrl.includes("roles")) {
     return res.status(403).json({
       message: "Admin users cannot be created through this endpoint.",
     });
@@ -144,4 +145,5 @@ function validateUserDoesNotExist(req, res, next) {
 }
 
 /* Export --------------------------------------------------------------------*/
+Object.assign(router, { generateToken, validateUserRoles });
 module.exports = router;
