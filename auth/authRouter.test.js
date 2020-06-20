@@ -12,18 +12,18 @@ describe("authRouter", () => {
       expect(res.status).toBe(200);
       expect(res.body.token).toBeDefined();
     });
-  });
-  it("Returns an error when trying to log in as an undefined user", async () => {
-    const res = await logInAs("nonexistent_user", "password");
-    expect(res.status).toBe(404);
-    expect(res.body.message).toBeDefined();
-    expect(res.body.token).toBeUndefined();
-  });
-  it("Returns an error when logging in with the wrong password", async () => {
-    const res = await logInAs("test_student", "wrong_password");
-    expect(res.status).toBe(401);
-    expect(res.body.message).toBeDefined();
-    expect(res.body.token).toBeUndefined();
+    it("Returns an error when trying to log in as an undefined user", async () => {
+      const res = await logInAs("nonexistent_user", "password");
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBeDefined();
+      expect(res.body.token).toBeUndefined();
+    });
+    it("Returns an error when logging in with the wrong password", async () => {
+      const res = await logInAs("test_student", "wrong_password");
+      expect(res.status).toBe(401);
+      expect(res.body.message).toBeDefined();
+      expect(res.body.token).toBeUndefined();
+    });
   });
   describe(`POST ${bU}/register`, () => {
     it("Returns an error for a malformed object", () =>

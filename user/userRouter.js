@@ -15,6 +15,11 @@ router.delete(
   catchAsync(async (req, res) => {
     const { idToDelete } = req.params;
     const { id, roles } = req.data;
+    if (!Number.isInteger(parseInt(idToDelete))) {
+      return res.status(404).json({
+        message: `Error: id ${idToDelete} is invalid - must be an integer. `,
+      });
+    }
     if (!(id == idToDelete || roles.includes("admin"))) {
       res.status(403).json({
         message: "Only admins can delete users other than themselves",

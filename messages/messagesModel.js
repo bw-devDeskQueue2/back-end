@@ -26,7 +26,7 @@ function addMessage(message) {
     .insert(message, ["id"])
     .then(([returned]) => {
       const id = returned.id || returned;
-      return knex("messages").where({ id });
+      return knex("messages").where({ id }).first();
     });
 }
 
