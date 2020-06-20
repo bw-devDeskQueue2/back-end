@@ -114,6 +114,13 @@ async function validateTicketObject(req, res, next) {
 async function validateTicketPermissions(req, res, next) {
   const { id: userId, roles } = req.data;
   const { ticketId } = req.params;
+  if (!Number.isInteger(parseInt(ticketId))) {
+    return res
+      .status(404)
+      .json({
+        message: `Error: id ${ticketId} is invalid - must be an integer. `,
+      });
+  }
   const ticket = await Tickets.getTicketById(ticketId);
   if (!ticket) {
     return res
@@ -147,11 +154,9 @@ async function lookupNewHelper(req, res, next) {
       message: `No helper found with username '${username}' or id '${id}'.`,
     });
   } else if (!helper.roles.includes("helper")) {
-    res
-      .status(400)
-      .json({
-        message: `Error: Tickets can only be assigned to users with the 'helper' role.`,
-      });
+    res.status(400).json({
+      message: `Error: Tickets can only be assigned to users with the 'helper' role.`,
+    });
   } else {
     req.newHelper = helper;
     next();
