@@ -3,7 +3,7 @@ const baseUrl = "https://devdesk-queue-2-herokuapp.com/api";
 const config = require("../config/serverInfo");
 const crypto = require("crypto");
 
-router.use(verifySignature);
+//router.use(verifySignature);
 
 router.post("/events_verify", (req, res) => {
   res.status(200).json({ challenge: req.challenge });
