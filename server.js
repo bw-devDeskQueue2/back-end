@@ -23,10 +23,10 @@ server.get("/", (req, res) => {
 });
 
 server.get("/api", (req, res) => {
-  res.status(200).json({
-    documentation_link:
-      "https://documenter.getpostman.com/view/11312100/SzzkcHLZ",
+  res.writeHead(302, {
+    Location: "https://documenter.getpostman.com/view/11312100/SzzkcHLZ",
   });
+  res.end();
 });
 
 server.use("/api/user", authRouter);

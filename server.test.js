@@ -7,11 +7,11 @@ describe("server", () => {
     expect(process.env.DB_ENV).toBe("test");
     expect(process.env.NODE_ENV).toBe("test");
   });
-  it("Responds with documentation at the root URL", () =>
+  it("Redirects the root URL to the documentation page", () =>
     request(server)
       .get(bU)
-      .expect(200)
-      .then(res => expect(res.body.documentation_link).toBeDefined()));
+      .expect(302)
+      .then(res => expect(res.header.location).toBeDefined()));
   it("Responds with an appropriate 404 object", () =>
     request(server)
       .get(`${bU}/bad_request_url`)
