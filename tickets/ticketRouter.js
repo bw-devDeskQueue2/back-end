@@ -81,6 +81,22 @@ router.patch(
   })
 );
 
+router.patch(
+  "/:ticketId/close",
+  catchAsync(validateTicketPermissions),
+  catchAsync(async (req, res) => {
+    const { ticketId } = req.params;
+    res
+      .status(200)
+      .json(
+        await Tickets.updateTicket(ticketId, {
+          helper_id: null,
+          status: "closed",
+        })
+      );
+  })
+);
+
 router.use(
   "/:ticketId/messages",
   catchAsync(validateTicketPermissions),
@@ -115,11 +131,9 @@ async function validateTicketPermissions(req, res, next) {
   const { id: userId, roles } = req.data;
   const { ticketId } = req.params;
   if (!Number.isInteger(parseInt(ticketId))) {
-    return res
-      .status(404)
-      .json({
-        message: `Error: id ${ticketId} is invalid - must be an integer. `,
-      });
+    return res.status(404).json({
+      message: `Error: id ${ticketId} is invalid - must be an integer. `,
+    });
   }
   const ticket = await Tickets.getTicketById(ticketId);
   if (!ticket) {

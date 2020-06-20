@@ -5,6 +5,7 @@ const {
   getBothToken,
   getAdminToken,
   getStudentToken,
+  getHelperToken,
 } = require("../auth/authTestHelperFunctions");
 
 describe("ticketRouter", () => {
@@ -12,13 +13,16 @@ describe("ticketRouter", () => {
   let studentToken;
   let bothToken;
   let adminToken;
+  let helperToken;
   beforeAll(async done => {
     await knex.seed.run();
     studentToken = await getStudentToken();
     bothToken = await getBothToken();
     adminToken = await getAdminToken();
+    helperToken = await getHelperToken();
     done();
   });
+  it("Requires authentication", () => request(server).get(bU).expect(401));
   describe(`GET ${bU}`, () => {
     it("Returns a list of tickets to logged-in users", () =>
       request(server)
@@ -62,8 +66,6 @@ describe("ticketRouter", () => {
     });
   });
   describe(`GET ${bU}/:id`, () => {
-    it("Requires authentication", () =>
-      request(server).get(`${bU}/1`).expect(401));
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
         .get(`${bU}/999`)
@@ -98,7 +100,6 @@ describe("ticketRouter", () => {
         }));
   });
   describe(`POST ${bU}`, () => {
-    it("Requires authentication", () => request(server).post(bU).expect(401));
     it("Returns an error for invalid ticket objects", () =>
       request(server)
         .post(bU)
@@ -150,8 +151,6 @@ describe("ticketRouter", () => {
     });
   });
   describe(`PATCH ${bU}/:id/update`, () => {
-    it("Requires authentication", () =>
-      request(server).patch(`${bU}/2/update`).expect(401));
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
         .patch(`${bU}/not_an_id/update`)
@@ -166,5 +165,98 @@ describe("ticketRouter", () => {
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
+    it("Correctly updates information", async () => {
+      const updates = {
+        status: "closed",
+        rating: 10,
+        tags: ["web", "account"],
+      };
+      const response = await request(server)
+        .patch(`${bU}/1/update`)
+        .send(updates)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(200)
+        .then(r => r.body);
+      expect(response.status).toBe(updates.status);
+      expect(response.rating).toBe(updates.rating);
+      expect(response.tags).toHaveLength(2);
+      expect(response.tags).toContain(updates.tags[0]);
+      expect(response.tags).toContain(updates.tags[1]);
+    });
+  });
+  describe(`PATCH ${bU}/:id/reassign`, () => {
+    it("Returns an error for invalid ticket IDs", () =>
+      request(server)
+        .patch(`${bU}/not_an_id/reassign`)
+        .send({ status: "closed" })
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(404)
+        .then(r => expect(r.body.message).toContain("not_an_id")));
+    it("Returns an error for accessing someone else's tickets", () =>
+      request(server)
+        .patch(`${bU}/3/reassign`)
+        .send({ status: "closed" })
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Returns an error for not supplying proper information", () =>
+      request(server)
+        .patch(`${bU}/2/reassign`)
+        .send({ status: "closed" })
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(400)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Allows any helper to reassign an unassigned ticket", () =>
+      request(server)
+        .patch(`${bU}/2/reassign`)
+        .send({ username: "test_both" })
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe("test_both")));
+    it("Forbids non-admins from reassigning tickets that aren't their own", () =>
+      request(server)
+        .patch(`${bU}/2/reassign`)
+        .send({ username: "test_both" })
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Allows admins to reassign any ticket", () =>
+      request(server)
+        .patch(`${bU}/2/reassign`)
+        .send({ username: "test_both" })
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe("test_both")));
+    it("Allows users to reassign their own tickets", () =>
+      request(server)
+        .patch(`${bU}/2/reassign`)
+        .send({ username: "test_helper" })
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe("test_helper")));
+  });
+  describe(`PATCH ${bU}/:id/close`, () => {
+    it("Returns an error for invalid ticket IDs", () =>
+      request(server)
+        .patch(`${bU}/not_an_id/close`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(404)
+        .then(r => expect(r.body.message).toContain("not_an_id")));
+    it("Forbids non-admins from closing tickets that aren't their own", () =>
+      request(server)
+        .patch(`${bU}/2/close`)
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Allows users to close their own tickets", () =>
+      request(server)
+        .patch(`${bU}/2/close`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(200)
+        .then(r => {
+          expect(r.body.helper.username).toBe(null);
+          expect(r.body.helper.id).toBe(null);
+          expect(r.body.status).toBe("closed");
+        }));
   });
 });
