@@ -24,10 +24,8 @@ function verifySignature(req, res, next) {
   const slackSigningSecret = config.SIGNING_SECRET;
   const requestSignature = String(req.headers["x-slack-signature"]);
   const requestTimestamp = req.headers["x-slack-request-timestamp"];
-  console.log("timestamp", requestTimestamp);
-  if (Math.abs(Number(Date.now()/1000) - Number(requestTimestamp)) > 60 * 5) {
-    console.log("now", Date.now());
-    console.log(Math.abs(Number(Date.now()/1000) - Number(requestTimestamp))); // return res.status(403).json({ message: "Invalid timestamp" });
+  if (Math.abs(Number(Date.now() / 1000) - Number(requestTimestamp)) > 60 * 5) {
+    return res.status(403).json({ message: "Invalid timestamp" });
   }
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
