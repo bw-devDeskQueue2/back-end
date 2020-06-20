@@ -123,7 +123,7 @@ describe("userRouter", () => {
   describe(`PATCH ${bU}/roles`, () => {
     it("Does not allow the 'admin' role to be set", () =>
       request(server)
-        .patch(`${bU}/4/roles`)
+        .patch(`${bU}/roles`)
         .send({ roles: ["admin"] })
         .set("Authorization", "Bearer " + studentToken)
         .expect(403));
