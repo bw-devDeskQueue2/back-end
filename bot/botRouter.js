@@ -22,14 +22,12 @@ router.post("/events", (req, res) => {
 //https://fireship.io/snippets/verify-slack-api-signing-signature-node
 function verifySignature(req, res, next) {
   const slackSigningSecret = config.SIGNING_SECRET;
-  console.log("secret", slackSigningSecret);
   const requestSignature = String(req.headers["x-slack-signature"]);
-  console.log("signature", requestSignature);
   const requestTimestamp = req.headers["x-slack-request-timestamp"];
-  if (abs(Date.now() - Number(requestTimestamp)) > 60 * 5) {
-    return res.status(403).json({ message: "Invalid timestamp" });
-  }
   console.log("timestamp", requestTimestamp);
+  if (Math.abs(Date.now() - Number(requestTimestamp)) > 60 * 5) {
+    console.log("invalid timestamp"); // return res.status(403).json({ message: "Invalid timestamp" });
+  }
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
   const base = `${version}:${requestTimestamp}:${JSON.stringify(req.body)}`;
