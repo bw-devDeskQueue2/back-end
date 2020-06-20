@@ -167,6 +167,7 @@ describe("ticketRouter", () => {
         .then(r => expect(r.body.message).toBeDefined()));
     it("Correctly updates information", async () => {
       const updates = {
+        subject :"New subject",
         status: "closed",
         rating: 10,
         tags: ["web", "account"],
@@ -178,6 +179,7 @@ describe("ticketRouter", () => {
         .expect(200)
         .then(r => r.body);
       expect(response.status).toBe(updates.status);
+      expect(response.subject).toBe(updates.subject);
       expect(response.rating).toBe(updates.rating);
       expect(response.tags).toHaveLength(2);
       expect(response.tags).toContain(updates.tags[0]);

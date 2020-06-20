@@ -57,16 +57,16 @@ router.patch(
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
-    const { status, rating, tags } = req.body;
-    if (!(status || rating || tags)) {
+    const { status, rating, tags, subject } = req.body;
+    if (!(status || rating || tags || subject)) {
       return res.status(400).json({
         message:
-          "You must supply something to update. Valid keys include 'status', 'rating', and 'tags'.",
+          "You must supply something to update. Valid keys include 'status', 'rating', 'tags', and 'subject'.",
       });
     }
     res
       .status(200)
-      .json(await Tickets.updateTicket(ticketId, { status, rating, tags }));
+      .json(await Tickets.updateTicket(ticketId, { status, rating, tags, subject }));
   })
 );
 
