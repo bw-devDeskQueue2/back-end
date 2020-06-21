@@ -18,7 +18,7 @@ router.get(
   catchAsync(async (req, res) => {
     const { roles } = req.data;
     const { name } = req.params;
-    const { status = "both", unassigned = "both" } = req.query;
+    const { status = "both", assigned = "both" } = req.query;
     const validStatuses = ["open", "closed", "both"];
     const validAssignmentStates = ["true", "false", "both"];
     if (!validStatuses.includes(status)) {
@@ -26,9 +26,9 @@ router.get(
         message: `${status} is not a valid status. Must be either 'open', 'closed', or 'both'.`,
       });
     }
-    if (!validAssignmentStates.includes(unassigned)) {
+    if (!validAssignmentStates.includes(assigned)) {
       return res.status(400).json({
-        message: `${unassigned} is not a valid assignment state. Must be either 'true', 'false', or 'both'.`,
+        message: `${assigned} is not a valid assignment state. Must be either 'true', 'false', or 'both'.`,
       });
     }
     if (!(roles.includes("helper") || roles.includes("admin"))) {
@@ -48,7 +48,7 @@ router.get(
       tickets.filter(ticket => {
         const statusFilter = status === "both" || status === ticket.status;
         const assignmentFilter =
-          unassigned === "both" || !!ticket.helper.id ^ unassigned==="true";
+          assigned === "both" || !!ticket.helper.id ^ assigned==="false";
         return statusFilter && assignmentFilter;
       })
     );
