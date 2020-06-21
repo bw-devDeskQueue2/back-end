@@ -137,7 +137,21 @@ async function addTicket({ body, tags, ...ticket }) {
   return getTicketById(id);
 }
 
+function getTicketQueue() {
+  return getDetailedTicket(
+    {},
+    { "statuses.name": "open", "t.helper_id": null }
+    //older tickets have smaller IDs and should appear earlier in the queue
+    //They should already be in that order, but this sort ensures no funny business happens
+  ).then(tickets =>
+    tickets
+      .sort((a, b) => (a.id < b.id ? -1 : 1))
+      .map((t, idx) => ({ queue_position: idx + 1, ...t }))
+  );
+}
+
 module.exports = {
+  getTicketQueue,
   getUserTickets,
   getTicketById,
   getTicketsByTag,
