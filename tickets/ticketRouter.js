@@ -71,7 +71,7 @@ router.patch(
 );
 
 router.patch(
-  "/:ticketId/reassign",
+  "/:ticketId/assign",
   catchAsync(validateTicketPermissions),
   catchAsync(lookupNewHelper),
   catchAsync(async (req, res) => {

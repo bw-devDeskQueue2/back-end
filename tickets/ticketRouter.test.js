@@ -186,52 +186,52 @@ describe("ticketRouter", () => {
       expect(response.tags).toContain(updates.tags[1]);
     });
   });
-  describe(`PATCH ${bU}/:id/reassign`, () => {
+  describe(`PATCH ${bU}/:id/assign`, () => {
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
-        .patch(`${bU}/not_an_id/reassign`)
+        .patch(`${bU}/not_an_id/assign`)
         .send({ status: "closed" })
         .set("Authorization", "Bearer " + studentToken)
         .expect(404)
         .then(r => expect(r.body.message).toContain("not_an_id")));
     it("Returns an error for accessing someone else's tickets", () =>
       request(server)
-        .patch(`${bU}/3/reassign`)
+        .patch(`${bU}/3/assign`)
         .send({ status: "closed" })
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
     it("Returns an error for not supplying proper information", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ status: "closed" })
         .set("Authorization", "Bearer " + bothToken)
         .expect(400)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Allows any helper to reassign an unassigned ticket", () =>
+    it("Allows any helper to assign an unassigned ticket", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + bothToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_both")));
-    it("Forbids non-admins from reassigning tickets that aren't their own", () =>
+    it("Forbids non-admins from assigning tickets that aren't their own", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + helperToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Allows admins to reassign any ticket", () =>
+    it("Allows admins to assign any ticket", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + adminToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_both")));
-    it("Allows users to reassign their own tickets", () =>
+    it("Allows users to assign their own tickets", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_helper" })
         .set("Authorization", "Bearer " + bothToken)
         .expect(200)
