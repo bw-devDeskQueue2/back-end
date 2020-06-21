@@ -66,12 +66,14 @@ router.patch(
     }
     res
       .status(200)
-      .json(await Tickets.updateTicket(ticketId, { status, rating, tags, subject }));
+      .json(
+        await Tickets.updateTicket(ticketId, { status, rating, tags, subject })
+      );
   })
 );
 
 router.patch(
-  "/:ticketId/reassign",
+  "/:ticketId/assign",
   catchAsync(validateTicketPermissions),
   catchAsync(lookupNewHelper),
   catchAsync(async (req, res) => {
@@ -81,19 +83,28 @@ router.patch(
   })
 );
 
-router.delete(
-  "/:ticketId",
+router.patch(
+  "/:ticketId/enqueue",
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res
       .status(200)
-      .json(
-        await Tickets.updateTicket(ticketId, {
-          helper_id: null,
-          status: "closed",
-        })
-      );
+      .json(await Tickets.updateTicket(ticketId, { helper_id: null }));
+  })
+);
+
+router.delete(
+  "/:ticketId",
+  catchAsync(validateTicketPermissions),
+  catchAsync(async (req, res) => {
+    const { ticketId } = req.params;
+    res.status(200).json(
+      await Tickets.updateTicket(ticketId, {
+        helper_id: null,
+        status: "closed",
+      })
+    );
   })
 );
 
@@ -156,10 +167,15 @@ async function validateTicketPermissions(req, res, next) {
 async function lookupNewHelper(req, res, next) {
   const { id, username } = req.body;
   if (!(id || username)) {
-    return res.status(400).json({
-      message:
-        "In order to modify the helper, you must include either an 'id' key or a 'username' key.",
-    });
+    if (req.data.roles.includes("helper")) {
+      req.newHelper = req.data;
+      return next();
+    } else {
+      return res.status(400).json({
+        message:
+          "In order to assign a helper other than yourself, you must include either an 'id' key or a 'username' key.",
+      });
+    }
   }
   const search = id ? { id } : { username };
   const helper = await Users.getUser(search);
