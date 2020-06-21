@@ -66,7 +66,9 @@ router.patch(
     }
     res
       .status(200)
-      .json(await Tickets.updateTicket(ticketId, { status, rating, tags, subject }));
+      .json(
+        await Tickets.updateTicket(ticketId, { status, rating, tags, subject })
+      );
   })
 );
 
@@ -81,19 +83,28 @@ router.patch(
   })
 );
 
-router.delete(
-  "/:ticketId",
+router.patch(
+  "/:ticketId/enqueue",
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res
       .status(200)
-      .json(
-        await Tickets.updateTicket(ticketId, {
-          helper_id: null,
-          status: "closed",
-        })
-      );
+      .json(await Tickets.updateTicket(ticketId, { helper_id: null }));
+  })
+);
+
+router.delete(
+  "/:ticketId",
+  catchAsync(validateTicketPermissions),
+  catchAsync(async (req, res) => {
+    const { ticketId } = req.params;
+    res.status(200).json(
+      await Tickets.updateTicket(ticketId, {
+        helper_id: null,
+        status: "closed",
+      })
+    );
   })
 );
 

@@ -237,6 +237,38 @@ describe("ticketRouter", () => {
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_helper")));
   });
+  describe(`PATCH ${bU}/:id/enqueue`, () => {
+    it("Returns an error for invalid ticket IDs", () =>
+      request(server)
+        .patch(`${bU}/not_an_id/enqueue`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(404)
+        .then(r => expect(r.body.message).toContain("not_an_id")));
+    it("Returns an error for accessing someone else's tickets", () =>
+      request(server)
+        .patch(`${bU}/1/enqueue`)
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Forbids non-admins from enqueueing tickets that aren't their own", () =>
+      request(server)
+        .patch(`${bU}/1/enqueue`)
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Allows admins to enqueue any ticket", () =>
+      request(server)
+        .patch(`${bU}/3/enqueue`)
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe(null)));
+    it("Allows users to enqueue their own tickets", () =>
+      request(server)
+        .patch(`${bU}/1/enqueue`)
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe(null)));
+  });
   describe(`DELETE ${bU}/:id`, () => {
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
