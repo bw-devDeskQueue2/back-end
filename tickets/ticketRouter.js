@@ -109,7 +109,7 @@ router.patch(
 );
 
 router.patch(
-  "/:ticketId/enqueue",
+  "/:ticketId/unassign",
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
