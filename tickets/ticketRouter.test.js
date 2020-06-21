@@ -201,13 +201,12 @@ describe("ticketRouter", () => {
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Returns an error for not supplying proper information", () =>
+    it("Assigns the ticket to the logged-in user if no user is supplied", () =>
       request(server)
         .patch(`${bU}/2/assign`)
-        .send({ status: "closed" })
         .set("Authorization", "Bearer " + bothToken)
-        .expect(400)
-        .then(r => expect(r.body.message).toBeDefined()));
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe("test_both")));
     it("Allows any helper to assign an unassigned ticket", () =>
       request(server)
         .patch(`${bU}/2/assign`)
