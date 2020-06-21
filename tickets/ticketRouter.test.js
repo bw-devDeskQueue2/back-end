@@ -207,6 +207,12 @@ describe("ticketRouter", () => {
         .set("Authorization", "Bearer " + bothToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_both")));
+    it("Returns an error if a non-helper tries to assign a ticket to themselves", () =>
+      request(server)
+        .patch(`${bU}/2/assign`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(400)
+        .then(r => expect(r.body.message).toContain("id")));
     it("Allows any helper to assign an unassigned ticket", () =>
       request(server)
         .patch(`${bU}/2/assign`)
@@ -243,12 +249,6 @@ describe("ticketRouter", () => {
         .set("Authorization", "Bearer " + studentToken)
         .expect(404)
         .then(r => expect(r.body.message).toContain("not_an_id")));
-    it("Returns an error for accessing someone else's tickets", () =>
-      request(server)
-        .patch(`${bU}/1/enqueue`)
-        .set("Authorization", "Bearer " + bothToken)
-        .expect(403)
-        .then(r => expect(r.body.message).toBeDefined()));
     it("Forbids non-admins from enqueueing tickets that aren't their own", () =>
       request(server)
         .patch(`${bU}/1/enqueue`)
