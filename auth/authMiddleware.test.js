@@ -21,7 +21,7 @@ describe("authMiddleware", () => {
     request(server)
       .get(bU)
       .set("Authorization", "Bearer invalid_jwt")
-      .expect(400)
+      .expect(403)
       .then(r => {
         expect(r.body.message).toContain("malformed");
       }));
@@ -35,4 +35,8 @@ describe("authMiddleware", () => {
         expect(body.username).toBe("test_student");
         expect(body.roles).toEqual(["student"]);
       }));
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
+  });
 });

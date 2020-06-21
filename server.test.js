@@ -17,4 +17,8 @@ describe("server", () => {
       .get(`${bU}/bad_request_url`)
       .expect(404)
       .then(res => expect(res.body.message).toContain("bad_request_url")));
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
+  });
 });

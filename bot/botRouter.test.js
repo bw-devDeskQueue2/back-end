@@ -65,4 +65,8 @@ describe("botRouter", () => {
         .expect(204);
     });
   });
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100)); 
+  });
 });

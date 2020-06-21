@@ -15,12 +15,16 @@ const catchAsync = fn => (req, res, next) => {
 };
 
 function custom404(req, res) {
-  res.status(404).json({
-    message: `${req.method} on ${req.originalUrl} is not a valid request.`,
-  });
+  res
+    .status(404)
+    .json({
+      message: `${req.method} on ${req.originalUrl} is not a valid request.`,
+    })
+    .end();
 }
 
 function errorHandling(error, req, res, next) {
+  if (res.headersSent) return next(error);
   //handle ValidationErrors, which are sent as an array
   if (error[0] instanceof ValidationError) {
     const message = error.map(e => e.stack.replace(/"/g, "'"));

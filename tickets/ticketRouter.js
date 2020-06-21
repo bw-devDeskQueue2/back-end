@@ -3,21 +3,7 @@ const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
 const messagesRouter = require("../messages/messagesRouter");
-const queueRouter = require("../queue/queueRouter");
 const Validator = require("jsonschema").Validator;
-
-router.use(
-  "/queue",
-  function disallowStudents(req, res, next) {
-    const { roles } = req.data;
-    if (!(roles.includes("helper") || roles.includes("admin"))) {
-      res
-        .status(403)
-        .json({ message: "Only helpers and admins may view the queue." });
-    } else next();
-  },
-  queueRouter
-);
 
 router.use(
   "/:ticketId/messages",
@@ -109,7 +95,7 @@ router.patch(
 );
 
 router.patch(
-  "/:ticketId/enqueue",
+  "/:ticketId/unassign",
   catchAsync(validateTicketPermissions),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;

@@ -242,28 +242,28 @@ describe("ticketRouter", () => {
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_helper")));
   });
-  describe(`PATCH ${bU}/:id/enqueue`, () => {
+  describe(`PATCH ${bU}/:id/unassign`, () => {
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
-        .patch(`${bU}/not_an_id/enqueue`)
+        .patch(`${bU}/not_an_id/unassign`)
         .set("Authorization", "Bearer " + studentToken)
         .expect(404)
         .then(r => expect(r.body.message).toContain("not_an_id")));
-    it("Forbids non-admins from enqueueing tickets that aren't their own", () =>
+    it("Forbids non-admins from unassigning tickets that aren't their own", () =>
       request(server)
-        .patch(`${bU}/1/enqueue`)
+        .patch(`${bU}/1/unassign`)
         .set("Authorization", "Bearer " + bothToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Allows admins to enqueue any ticket", () =>
+    it("Allows admins to unassign any ticket", () =>
       request(server)
-        .patch(`${bU}/3/enqueue`)
+        .patch(`${bU}/3/unassign`)
         .set("Authorization", "Bearer " + adminToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe(null)));
-    it("Allows users to enqueue their own tickets", () =>
+    it("Allows users to unassign their own tickets", () =>
       request(server)
-        .patch(`${bU}/1/enqueue`)
+        .patch(`${bU}/1/unassign`)
         .set("Authorization", "Bearer " + helperToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe(null)));
@@ -291,5 +291,9 @@ describe("ticketRouter", () => {
           expect(r.body.helper.id).toBe(null);
           expect(r.body.status).toBe("closed");
         }));
+  });
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
   });
 });

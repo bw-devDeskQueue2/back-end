@@ -36,4 +36,8 @@ describe("queueRouter", () => {
           expect(first.status).toBe("open");
         }));
   });
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
+  });
 });

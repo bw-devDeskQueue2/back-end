@@ -87,21 +87,8 @@ async function updateTicket(id, changes) {
     delete changes.status;
   }
   if (changes.tags) {
-    //clear all existing ticket tags
-    await knex("ticket_tags").where({ ticket_id: id }).delete();
-    //add ticket tags, creating new tags as necessary
-    const existingTags = await Tags.getTags();
-    await Promise.all(
-      changes.tags.map(async tag => {
-        const found = existingTags.find(eT => eT.name === tag.toLowerCase());
-        if (found) {
-          await Tags.addTicketTag(id, found.id);
-        } else {
-          const newTag = await Tags.addTag(tag.toLowerCase());
-          await Tags.addTicketTag(id, newTag.id);
-        }
-      })
-    );
+    //update the tags on the ticket
+    await Tags.updateTags(id, changes.tags);
     //remove the tags property so it doesn't interfere with the next step
     delete changes.tags;
   }
@@ -141,10 +128,10 @@ function getTicketQueue() {
   return getDetailedTicket(
     {},
     { "statuses.name": "open", "t.helper_id": null }
-    //older tickets have smaller IDs and should appear earlier in the queue
-    //They should already be in that order, but this sort ensures no funny business happens
   ).then(tickets =>
     tickets
+      //older tickets have smaller IDs and should appear earlier in the queue
+      //They should already be in that order, but this sort ensures no funny business happens
       .sort((a, b) => (a.id < b.id ? -1 : 1))
       .map((t, idx) => ({ queue_position: idx + 1, ...t }))
   );
