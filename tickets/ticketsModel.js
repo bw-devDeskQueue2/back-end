@@ -140,7 +140,7 @@ async function addTicket({ body, tags, ...ticket }) {
 function getTicketQueue() {
   return getDetailedTicket(
     {},
-    { status: "open", "t.helper_id": null }
+    { "statuses.name": "open", "t.helper_id": null }
     //older tickets have smaller IDs and should appear earlier in the queue
     //They should already be in that order, but this sort ensures no funny business happens
   ).then(tickets =>
