@@ -35,7 +35,7 @@ describe("tags", () => {
         .get(bU + "/account")
         .set("Authorization", "Bearer " + helperToken)
         .expect(200)
-        .then(res => expect(res.body.length).toBe(2)));
+        .then(res => expect(res.body.length).toBe(1)));
     it("Returns an error for an invalid tag name", () =>
       request(server)
         .get(bU + "/nonexistent_tag")

@@ -30,7 +30,8 @@ router.get(
         .json({ message: `Error: ${name} is not a valid tag name.` });
     }
     const tag_id = tags[0].id;
-    res.status(200).json(await Tickets.getTicketsByTag(tag_id));
+    const tickets = await Tickets.getTicketsByTag(tag_id);
+    res.status(200).json(tickets.filter(ticket => ticket.status === "open"));
   })
 );
 

@@ -186,56 +186,87 @@ describe("ticketRouter", () => {
       expect(response.tags).toContain(updates.tags[1]);
     });
   });
-  describe(`PATCH ${bU}/:id/reassign`, () => {
+  describe(`PATCH ${bU}/:id/assign`, () => {
     it("Returns an error for invalid ticket IDs", () =>
       request(server)
-        .patch(`${bU}/not_an_id/reassign`)
+        .patch(`${bU}/not_an_id/assign`)
         .send({ status: "closed" })
         .set("Authorization", "Bearer " + studentToken)
         .expect(404)
         .then(r => expect(r.body.message).toContain("not_an_id")));
     it("Returns an error for accessing someone else's tickets", () =>
       request(server)
-        .patch(`${bU}/3/reassign`)
+        .patch(`${bU}/3/assign`)
         .send({ status: "closed" })
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Returns an error for not supplying proper information", () =>
+    it("Assigns the ticket to the logged-in user if no user is supplied", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
-        .send({ status: "closed" })
+        .patch(`${bU}/2/assign`)
         .set("Authorization", "Bearer " + bothToken)
-        .expect(400)
-        .then(r => expect(r.body.message).toBeDefined()));
-    it("Allows any helper to reassign an unassigned ticket", () =>
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe("test_both")));
+    it("Returns an error if a non-helper tries to assign a ticket to themselves", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(400)
+        .then(r => expect(r.body.message).toContain("id")));
+    it("Allows any helper to assign an unassigned ticket", () =>
+      request(server)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + bothToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_both")));
-    it("Forbids non-admins from reassigning tickets that aren't their own", () =>
+    it("Forbids non-admins from assigning tickets that aren't their own", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + helperToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Allows admins to reassign any ticket", () =>
+    it("Allows admins to assign any ticket", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_both" })
         .set("Authorization", "Bearer " + adminToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_both")));
-    it("Allows users to reassign their own tickets", () =>
+    it("Allows users to assign their own tickets", () =>
       request(server)
-        .patch(`${bU}/2/reassign`)
+        .patch(`${bU}/2/assign`)
         .send({ username: "test_helper" })
         .set("Authorization", "Bearer " + bothToken)
         .expect(200)
         .then(r => expect(r.body.helper.username).toBe("test_helper")));
+  });
+  describe(`PATCH ${bU}/:id/enqueue`, () => {
+    it("Returns an error for invalid ticket IDs", () =>
+      request(server)
+        .patch(`${bU}/not_an_id/enqueue`)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(404)
+        .then(r => expect(r.body.message).toContain("not_an_id")));
+    it("Forbids non-admins from enqueueing tickets that aren't their own", () =>
+      request(server)
+        .patch(`${bU}/1/enqueue`)
+        .set("Authorization", "Bearer " + bothToken)
+        .expect(403)
+        .then(r => expect(r.body.message).toBeDefined()));
+    it("Allows admins to enqueue any ticket", () =>
+      request(server)
+        .patch(`${bU}/3/enqueue`)
+        .set("Authorization", "Bearer " + adminToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe(null)));
+    it("Allows users to enqueue their own tickets", () =>
+      request(server)
+        .patch(`${bU}/1/enqueue`)
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(200)
+        .then(r => expect(r.body.helper.username).toBe(null)));
   });
   describe(`DELETE ${bU}/:id`, () => {
     it("Returns an error for invalid ticket IDs", () =>
