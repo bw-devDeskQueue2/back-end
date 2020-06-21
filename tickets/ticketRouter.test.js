@@ -292,4 +292,8 @@ describe("ticketRouter", () => {
           expect(r.body.status).toBe("closed");
         }));
   });
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
+  });
 });

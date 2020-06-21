@@ -11,13 +11,13 @@ router.use(function respondToChallenge(req, res, next) {
 });
 
 router.post("/events", (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   res.status(204).end();
 });
-
-router.post("/testing", (req, res) => {
-  res.status(204).end();
-});
+process.env.NODE_ENV === "test" &&
+  router.post("/testing", (req, res) => {
+    res.status(204).end();
+  });
 
 /*----------------------------------------------------------------------------*/
 /* Middleware
@@ -29,7 +29,7 @@ function verifySignature(req, res, next) {
   const requestSignature = String(req.headers["x-slack-signature"]);
   const requestTimestamp = req.headers["x-slack-request-timestamp"];
   if (Math.abs(Number(Date.now() / 1000) - Number(requestTimestamp)) > 60 * 5) {
-    return res.status(403).json({ message: "Invalid timestamp" });
+    return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
@@ -38,7 +38,7 @@ function verifySignature(req, res, next) {
 
   tsscmp(hash, hmac.digest("hex"))
     ? next()
-    : res.status(403).json({ message: "Invalid signature" });
+    : res.status(403).json({ message: "Invalid signature" }).end();
 }
 
 module.exports = router;

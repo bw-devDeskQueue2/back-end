@@ -55,4 +55,8 @@ describe("tags", () => {
         .expect(200)
         .then(res => expect(res.body.length).toBe(2)));
   });
+  afterAll(async () => {
+    // avoid jest open handle error
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
+  });
 });

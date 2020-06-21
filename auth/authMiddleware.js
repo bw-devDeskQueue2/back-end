@@ -18,7 +18,7 @@ async function checkUserAuthorization(req, res, next) {
     return res.status(401).json({ message: "Please authorize with a token" });
   }
   jwt.verify(auth, config.JWT_SECRET, (err, data) => {
-    if (err) return res.status(400).json({ message: err.message });
+    if (err) return res.status(403).json({ message: `There was an issue with your JWT: ${err.message}` });
     req.data = data;
     return next();
   });

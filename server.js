@@ -24,10 +24,11 @@ server.get("/", (req, res) => {
 });
 
 server.get("/api", (req, res) => {
-  res.writeHead(302, {
-    Location: "https://documenter.getpostman.com/view/11312100/SzzkcHLZ",
-  });
-  res.end();
+  res
+    .writeHead(302, {
+      Location: "https://documenter.getpostman.com/view/11312100/SzzkcHLZ",
+    })
+    .end();
 });
 
 server.use("/api/user", authRouter);
