@@ -30,17 +30,29 @@ describe("tags", () => {
         .get(bU + "/account")
         .set("Authorization", "Bearer " + studentToken)
         .expect(403));
-    it("Returns a list of tickets to admins or helpers", () =>
-      request(server)
-        .get(bU + "/account")
-        .set("Authorization", "Bearer " + helperToken)
-        .expect(200)
-        .then(res => expect(res.body.length).toBe(1)));
     it("Returns an error for an invalid tag name", () =>
       request(server)
         .get(bU + "/nonexistent_tag")
         .set("Authorization", "Bearer " + helperToken)
         .expect(404)
         .then(res => expect(res.body.message).toBeDefined()));
+    it("Returns a list of tickets to admins or helpers", () =>
+      request(server)
+        .get(bU + "/account")
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(200)
+        .then(res => expect(res.body.length).toBe(2)));
+    it("Successfully filters by ticket status", () =>
+      request(server)
+        .get(bU + "/web?status=open")
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(200)
+        .then(res => expect(res.body.length).toBe(3)));
+    it("Successfully filters by assignment status", () =>
+      request(server)
+        .get(bU + "/technical?assigned=true")
+        .set("Authorization", "Bearer " + helperToken)
+        .expect(200)
+        .then(res => expect(res.body.length).toBe(2)));
   });
 });
