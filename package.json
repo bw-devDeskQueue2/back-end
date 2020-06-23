@@ -22,8 +22,10 @@
   "homepage": "https://github.com/bw-devDeskQueue2/back-end#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "encode": "^1.0.1",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
     "jsonschema": "^1.2.6",
@@ -32,14 +34,14 @@
     "knex-cleaner": "^1.3.0",
     "pg": "^8.2.1",
     "sqlite3": "^4.1.1",
-    "tsscmp": "^1.0.6",
-    "supertest": "^4.0.2"
+    "tsscmp": "^1.0.6"
   },
   "devDependencies": {
     "@types/jest": "^26.0.0",
     "dotenv": "^8.2.0",
     "jest": "^26.0.1",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
   },
   "jest": {
     "testEnvironment": "node"

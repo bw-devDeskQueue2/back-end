@@ -62,7 +62,7 @@ describe("botRouter", () => {
         .send(body)
         .set("X-Slack-Request-Timestamp", timestamp)
         .set("X-Slack-Signature", createSignature(body))
-        .expect(204);
+        .expect(200);
     });
   });
   afterAll(async () => {
