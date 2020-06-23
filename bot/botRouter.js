@@ -3,7 +3,7 @@ const baseUrl = "https://devdesk-queue-2-herokuapp.com/api";
 const config = require("../config/serverInfo");
 const crypto = require("crypto");
 const tsscmp = require("tsscmp");
-const { encode } = require("querystring");
+const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 
 router.use(
@@ -12,15 +12,19 @@ router.use(
       r.headers["content-type"] === "application/x-www-form-urlencoded",
   })
 );
-
 router.use(verifySignature);
+router.use(function convertURLEncodedToObject(req, res, next) {
+  if (r.headers["content-type"] === "application/x-www-form-urlencoded") {
+    r.body = decode(r.body);
+    console.log(r.body);
+  }
+  next();
+});
 router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
-
   //debugging
   //console.log("body", req.body);
   //console.log("challenge", challenge);
-
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
@@ -41,13 +45,6 @@ process.env.NODE_ENV === "test" &&
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
-function rawifyBody(body) {
-  const query = encode(body);
-  console.log("query", query);
-  const withNewlines = query.replace(/&/g, "\n&");
-  console.log("withnewlines", withNewlines);
-  return withNewlines;
-}
 
 //https://fireship.io/snippets/verify-slack-api-signing-signature-node
 function verifySignature(req, res, next) {
@@ -58,13 +55,11 @@ function verifySignature(req, res, next) {
   if (Math.abs(Number(Date.now() / 1000) - Number(requestTimestamp)) > 60 * 5) {
     return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
-  console.log("body", req.body);
-  //console.log("rawBody", rawifyBody(req.body));
+  //console.log("body", req.body);
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
-  console.log("type", req.headers["content-type"]);
+  //console.log("type", req.headers["content-type"]);
   const isJSON = req.headers["content-type"] === "application/json";
-  console.log("isJSON", isJSON);
   const base = `${version}:${requestTimestamp}:${
     isJSON ? JSON.stringify(req.body) : req.body
   }`;
