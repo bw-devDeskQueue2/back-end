@@ -49,11 +49,14 @@ function verifySignature(req, res, next) {
   //debugging
   console.log("signature", requestSignature);
   console.log("timestamp", requestTimestamp);
-  console.log("hash result", tsscmp(hash, hmac.digest("hex")));
 
-  tsscmp(hash, hmac.digest("hex"))
-    ? next()
-    : res.status(403).json({ message: "Invalid signature" }).end();
+  if (tsscmp(hash, hmac.digest("hex"))) {
+    console.log("hash success");
+    next();
+  } else {
+    console.log("hash failure");
+    res.status(403).json({ message: "Invalid signature" });
+  }
 }
 
 module.exports = router;
