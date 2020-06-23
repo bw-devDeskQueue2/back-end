@@ -27,9 +27,16 @@ router.use(function respondToChallenge(req, res, next) {
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
-router.post("/register", (req, res) => {
+router.post("/", (req, res) => {
+  const { trigger_id, text } = req.body;
+  res
+    .status(200)
+    .json({ response_type: "in_channel", text: "You accessed the root" });
+});
+
+router.post("/interactive", (req, res) => {
   console.log(req.body);
-  res.status(200).json({ response_type: "in_channel", text: "You registered" });
+  res.status(200).json({ response_type: "in_channel", text: "You interacted" });
 });
 
 router.post("/events", (req, res) => {
