@@ -6,7 +6,12 @@ const tsscmp = require("tsscmp");
 const { encode } = require("querystring");
 const bodyParser = require("body-parser");
 
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(
+  bodyParser.text({
+    type: r =>
+      r.headers["content-type"] === "application/x-www-form-urlencoded",
+  })
+);
 
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
@@ -54,13 +59,14 @@ function verifySignature(req, res, next) {
     return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
   console.log("body", req.body);
-  console.log("rawBody", rawifyBody(req.body));
+  //console.log("rawBody", rawifyBody(req.body));
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
+  console.log("type", req.headers["content-type"]);
   const isJSON = req.headers["content-type"] === "application/json";
   console.log("isJSON", isJSON);
   const base = `${version}:${requestTimestamp}:${
-    isJSON ? JSON.stringify(req.body) : rawifyBody(req.body)
+    isJSON ? JSON.stringify(req.body) : req.body
   }`;
   hmac.update(base);
 
