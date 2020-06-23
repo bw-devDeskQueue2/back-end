@@ -24,7 +24,6 @@ module.exports = {
       //     style: "danger",
       //   },
       // },
-
       {
         type: "input",
         label: {
@@ -42,37 +41,63 @@ module.exports = {
         },
         optional: false,
       },
-      // {
-      //   type: "section",
-      //   fields: [
-      //     {
-      //       type: "input",
-      //       label: {
-      //         type: "plain_text",
-      //         text: "Password",
-      //       },
-      //       element: {
-      //         type: "password_input",
-      //         action_id: "input_password",
-      //         multiline: false,
-      //       },
-      //       optional: false,
-      //     },
-      //     {
-      //       type: "input",
-      //       label: {
-      //         type: "plain_text",
-      //         text: "Confirm Password",
-      //       },
-      //       element: {
-      //         type: "password_input",
-      //         action_id: "input_password_confirmation",
-      //         multiline: false,
-      //       },
-      //       optional: false,
-      //     },
-      //   ],
-      // },
+      {
+        type: "input",
+        label: {
+          type: "plain_text",
+          text: "Password",
+        },
+        element: {
+          type: "password_input",
+          action_id: "input_password",
+          multiline: false,
+        },
+        optional: false,
+      },
+      {
+        type: "input",
+        label: {
+          type: "plain_text",
+          text: "Confirm Password",
+        },
+        element: {
+          type: "password_input",
+          action_id: "input_password_confirmation",
+          multiline: false,
+        },
+        optional: false,
+      },
+      {
+        type: "static_select",
+        placeholder: {
+          type: "plain_text",
+          text: "Choose your role(s)",
+        },
+        action_id: "role_select",
+        options: [
+          {
+            text: {
+              type: "plain_text",
+              text: "Student",
+            },
+            value: "student",
+          },
+          {
+            text: {
+              type: "plain_text",
+              text: "Helper",
+            },
+            value: "helper",
+          },
+          {
+            text: {
+              type: "plain_text",
+              text: "Both student and helper",
+            },
+            value: "both",
+          },
+        ],
+      },
     ],
     close: {
       type: "plain_text",
