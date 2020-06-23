@@ -62,7 +62,7 @@ router.post("/interactive", (req, res) => {
   payload = JSON.parse(payload);
   if (payload.type === "view_submission") {
     const handler = "register";
-    submissionHandlers[handler](req.payload);
+    submissionHandlers[handler](payload);
   }
   res.status(200).end();
 });
