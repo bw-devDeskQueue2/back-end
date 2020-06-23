@@ -20,12 +20,6 @@ server.use(cors());
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 
-server.get("/", (req, res) => {
-  res.status(200).json({
-    api_status: "up",
-  });
-});
-
 server.get("/api", (req, res) => {
   res
     .writeHead(302, {

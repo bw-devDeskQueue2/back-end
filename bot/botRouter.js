@@ -5,12 +5,15 @@ const crypto = require("crypto");
 const tsscmp = require("tsscmp");
 const { encode } = require("querystring");
 
+
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
+
   //debugging
   //console.log("body", req.body);
   //console.log("challenge", challenge);
+
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
