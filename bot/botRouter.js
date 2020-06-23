@@ -13,10 +13,9 @@ router.use(
   })
 );
 router.use(verifySignature);
-router.use(function convertURLEncodedToObject(req, res, next) {
+router.use(function convertURLEncodedToObject(r, res, next) {
   if (r.headers["content-type"] === "application/x-www-form-urlencoded") {
     r.body = decode(r.body);
-    console.log(r.body);
   }
   next();
 });
