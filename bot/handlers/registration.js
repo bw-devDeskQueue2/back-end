@@ -91,10 +91,12 @@ function handleSubmission(submission) {
   const {
     user: { id },
     view: {
-      state: { values },
+      state: {
+        values: { role },
+      },
     },
   } = submission;
-  console.log(id, submission.view);
+  console.log(id, role);
 }
 
 module.exports = { modal, handleSubmission };
