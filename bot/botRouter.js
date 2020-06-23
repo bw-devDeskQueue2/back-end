@@ -39,7 +39,7 @@ process.env.NODE_ENV === "test" &&
 function rawifyBody(body) {
   const query = encode(body);
   console.log("query", query);
-  const withNewlines = query.replace(/&/g, "&\n");
+  const withNewlines = query.replace(/&/g, "\n&");
   console.log("withnewlines", withNewlines);
   return withNewlines;
 }
@@ -60,7 +60,7 @@ function verifySignature(req, res, next) {
   const isJSON = req.headers["content-type"] === "application/json";
   console.log("isJSON", isJSON);
   const base = `${version}:${requestTimestamp}:${
-    isJSON ? JSON.stringify(req.body) : req.body
+    isJSON ? JSON.stringify(req.body) : rawifyBody(req.body)
   }`;
   hmac.update(base);
 
