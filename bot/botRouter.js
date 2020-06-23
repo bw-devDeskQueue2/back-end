@@ -9,6 +9,8 @@ const { catchAsync } = require("../config/errors");
 const request = require("superagent");
 const modals = require("./modals");
 
+let activeViews = [];
+
 router.use(
   bodyParser.text({
     type: r =>
@@ -46,13 +48,14 @@ router.post(
     await request
       .post("https://slack.com/api/views.open")
       .send({ trigger_id, view })
-      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`);
+      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+      .then(({ body }) => activeViews.push(body));
   })
 );
 
 router.post("/interactive", (req, res) => {
   console.log(req.body);
-  res.status(200).json({ response_type: "in_channel", text: "You interacted" });
+  res.status(200).end();
 });
 
 router.post("/events", (req, res) => {
@@ -92,10 +95,10 @@ function verifySignature(req, res, next) {
   // console.log("timestamp", requestTimestamp);
 
   if (tsscmp(hash, hmac.digest("hex"))) {
-    console.log("hash success");
+    //console.log("hash success");
     next();
   } else {
-    console.log("hash failure");
+    //console.log("hash failure");
     res.status(403).json({ message: "Invalid signature" });
   }
 }
