@@ -1,3 +1,6 @@
+const config = require("../../config/serverInfo");
+const request = require("superagent");
+
 const modal = {
   type: "modal",
   title: {
@@ -31,8 +34,8 @@ const modal = {
     //   optional: false,
     // },
     {
-      type: "actions",
-      block_id: "actions1",
+      type: "input",
+      block_id: "role",
       elements: [
         {
           type: "static_select",
