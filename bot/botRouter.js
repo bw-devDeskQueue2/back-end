@@ -7,6 +7,11 @@ const tsscmp = require("tsscmp");
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
+
+  //debugging
+  console.log("body", req.body);
+  console.log("challenge", challenge);
+
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
@@ -35,7 +40,6 @@ function verifySignature(req, res, next) {
   const requestTimestamp = req.headers["x-slack-request-timestamp"];
 
   if (Math.abs(Number(Date.now() / 1000) - Number(requestTimestamp)) > 60 * 5) {
-    console.log("timestamp error");
     return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
@@ -43,8 +47,8 @@ function verifySignature(req, res, next) {
   const base = `${version}:${requestTimestamp}:${JSON.stringify(req.body)}`;
   hmac.update(base);
   //debugging
-  console.log(requestSignature);
-  console.log(requestTimestamp);
+  console.log("signature", requestSignature);
+  console.log("timestamp", requestTimestamp);
   console.log("hash result", tsscmp(hash, hmac.digest("hex")));
 
   tsscmp(hash, hmac.digest("hex"))
