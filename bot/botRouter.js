@@ -12,7 +12,7 @@ router.use(function respondToChallenge(req, res, next) {
 
 router.post("/register", (req, res) => {
   console.log(req.body);
-  res.status(200).end();
+  res.status(200).json({ response_type: "in_channel", text: "You registered" });
 });
 
 router.post("/events", (req, res) => {
