@@ -6,7 +6,7 @@ const tsscmp = require("tsscmp");
 const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 
-router.use(bodyParser.text({ type: "x-www-form-urlencoded" }));
+router.use(bodyParser.urlencoded({ extended:false }));
 
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
