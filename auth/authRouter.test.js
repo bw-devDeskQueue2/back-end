@@ -49,18 +49,18 @@ describe("authRouter", () => {
         .send({ username: "new_user", password: "none", roles: ["no_role"] })
         .expect(400)
         .then(r => expect(r.body.message).toContain("no_role")));
-    it("Returns an error when roles isn't an array", () =>
+    it("Allows a string instead of an array for roles", () =>
       request(server)
         .post(bU + "/register")
-        .send({ username: "new_user", password: "none", roles: "no_role" })
-        .expect(400)
-        .then(r => expect(r.body.message).toContain("array")));
+        .send({ username: "newer_user", password: "none", roles: "student" })
+        .expect(201)
+        .then(r => expect(r.body.user.roles).toContain("student")));
     it("Returns a user object with token upon successful registration", () =>
       registerNewUser()
         .expect(201)
         .then(({ body }) => {
           expect(body.user).toBeDefined();
-          expect(body.user.id).toBe(5);
+          expect(body.user.id).toBe(6);
           expect(body.user.roles).toEqual(["student"]);
           expect(body.token).toBeDefined();
         }));
