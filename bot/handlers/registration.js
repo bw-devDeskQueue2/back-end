@@ -107,7 +107,7 @@ function handleSubmission(submission) {
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: id })
-    .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+    .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
         console.log(body);
