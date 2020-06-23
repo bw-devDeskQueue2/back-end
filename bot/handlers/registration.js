@@ -102,7 +102,7 @@ function handleSubmission(submission) {
       },
     },
   } = submission;
-  console.log(id, value);
+ // console.log(id, value);
 
   request
     .post("https://slack.com/api/conversations.open")
@@ -110,13 +110,14 @@ function handleSubmission(submission) {
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
-        return console.log(body);
+        return console.log("opening error",body);
       }
       const {
         channel: { id },
       } = body;
       return request
         .post("https://slack.com/api/conversations.open")
+        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
         .send({
           channel: id,
           token: config.BOT_ACCESS_TOKEN,
@@ -124,10 +125,11 @@ function handleSubmission(submission) {
         })
         .then(({ body }) => {
           if (!body.ok) {
-            console.log(body);
+            console.log("sending error", body);
           }
         });
-    });
+    })
+    .catch(console.error);
 }
 
 module.exports = { modal, handleSubmission };
