@@ -6,6 +6,7 @@ const tsscmp = require("tsscmp");
 const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
+const request = require("superagent");
 
 router.use(
   bodyParser.text({
@@ -60,15 +61,10 @@ router.post(
         },
       ],
     };
-    await axios
-      .post(
-        "https://slack.com/api/views.open",
-        {
-          trigger_id,
-          view: introModal,
-        },
-        { headers: { Authorization: `Bearer ${config.OAUTH_ACCESS_TOKEN}` } }
-      )
+    await request
+      .post("https://slack.com/api/views.open")
+      .send({ trigger_id, view: introModal })
+      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
       .then(r => console.log(r.body));
 
     res.status(200).json({
