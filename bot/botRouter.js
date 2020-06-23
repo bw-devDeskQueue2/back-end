@@ -3,8 +3,10 @@ const baseUrl = "https://devdesk-queue-2-herokuapp.com/api";
 const config = require("../config/serverInfo");
 const crypto = require("crypto");
 const tsscmp = require("tsscmp");
-const { encode } = require("querystring");
+const { decode } = require("querystring");
+const bodyParser = require("body-parser");
 
+//router.use(bodyParser.text({type:}))
 
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
@@ -44,15 +46,14 @@ function verifySignature(req, res, next) {
   if (Math.abs(Number(Date.now() / 1000) - Number(requestTimestamp)) > 60 * 5) {
     return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
-  console.log("body", req.body);
-  console.log("rawBody", encode(req.body));
+  //console.log("body", req.body);
 
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
-  const isJSON = req.headers["content-type"] === "application/json";
+  const isJSON = req.headers["content-type"];
   console.log("isJSON", isJSON);
   const base = `${version}:${requestTimestamp}:${
-    isJSON ? JSON.stringify(req.body) : encode(req.body)
+    isJSON ? JSON.stringify(req.body) : req.body
   }`;
   hmac.update(base);
 

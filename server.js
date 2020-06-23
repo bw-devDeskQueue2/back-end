@@ -17,7 +17,6 @@ const server = express();
 server.use(helmet());
 server.use(cors());
 
-server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 
 server.get("/api", (req, res) => {
