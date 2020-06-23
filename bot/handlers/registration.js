@@ -36,39 +36,44 @@ const modal = {
     {
       type: "input",
       block_id: "role",
-      elements: [
-        {
-          type: "static_select",
-          placeholder: {
+      label: {
+        type: "plain_text",
+        text: "Select your role(s)",
+      },
+      element: {
+        type: "static_select",
+        action_id: "role_select",
+        initial_option: {
+          text: {
             type: "plain_text",
-            text: "Choose your role(s)",
+            text: "Student",
           },
-          action_id: "role_select",
-          options: [
-            {
-              text: {
-                type: "plain_text",
-                text: "Student",
-              },
-              value: "student",
-            },
-            {
-              text: {
-                type: "plain_text",
-                text: "Helper",
-              },
-              value: "helper",
-            },
-            {
-              text: {
-                type: "plain_text",
-                text: "Both student and helper",
-              },
-              value: "both",
-            },
-          ],
+          value: "student",
         },
-      ],
+        options: [
+          {
+            text: {
+              type: "plain_text",
+              text: "Student",
+            },
+            value: "student",
+          },
+          {
+            text: {
+              type: "plain_text",
+              text: "Helper",
+            },
+            value: "helper",
+          },
+          {
+            text: {
+              type: "plain_text",
+              text: "Both student and helper",
+            },
+            value: "both",
+          },
+        ],
+      },
     },
   ],
   close: {
@@ -84,12 +89,12 @@ const modal = {
 
 function handleSubmission(submission) {
   const {
-    user: { id, name },
+    user: { id },
     view: {
       state: { values },
     },
   } = submission;
-  console.log(id, name, submission.view);
+  console.log(id, submission.view);
 }
 
 module.exports = { modal, handleSubmission };
