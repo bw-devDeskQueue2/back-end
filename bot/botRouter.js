@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const tsscmp = require("tsscmp");
 const { decode } = require("querystring");
 const bodyParser = require("body-parser");
+const { catchAsync } = require("../config/errors");
 
 router.use(
   bodyParser.text({
@@ -27,39 +28,55 @@ router.use(function respondToChallenge(req, res, next) {
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
-router.post("/", (req, res) => {
-  const { trigger_id, text } = req.body;
-  const action = text.split(" ")[0];
+router.post(
+  "/",
+  catchAsync(async (req, res) => {
+    const { trigger_id, text } = req.body;
+    const action = text.split(" ")[0];
 
-  const introModal = {
-    type: "modal",
-    callback_id: "modal-identifier",
-    title: {
-      type: "plain_text",
-      text: "Just a modal",
-    },
-    blocks: [
-      {
-        type: "section",
-        block_id: "section-identifier",
-        text: {
-          type: "mrkdwn",
-          text: "*Welcome* to ~my~ Block Kit _modal_!",
-        },
-        accessory: {
-          type: "button",
-          text: {
-            type: "plain_text",
-            text: "Just a button",
-          },
-          action_id: "button-identifier",
-        },
+    const introModal = {
+      type: "modal",
+      callback_id: "modal-identifier",
+      title: {
+        type: "plain_text",
+        text: "Just a modal",
       },
-    ],
-  };
+      blocks: [
+        {
+          type: "section",
+          block_id: "section-identifier",
+          text: {
+            type: "mrkdwn",
+            text: "*Welcome* to ~my~ Block Kit _modal_!",
+          },
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Just a button",
+            },
+            action_id: "button-identifier",
+          },
+        },
+      ],
+    };
+    await axios
+      .post(
+        "https://slack.com/api/views.open",
+        {
+          trigger_id,
+          view: introModal,
+        },
+        { headers: { Authorization: `Bearer ${config.OAUTH_ACCESS_TOKEN}` } }
+      )
+      .then(r => console.log(r.body));
 
-  res.status(200).json({ trigger_id, view: introModal });
-});
+    res.status(200).json({
+      response_type: "in_channel",
+      text: "You started the interaction",
+    });
+  })
+);
 
 router.post("/interactive", (req, res) => {
   console.log(req.body);
