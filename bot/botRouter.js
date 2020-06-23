@@ -49,7 +49,10 @@ router.post(
       .post("https://slack.com/api/views.open")
       .send({ trigger_id, view })
       .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
-      .then(({ body }) => activeViews.push(body));
+      .then(({ body }) => {
+        console.log(body);
+        activeViews.push(body);
+      });
   })
 );
 

@@ -42,37 +42,37 @@ module.exports = {
         },
         optional: false,
       },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "input",
-            label: {
-              type: "plain_text",
-              text: "Password",
-            },
-            element: {
-              type: "password_input",
-              action_id: "input_password",
-              multiline: false,
-            },
-            optional: false,
-          },
-          {
-            type: "input",
-            label: {
-              type: "plain_text",
-              text: "Confirm Password",
-            },
-            element: {
-              type: "password_input",
-              action_id: "input_password_confirmation",
-              multiline: false,
-            },
-            optional: false,
-          },
-        ],
-      },
+      // {
+      //   type: "section",
+      //   fields: [
+      //     {
+      //       type: "input",
+      //       label: {
+      //         type: "plain_text",
+      //         text: "Password",
+      //       },
+      //       element: {
+      //         type: "password_input",
+      //         action_id: "input_password",
+      //         multiline: false,
+      //       },
+      //       optional: false,
+      //     },
+      //     {
+      //       type: "input",
+      //       label: {
+      //         type: "plain_text",
+      //         text: "Confirm Password",
+      //       },
+      //       element: {
+      //         type: "password_input",
+      //         action_id: "input_password_confirmation",
+      //         multiline: false,
+      //       },
+      //       optional: false,
+      //     },
+      //   ],
+      // },
     ],
     close: {
       type: "plain_text",
@@ -80,7 +80,7 @@ module.exports = {
     },
     submit: {
       type: "plain_text",
-      text: "Save",
+      text: "Register",
     },
     private_metadata: "Shhhhhhhh",
     callback_id: "registration_form",
