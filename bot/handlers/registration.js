@@ -110,9 +110,23 @@ function handleSubmission(submission) {
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
-        console.log(body);
+        return console.log(body);
       }
-      console.log("success", body);
+      const {
+        channel: { id },
+      } = req.body;
+      return request
+        .post("https://slack.com/api/conversations.open")
+        .send({
+          channel: id,
+          token: config.BOT_ACCESS_TOKEN,
+          text: `You successfully registered as ${id} with the role of '${value}'`,
+        })
+        .then(({ body }) => {
+          if (!body.ok) {
+            console.log(body);
+          }
+        });
     });
 }
 
