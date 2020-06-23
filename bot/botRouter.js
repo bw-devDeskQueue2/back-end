@@ -50,8 +50,10 @@ router.post(
       .send({ trigger_id, view })
       .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
       .then(({ body }) => {
-        console.log(body);
-        activeViews.push(body);
+        if (!body.ok) {
+          console.log(body);
+        }
+        //activeViews.push(body);
       });
   })
 );

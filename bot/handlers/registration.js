@@ -76,7 +76,6 @@ const modal = {
     type: "plain_text",
     text: "Register",
   },
-  private_metadata: "Shhhhhhhh",
   callback_id: "register",
 };
 
@@ -87,7 +86,7 @@ function handleSubmission(submission) {
       state: { values },
     },
   } = submission;
-  console.log(id, name, values);
+  console.log(id, name, submission.view);
 }
 
 module.exports = { modal, handleSubmission };
