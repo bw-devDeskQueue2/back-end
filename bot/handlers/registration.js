@@ -80,4 +80,8 @@ const modal = {
   callback_id: "registration_form",
 };
 
-module.exports = { modal };
+function handleSubmission(submission) {
+  console.log(submission);
+}
+
+module.exports = { modal, handleSubmission };

@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
 const request = require("superagent");
 const modals = require("./reducers/modals");
+const submissionHandlers = require("./reducers/submissionHandlers");
 
 let activeViews = [];
 
@@ -57,7 +58,11 @@ router.post(
 );
 
 router.post("/interactive", (req, res) => {
-  console.log(req.body);
+  const { type } = req.payload;
+  if (type === "view_submission") {
+    const handler = "register";
+    submissionHandlers[handler](req.payload);
+  }
   res.status(200).end();
 });
 
