@@ -88,7 +88,7 @@ const modal = {
   callback_id: "register",
 };
 
-function handleSubmission(submission) {
+async function handleSubmission(submission) {
   const {
     user: { id },
     view: {
@@ -104,6 +104,11 @@ function handleSubmission(submission) {
     },
   } = submission;
   console.log(id, value);
+  const botID = await request
+    .get("https://slack.com/api/auth.test")
+    .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+    .then(r => r.bot_id);
+  console.log(botID);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: `${id},B015Z14S6JG` })
