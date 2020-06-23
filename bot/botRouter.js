@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const baseUrl = "https://devdesk-queue-2-herokuapp.com/api";
 const config = require("../config/serverInfo");
 const crypto = require("crypto");
 const tsscmp = require("tsscmp");

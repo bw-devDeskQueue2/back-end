@@ -36,6 +36,7 @@ const modal = {
       elements: [
         {
           type: "static_select",
+          optional: false,
           placeholder: {
             type: "plain_text",
             text: "Choose your role(s)",
@@ -81,7 +82,13 @@ const modal = {
 };
 
 function handleSubmission(submission) {
-  console.log(submission);
+  const {
+    user: { id, name },
+    view: {
+      state: { values },
+    },
+  } = submission;
+  console.log(id, name, values);
 }
 
 module.exports = { modal, handleSubmission };

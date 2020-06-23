@@ -9,4 +9,5 @@ module.exports = {
     "i don't need no secure fallback values when I'm backed by the fury of the flying spaghetti monster",
   CLIENT_SECRET: process.env.CLIENT_SECRET || "test_client_secret",
   OAUTH_ACCESS_TOKEN: process.env.OAUTH_ACCESS_TOKEN || "no fallback",
+  BASE_URL: "https://devdesk-queue-2-herokuapp.com/api",
 };
