@@ -3,10 +3,10 @@ const baseUrl = "https://devdesk-queue-2-herokuapp.com/api";
 const config = require("../config/serverInfo");
 const crypto = require("crypto");
 const tsscmp = require("tsscmp");
-const { decode } = require("querystring");
+const { encode } = require("querystring");
 const bodyParser = require("body-parser");
 
-router.use(bodyParser.urlencoded({ extended:false }));
+router.use(bodyParser.urlencoded({ extended: false }));
 
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
@@ -36,6 +36,13 @@ process.env.NODE_ENV === "test" &&
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+function rawifyBody(body) {
+  const query = encode(body);
+  console.log("query", query);
+  const withNewlines = query.replace(/&/g, "&\n");
+  console.log("withnewlines", withNewlines);
+  return withNewlines;
+}
 
 //https://fireship.io/snippets/verify-slack-api-signing-signature-node
 function verifySignature(req, res, next) {
@@ -47,7 +54,7 @@ function verifySignature(req, res, next) {
     return res.status(403).json({ message: "Invalid timestamp" }).end();
   }
   console.log("body", req.body);
-
+  console.log("rawBody", rawifyBody(req.body));
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
   const isJSON = req.headers["content-type"] === "application/json";
