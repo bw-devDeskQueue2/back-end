@@ -1,7 +1,7 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
 
-const modal = {
+const modal = user => ({
   type: "modal",
   title: {
     type: "plain_text",
@@ -84,13 +84,14 @@ const modal = {
     type: "plain_text",
     text: "Register",
   },
+  private_metadata: user,
   callback_id: "register",
-};
+});
 
 function handleSubmission(submission) {
   const {
-    user: { id },
     view: {
+      private_metadata: users,
       state: {
         values: {
           role: {
@@ -102,15 +103,14 @@ function handleSubmission(submission) {
       },
     },
   } = submission;
- // console.log(id, value);
-
+  console.log(users, value);
   request
     .post("https://slack.com/api/conversations.open")
-    .send({ users: id })
+    .send({ users })
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
-        return console.log("opening error",body);
+        return console.log("opening error", body);
       }
       const {
         channel: { id },

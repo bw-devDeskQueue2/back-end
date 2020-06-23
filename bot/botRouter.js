@@ -36,8 +36,9 @@ router.post(
   "/",
   catchAsync(async (req, res) => {
     const { trigger_id, text } = req.body;
+    console.log(req.body);
     const action = text.split(" ")[0];
-    const view = modals[action];
+    const view = modals[action](100);
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
