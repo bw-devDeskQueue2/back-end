@@ -6,46 +6,35 @@ module.exports = {
       text: "Register",
     },
     blocks: [
+      {
+        type: "section",
+        text: {
+          type: "plain_txt",
+          text: "Your registration will use your slack username.",
+        },
+        block_id: "info"
+      },
       // {
-      //   type: "section",
-      //   text: {
-      //     type: "mrkdwn",
-      //     text: "It's Block Kit...but _in a modal_",
+      //   type: "input",
+      //   label: {
+      //     type: "plain_text",
+      //     text: "Username",
       //   },
-      //   block_id: "section1",
-      //   accessory: {
-      //     type: "button",
-      //     text: {
+      //   element: {
+      //     type: "plain_text_input",
+      //     action_id: "input_username",
+      //     placeholder: {
       //       type: "plain_text",
-      //       text: "Click me",
+      //       text: "Enter your desired username",
       //     },
-      //     action_id: "button_abc",
-      //     value: "Button value",
-      //     style: "danger",
+      //     multiline: false,
       //   },
+      //   optional: false,
       // },
-
       {
         type: "actions",
         block_id: "actions1",
         elements: [
-          {
-            type: "input",
-            label: {
-              type: "plain_text",
-              text: "Username",
-            },
-            element: {
-              type: "plain_text_input",
-              action_id: "input_username",
-              placeholder: {
-                type: "plain_text",
-                text: "Enter your desired username",
-              },
-              multiline: false,
-            },
-            optional: false,
-          },
           {
             type: "static_select",
             placeholder: {
