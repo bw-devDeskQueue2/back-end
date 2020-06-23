@@ -114,7 +114,7 @@ function handleSubmission(submission) {
       }
       const {
         channel: { id },
-      } = req.body;
+      } = body;
       return request
         .post("https://slack.com/api/conversations.open")
         .send({
