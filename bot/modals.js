@@ -9,7 +9,7 @@ module.exports = {
       {
         type: "section",
         text: {
-          type: "plain_txt",
+          type: "mrkdwn",
           text: "Your registration will use your slack username.",
         },
         block_id: "info"
