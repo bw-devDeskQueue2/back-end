@@ -24,53 +24,28 @@ module.exports = {
       //     style: "danger",
       //   },
       // },
-      {
-        type: "input",
-        label: {
-          type: "plain_text",
-          text: "Username",
-        },
-        element: {
-          type: "plain_text_input",
-          action_id: "input_username",
-          placeholder: {
-            type: "plain_text",
-            text: "Enter your desired username",
-          },
-          multiline: false,
-        },
-        optional: false,
-      },
-      {
-        type: "input",
-        label: {
-          type: "plain_text",
-          text: "Password",
-        },
-        element: {
-          type: "plain_text_input",
-          action_id: "input_password",
-          multiline: false,
-        },
-        optional: false,
-      },
-      {
-        type: "input",
-        label: {
-          type: "plain_text",
-          text: "Confirm Password",
-        },
-        element: {
-          type: "plain_text_input",
-          action_id: "input_password_confirmation",
-          multiline: false,
-        },
-        optional: false,
-      },
+
       {
         type: "actions",
         block_id: "actions1",
         elements: [
+          {
+            type: "input",
+            label: {
+              type: "plain_text",
+              text: "Username",
+            },
+            element: {
+              type: "plain_text_input",
+              action_id: "input_username",
+              placeholder: {
+                type: "plain_text",
+                text: "Enter your desired username",
+              },
+              multiline: false,
+            },
+            optional: false,
+          },
           {
             type: "static_select",
             placeholder: {
