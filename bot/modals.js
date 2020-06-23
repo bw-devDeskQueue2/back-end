@@ -48,7 +48,7 @@ module.exports = {
           text: "Password",
         },
         element: {
-          type: "password_input",
+          type: "plain_text_input",
           action_id: "input_password",
           multiline: false,
         },
@@ -61,40 +61,46 @@ module.exports = {
           text: "Confirm Password",
         },
         element: {
-          type: "password_input",
+          type: "plain_text_input",
           action_id: "input_password_confirmation",
           multiline: false,
         },
         optional: false,
       },
       {
-        type: "static_select",
-        placeholder: {
-          type: "plain_text",
-          text: "Choose your role(s)",
-        },
-        action_id: "role_select",
-        options: [
+        type: "actions",
+        block_id: "actions1",
+        elements: [
           {
-            text: {
+            type: "static_select",
+            placeholder: {
               type: "plain_text",
-              text: "Student",
+              text: "Choose your role(s)",
             },
-            value: "student",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "Helper",
-            },
-            value: "helper",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "Both student and helper",
-            },
-            value: "both",
+            action_id: "role_select",
+            options: [
+              {
+                text: {
+                  type: "plain_text",
+                  text: "Student",
+                },
+                value: "student",
+              },
+              {
+                text: {
+                  type: "plain_text",
+                  text: "Helper",
+                },
+                value: "helper",
+              },
+              {
+                text: {
+                  type: "plain_text",
+                  text: "Both student and helper",
+                },
+                value: "both",
+              },
+            ],
           },
         ],
       },
