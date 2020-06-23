@@ -45,7 +45,7 @@ function verifySignature(req, res, next) {
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
   const isJSON = req.headers["content-type"] === "application/json";
-  console.log(isJSON);
+  console.log("isJSON", isJSON);
   const base = `${version}:${requestTimestamp}:${
     isJSON ? JSON.stringify(req.body) : req.body
   }`;

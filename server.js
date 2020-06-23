@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const bodyParser = require("body-parser");
 
 const authenticate = require("./auth/authMiddleware.js");
 const authRouter = require("./auth/authRouter.js");
@@ -15,13 +16,9 @@ const server = express();
 
 server.use(helmet());
 server.use(cors());
-server.use(express.json());
 
-server.get("/", (req, res) => {
-  res.status(200).json({
-    api_status: "up",
-  });
-});
+server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.json());
 
 server.get("/api", (req, res) => {
   res
