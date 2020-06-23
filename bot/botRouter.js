@@ -29,9 +29,36 @@ router.use(function respondToChallenge(req, res, next) {
 
 router.post("/", (req, res) => {
   const { trigger_id, text } = req.body;
-  res
-    .status(200)
-    .json({ response_type: "in_channel", text: "You accessed the root" });
+  const action = text.split(" ")[0];
+
+  const introModal = {
+    type: "modal",
+    callback_id: "modal-identifier",
+    title: {
+      type: "plain_text",
+      text: "Just a modal",
+    },
+    blocks: [
+      {
+        type: "section",
+        block_id: "section-identifier",
+        text: {
+          type: "mrkdwn",
+          text: "*Welcome* to ~my~ Block Kit _modal_!",
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Just a button",
+          },
+          action_id: "button-identifier",
+        },
+      },
+    ],
+  };
+
+  res.status(200).json({ trigger_id, view: introModal });
 });
 
 router.post("/interactive", (req, res) => {
