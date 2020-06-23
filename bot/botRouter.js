@@ -4,7 +4,7 @@ const config = require("../config/serverInfo");
 const crypto = require("crypto");
 const tsscmp = require("tsscmp");
 const { encode } = require("querystring");
-const { registerNewUser } = require("../auth/authTestHelperFunctions");
+
 
 router.use(verifySignature);
 router.use(function respondToChallenge(req, res, next) {
@@ -46,7 +46,7 @@ function verifySignature(req, res, next) {
   }
   console.log("body", req.body);
   console.log("rawBody", encode(req.body));
-  
+
   const hmac = crypto.createHmac("sha256", slackSigningSecret);
   const [version, hash] = requestSignature.split("=");
   const isJSON = req.headers["content-type"] === "application/json";
