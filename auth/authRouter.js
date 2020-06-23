@@ -12,7 +12,8 @@ router.post(
   catchAsync(validateUserRoles),
   validateUserDoesNotExist,
   catchAsync(async (req, res, next) => {
-    const user = req.body;
+    const { username, password, roles } = req.body;
+    const user = { username, password, roles };
     user.password = bcrypt.hashSync(user.password, config.BCRYPT_ROUNDS);
     const saved = await Users.addUser(user);
     const token = generateToken(saved);
@@ -85,11 +86,14 @@ function validateUserObject(req, res, next) {
 
 async function validateUserRoles(req, res, next) {
   let encounteredErrors = false;
-  const { roles } = req.body;
+  let { roles } = req.body;
   if (!roles) {
     return res
       .status(400)
       .json({ message: "New users must include a 'roles' array." });
+  }
+  if (!Array.isArray(roles)) {
+    roles = [roles];
   }
 
   if (
