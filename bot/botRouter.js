@@ -35,10 +35,10 @@ router.use(function respondToChallenge(req, res, next) {
 router.post(
   "/",
   catchAsync(async (req, res) => {
-    const { trigger_id, text } = req.body;
+    const { trigger_id, text, user_id } = req.body;
     console.log(req.body);
     const action = text.split(" ")[0];
-    const view = modals[action](100);
+    const view = modals[action](user_id);
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
