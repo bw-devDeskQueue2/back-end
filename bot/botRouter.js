@@ -10,9 +10,14 @@ router.use(function respondToChallenge(req, res, next) {
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
+router.post("/register", (req, res) => {
+  console.log(req.body);
+  res.status(200).end();
+});
+
 router.post("/events", (req, res) => {
   //console.log(req.body);
-  res.status(204).end();
+  res.status(200).end();
 });
 process.env.NODE_ENV === "test" &&
   router.post("/testing", (req, res) => {
