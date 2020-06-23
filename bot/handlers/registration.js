@@ -36,7 +36,6 @@ const modal = {
       elements: [
         {
           type: "static_select",
-          optional: false,
           placeholder: {
             type: "plain_text",
             text: "Choose your role(s)",
@@ -78,7 +77,7 @@ const modal = {
     text: "Register",
   },
   private_metadata: "Shhhhhhhh",
-  callback_id: "registration_form",
+  callback_id: "register",
 };
 
 function handleSubmission(submission) {

@@ -60,7 +60,7 @@ router.post("/interactive", (req, res) => {
   let { payload } = req.body;
   payload = JSON.parse(payload);
   if (payload.type === "view_submission") {
-    const handler = "register";
+    const handler = payload.view.callback_id;
     submissionHandlers[handler](payload);
   }
   res.status(200).end();
