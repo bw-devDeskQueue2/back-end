@@ -92,11 +92,28 @@ function handleSubmission(submission) {
     user: { id },
     view: {
       state: {
-        values: { role },
+        values: {
+          role: {
+            role_select: {
+              selected_option: { value },
+            },
+          },
+        },
       },
     },
   } = submission;
-  console.log(id, role);
+  console.log(id, value);
+
+  request
+    .post("https://slack.com/api/conversations.open")
+    .send({ users: id })
+    .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+    .then(({ body }) => {
+      if (!body.ok) {
+        console.log(body);
+      }
+      console.log("success", body);
+    });
 }
 
 module.exports = { modal, handleSubmission };
