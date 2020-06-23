@@ -7,6 +7,7 @@ const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
 const request = require("superagent");
+const modals = require("./modals");
 
 router.use(
   bodyParser.text({
@@ -34,43 +35,18 @@ router.post(
   catchAsync(async (req, res) => {
     const { trigger_id, text } = req.body;
     const action = text.split(" ")[0];
-
-    const introModal = {
-      type: "modal",
-      callback_id: "modal-identifier",
-      title: {
-        type: "plain_text",
-        text: "Just a modal",
-      },
-      blocks: [
-        {
-          type: "section",
-          block_id: "section-identifier",
-          text: {
-            type: "mrkdwn",
-            text: "*Welcome* to ~my~ Block Kit _modal_!",
-          },
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Just a button",
-            },
-            action_id: "button-identifier",
-          },
-        },
-      ],
-    };
+    const view = modals[action];
+    if (action === "help" || !view) {
+      return res.status(200).json({
+        response_type: "ephemeral",
+        text: "Commands: 'help', 'register', more soon...",
+      });
+    }
+    res.status(200).end();
     await request
       .post("https://slack.com/api/views.open")
-      .send({ trigger_id, view: introModal })
-      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
-      .then(r => console.log(r.body));
-
-    res.status(200).json({
-      response_type: "in_channel",
-      text: "You started the interaction",
-    });
+      .send({ trigger_id, view })
+      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`);
   })
 );
 
