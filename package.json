@@ -25,7 +25,6 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "encode": "^1.0.1",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
     "jsonschema": "^1.2.6",
