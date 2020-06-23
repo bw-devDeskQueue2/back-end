@@ -7,7 +7,7 @@ const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
 const request = require("superagent");
-const modals = require("./modals");
+const modals = require("./reducers/modals");
 
 let activeViews = [];
 
