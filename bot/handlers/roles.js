@@ -105,7 +105,7 @@ async function handleSubmission(submission) {
   } = submission;
   //console.log(userID, roles);
   const adminToken = await request
-    .get(config.BASE_URL / "login")
+    .get(config.BASE_URL + "/user/login")
     .send({ username: "test_admin", password: config.ADMIN_PASS })
     .then(r => r.body.bot_id);
   console.log(adminToken);
