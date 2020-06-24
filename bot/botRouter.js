@@ -45,24 +45,24 @@ router.post(
   catchAsync(async (req, res) => {
     const { trigger_id, text } = req.body;
     //console.log(req.body);
-    if (!(trigger_id && text)) {
+    if (!trigger_id) {
       return res.status(400).json({ message: "Malformed request" });
     }
-    const response_message = `Available actions: 'help'${Object.keys(
-      modals
-    ).map(name => `, '${name}'`)}`;
-    console.log("action length", text.length);
-    if (text.length === 0) {
-      return res
-        .status(200)
-        .json({ response_type: "ephemeral", text: response_message });
-    }
-    const action = text.split(" ")[0];
+    const helpMessage = `Available actions: 'help'${Object.keys(modals).map(
+      name => `, '${name}'`
+    )}`;
+    // console.log("action length", text.length);
+    // if (text.length === 0) {
+    //   return res
+    //     .status(200)
+    //     .json({ response_type: "ephemeral", text: helpMessage });
+    // }
+    const action = text ? text.split(" ")[0] : "help";
     const view = modals[action];
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
-        text: response_message,
+        text: helpMessage,
       });
     }
     res.status(200).end();
