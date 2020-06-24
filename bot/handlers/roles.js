@@ -96,14 +96,14 @@ async function handleSubmission(submission) {
         values: {
           role: {
             role_select: {
-              selected_option: { value },
+              selected_option: { value: roles },
             },
           },
         },
       },
     },
   } = submission;
-  console.log(userID, value);
+  //console.log(userID, roles);
   // const botID = await request
   //   .get("https://slack.com/api/auth.test")
   //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
@@ -126,13 +126,13 @@ async function handleSubmission(submission) {
         .send({
           channel: channelID,
           token: config.BOT_ACCESS_TOKEN,
-          text: `You successfully registered as ${userID} with the role of '${value}'`,
+          text: `You successfully registered as ${userID} with the role of '${roles}'`,
         })
         .then(({ body }) => {
           if (!body.ok) {
             console.log("sending error", body);
           }
-          console.log("sent", body);
+          //console.log("sent", body);
         });
     })
     .catch(console.error);

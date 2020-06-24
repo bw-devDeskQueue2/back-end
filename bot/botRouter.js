@@ -42,7 +42,9 @@ router.post(
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
-        text: "Commands: 'help', 'register', more soon...",
+        text: `Commands: ${Object.keys(modals).map(
+          name => `'${name}',`
+        )} and 'help'`,
       });
     }
     res.status(200).end();

@@ -1,4 +1,4 @@
-const { modal: register } = require("../handlers/registration");
+const { modal: roles } = require("../handlers/roles");
 
 module.exports = {
   register,
