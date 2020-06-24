@@ -113,11 +113,13 @@ async function handleSubmission(req, res, next, submission) {
   const slackUser = { slack_id: userID, team_id, roles };
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
   //console.log("user in database", userInDatabase);
+  console.log("database id",userInDatabase.user_id);
   const rolesChangeResult = await request
     .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
     .set("Authorization", `Bearer ${adminToken}`)
     .send(roles)
-    .then(r => r.body);
+    .then(r => r.body)
+    .catch(e => console.log("Error with roles change result", e));
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
