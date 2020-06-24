@@ -5,14 +5,14 @@ const modal = {
   type: "modal",
   title: {
     type: "plain_text",
-    text: "Register",
+    text: "Roles",
   },
   blocks: [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: "Your registration will use your slack username.",
+        text: "Your username and password are tied to your slack account.",
       },
       block_id: "info",
     },
@@ -85,7 +85,7 @@ const modal = {
     text: "Register",
   },
   //private_metadata: user,
-  callback_id: "register",
+  callback_id: "roles",
 };
 
 async function handleSubmission(submission) {
