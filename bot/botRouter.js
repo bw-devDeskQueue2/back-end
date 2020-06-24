@@ -48,14 +48,20 @@ router.post(
     if (!(trigger_id && text)) {
       return res.status(400).json({ message: "Malformed request" });
     }
+    const response_message = `Available actions: 'help'${Object.keys(
+      modals
+    ).map(name => `, '${name}'`)}`;
+    if (text.length === 0) {
+      return res
+        .status(200)
+        .json({ response_type: "ephemeral", text: response_message });
+    }
     const action = text.split(" ")[0];
     const view = modals[action];
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
-        text: `Available actions: 'help'${Object.keys(modals).map(
-          name => `, '${name}'`
-        )}`,
+        text: response_message,
       });
     }
     res.status(200).end();
