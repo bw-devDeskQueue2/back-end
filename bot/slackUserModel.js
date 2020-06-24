@@ -7,10 +7,10 @@ function getUser(query) {
 }
 
 function addUser(user) {
-  const { slack_id, team_id } = user;
+  const { slack_id, team_id, user_id } = user;
   return knex("slack_users")
     .insert(user)
-    .then(() => getUser({ slack_id, team_id }));
+    .then(() => getUser({ slack_id, team_id, user_id }));
 }
 
 module.exports = { getUser, addUser };
