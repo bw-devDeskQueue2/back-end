@@ -1,2 +1,2 @@
 const { handleSubmission: roles } = require("../handlers/roles");
-module.exports = { register };
+module.exports = { roles };

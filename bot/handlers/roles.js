@@ -104,11 +104,11 @@ async function handleSubmission(submission) {
     },
   } = submission;
   //console.log(userID, roles);
-  // const botID = await request
-  //   .get("https://slack.com/api/auth.test")
-  //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-  //   .then(r => r.body.bot_id);
-  // console.log(botID);
+  const adminToken = await request
+    .get(config.BASE_URL / "login")
+    .send({ username: "test_admin", password: config.ADMIN_PASS })
+    .then(r => r.body.bot_id);
+  console.log(adminToken);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
