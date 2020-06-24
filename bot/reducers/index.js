@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+let modals = {};
 let submissionHandlers = {};
 
 const directory = path.join(__dirname, "..", "handlers");
@@ -9,9 +10,12 @@ fs.readdir(directory, (err, files) => {
   }
   files.forEach(file => {
     const name = file.toString().split(".")[0];
-    const { handleSubmission } = require(directory + "/" + file.toString());
+    const { modal, handleSubmission } = require(directory +
+      "/" +
+      file.toString());
+    modals[name] = modal;
     submissionHandlers[name] = handleSubmission;
   });
 });
 
-module.exports = submissionHandlers;
+module.exports = { modals, submissionHandlers };
