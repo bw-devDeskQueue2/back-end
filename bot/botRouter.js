@@ -9,7 +9,12 @@ const request = require("superagent");
 const modals = require("./reducers/modals");
 const submissionHandlers = require("./reducers/submissionHandlers");
 
-let activeViews = [];
+//let activeViews = [];
+
+router.use(function attachDomain(req, res, next) {
+  req.domain = `${req.protocol}://${req.get("host")}`;
+  console.log(req.domain);
+});
 
 router.use(
   bodyParser.text({
@@ -42,7 +47,7 @@ router.post(
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",
-        text: `Commands: 'help'${Object.keys(modals).map(
+        text: `Available actions: 'help'${Object.keys(modals).map(
           name => `, '${name}'`
         )}`,
       });

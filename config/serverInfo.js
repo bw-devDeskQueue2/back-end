@@ -11,5 +11,4 @@ module.exports = {
   OAUTH_ACCESS_TOKEN: process.env.OAUTH_ACCESS_TOKEN || "no fallback",
   BOT_ACCESS_TOKEN: process.env.BOT_ACCESS_TOKEN || "no fallback",
   GENERIC_PASSWORD: process.env.GENERIC_PASSWORD || "password",
-  BASE_URL: "https://devdesk-queue-2-herokuapp.com/api",
 };

@@ -82,7 +82,7 @@ const modal = {
   },
   submit: {
     type: "plain_text",
-    text: "Register",
+    text: "Select Role(s)",
   },
   //private_metadata: user,
   callback_id: "roles",
