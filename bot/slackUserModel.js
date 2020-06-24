@@ -1,4 +1,4 @@
-const knex = require("../../data/dbConfig");
+const knex = require("../data/dbConfig");
 
 function getUser(query) {
   return knex("slack_users").where(query).first();
