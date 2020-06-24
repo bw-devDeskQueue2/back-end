@@ -105,8 +105,9 @@ async function handleSubmission(req, res, next, submission) {
     },
   } = submission;
   //console.log(userID, roles);
-  const adminToken = await getAdminToken(req, res, next);
-  console.log(adminToken);
+  console.log("req protocol", req.protocol);
+  const adminToken = await getAdminToken(req);
+  console.log("admin token", adminToken);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
