@@ -16,19 +16,23 @@ router.use(function attachDomain(req, res, next) {
   next();
 });
 
+//First, extract body as raw text for non-JSON requests
+//Then, verify the signature using that body
+//Then, convert the raw text body into a more useful form
 router.use(
   bodyParser.text({
     type: r =>
       r.headers["content-type"] === "application/x-www-form-urlencoded",
-  })
-);
-router.use(verifySignature);
-router.use(function convertURLEncodedToObject(r, res, next) {
-  if (r.headers["content-type"] === "application/x-www-form-urlencoded") {
-    r.body = decode(r.body);
+  }),
+  verifySignature,
+  function convertURLEncodedToObject(r, res, next) {
+    if (r.headers["content-type"] === "application/x-www-form-urlencoded") {
+      r.body = decode(r.body);
+    }
+    next();
   }
-  next();
-});
+);
+
 router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
   //debugging
@@ -38,10 +42,13 @@ router.use(function respondToChallenge(req, res, next) {
 });
 
 router.post(
-  "/",
+  "/ddq",
   catchAsync(async (req, res) => {
     const { trigger_id, text } = req.body;
     //console.log(req.body);
+    if (!(trigger_id && text)) {
+      return res.status(400).json({ message: "Malformed request" });
+    }
     const action = text.split(" ")[0];
     const view = modals[action];
     if (action === "help" || !view) {
@@ -59,7 +66,7 @@ router.post(
       .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
       .then(({ body }) => {
         if (!body.ok) {
-          console.log(body);
+          console.log("Error opening view", body);
         }
         //activeViews.push(body);
       });
@@ -68,10 +75,20 @@ router.post(
 
 router.post("/interactive", (req, res) => {
   let { payload } = req.body;
+  if (!payload) {
+    return res.status(400).json({ message: "Malformed request" });
+  }
   payload = JSON.parse(payload);
-  if (payload.type === "view_submission") {
-    const handler = payload.view.callback_id;
-    submissionHandlers[handler](payload);
+  if (!payload.type) {
+    return res.status(400).json({ message: "Malformed request" });
+  }
+  try {
+    if (payload.type === "view_submission") {
+      const handler = payload.view.callback_id;
+      submissionHandlers[handler](payload);
+    }
+  } catch (e) {
+    next(e);
   }
   res.status(200).end();
 });
