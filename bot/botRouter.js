@@ -13,7 +13,7 @@ const submissionHandlers = require("./reducers/submissionHandlers");
 
 router.use(function attachDomain(req, res, next) {
   req.domain = `${req.protocol}://${req.get("host")}`;
-  console.log(req.domain);
+  next();
 });
 
 router.use(
