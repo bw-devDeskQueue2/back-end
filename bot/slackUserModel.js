@@ -7,7 +7,7 @@ function getUser(query) {
 }
 
 function addUser({ slack_id, team_id, user_id }) {
-  console.log("inside addUser", slack_id, team_id, user_id);
+  //console.log("inside addUser", slack_id, team_id, user_id);
   return knex("slack_users")
     .insert({ slack_id, team_id, user_id })
     .then(() => getUser({ slack_id, team_id, user_id }));

@@ -1,6 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const { getAdminToken, createUserIfNotExists } = require("../utils");
+const { getAdminToken, createUserIfNotExists, baseURL } = require("../utils");
 
 const modal = {
   type: "modal",
@@ -112,7 +112,12 @@ async function handleSubmission(req, res, next, submission) {
   //console.log("admin token", adminToken);
   const slackUser = { slack_id: userID, team_id, roles };
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
-  console.log("user in database", userInDatabase);
+  //console.log("user in database", userInDatabase);
+  const rolesChangeResult = await request
+    .post(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
+    .set("Authorization", `Bearer ${adminToken}`)
+    .send(roles)
+    .then(r => r.body);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
@@ -124,20 +129,20 @@ async function handleSubmission(req, res, next, submission) {
       const {
         channel: { id: channelID },
       } = body;
-      // return request
-      //   .post("https://slack.com/api/chat.postMessage")
-      //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-      //   .send({
-      //     channel: channelID,
-      //     token: config.BOT_ACCESS_TOKEN,
-      //     text: `Success! Your roles are now: '${roles}'`,
-      //   })
-      //   .then(({ body }) => {
-      //     if (!body.ok) {
-      //       console.log("sending error", body);
-      //     }
-      //     //console.log("sent", body);
-      //   });
+      return request
+        .post("https://slack.com/api/chat.postMessage")
+        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+        .send({
+          channel: channelID,
+          token: config.BOT_ACCESS_TOKEN,
+          text: `Success! Your roles are now: '${rolesChangeResult}'`,
+        })
+        .then(({ body }) => {
+          if (!body.ok) {
+            console.log("sending error", body);
+          }
+          //console.log("sent", body);
+        });
     })
     .catch(console.error);
 }
