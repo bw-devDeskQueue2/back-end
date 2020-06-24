@@ -114,7 +114,7 @@ async function handleSubmission(req, res, next, submission) {
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
   //console.log("user in database", userInDatabase);
   const rolesChangeResult = await request
-    .post(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
+    .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
     .set("Authorization", `Bearer ${adminToken}`)
     .send(roles)
     .then(r => r.body);
