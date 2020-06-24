@@ -71,7 +71,7 @@ const modal = {
               type: "plain_text",
               text: "Both student and helper",
             },
-            value: "both",
+            value: ["student", "helper"],
           },
         ],
       },
@@ -118,20 +118,20 @@ async function handleSubmission(req, res, next, submission) {
       const {
         channel: { id: channelID },
       } = body;
-      return request
-        .post("https://slack.com/api/chat.postMessage")
-        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-        .send({
-          channel: channelID,
-          token: config.BOT_ACCESS_TOKEN,
-          text: `Success! Your roles are now: '${roles}'`,
-        })
-        .then(({ body }) => {
-          if (!body.ok) {
-            console.log("sending error", body);
-          }
-          //console.log("sent", body);
-        });
+      // return request
+      //   .post("https://slack.com/api/chat.postMessage")
+      //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+      //   .send({
+      //     channel: channelID,
+      //     token: config.BOT_ACCESS_TOKEN,
+      //     text: `Success! Your roles are now: '${roles}'`,
+      //   })
+      //   .then(({ body }) => {
+      //     if (!body.ok) {
+      //       console.log("sending error", body);
+      //     }
+      //     //console.log("sent", body);
+      //   });
     })
     .catch(console.error);
 }
