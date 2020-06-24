@@ -6,10 +6,10 @@ function getUser(query) {
     .then(results => (results.length === 0 ? null : results[0]));
 }
 
-function addUser(user) {
-  const { slack_id, team_id, user_id } = user;
+function addUser({ slack_id, team_id, user_id }) {
+  console.log("inside addUser", slack_id, team_id, user_id);
   return knex("slack_users")
-    .insert(user)
+    .insert({ slack_id, team_id, user_id })
     .then(() => getUser({ slack_id, team_id, user_id }));
 }
 
