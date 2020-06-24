@@ -111,7 +111,7 @@ async function handleSubmission(req, res, next, submission) {
   const adminToken = await getAdminToken(req);
   //console.log("admin token", adminToken);
   const userDatabaseID = await createUserIfNotExists(userID, team_id, next);
-  console.log("user_id in database", userDatabaseID);
+  //console.log("user_id in database", userDatabaseID);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
@@ -123,20 +123,20 @@ async function handleSubmission(req, res, next, submission) {
       const {
         channel: { id: channelID },
       } = body;
-      return request
-        .post("https://slack.com/api/chat.postMessage")
-        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-        .send({
-          channel: channelID,
-          token: config.BOT_ACCESS_TOKEN,
-          text: `Success! Your roles are now: '${roles}'`,
-        })
-        .then(({ body }) => {
-          if (!body.ok) {
-            console.log("sending error", body);
-          }
-          //console.log("sent", body);
-        });
+      // return request
+      //   .post("https://slack.com/api/chat.postMessage")
+      //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+      //   .send({
+      //     channel: channelID,
+      //     token: config.BOT_ACCESS_TOKEN,
+      //     text: `Success! Your roles are now: '${roles}'`,
+      //   })
+      //   .then(({ body }) => {
+      //     if (!body.ok) {
+      //       console.log("sending error", body);
+      //     }
+      //     //console.log("sent", body);
+      //   });
     })
     .catch(console.error);
 }

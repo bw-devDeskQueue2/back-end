@@ -1,6 +1,6 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
-const knex = require("../../data/dbConfig");
+const SlackUsers = require("../slackUserModel");
 
 const baseURL = req => `${req.protocol}://${req.get("host")}/api`;
 
@@ -15,9 +15,7 @@ function getAdminToken(req) {
 
 async function createUserIfNotExists(slack_id, team_id, next) {
   try {
-    const existingUser = knex("slack_users")
-      .where({ slack_id, team_id })
-      .first();
+    const existingUser = await SlackUsers.getUser({ slack_id, team_id });
     console.log("existing user for slack_id and team_id", existingUser);
   } catch (e) {
     next(e);
