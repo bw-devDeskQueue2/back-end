@@ -1,5 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
+const getAdminToken = require("../utils/getAdminToken");
 
 const modal = {
   type: "modal",
@@ -104,11 +105,8 @@ async function handleSubmission(submission) {
     },
   } = submission;
   //console.log(userID, roles);
-  // const adminToken = await request
-  //   .get(config.BASE_URL + "/user/login")
-  //   .send({ username: "test_admin", password: config.ADMIN_PASS })
-  //   .then(r => r.body.bot_id);
-  // console.log(adminToken);
+  const adminToken = await getAdminToken();
+  console.log(adminToken);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
