@@ -20,22 +20,27 @@ async function createUserIfNotExists(slackUser, req, res, next) {
     if (existingUser) {
       return existingUser;
     }
-    let newUser = await request.post(`${baseURL(req)}/user/register`).send({
-      username: `${team_id}:${slack_id}`,
-      password: config.GENERIC_PASSWORD,
-      roles,
-    });
+    let newUser = await request
+      .post(`${baseURL(req)}/user/register`)
+      .send({
+        username: `${team_id}:${slack_id}`,
+        password: config.GENERIC_PASSWORD,
+        roles,
+      })
+      .then(r => r.body);
     //Successful creation returns an object with a user key
     //Errors return an object with a message key
-    console.log("new user", newUser.user);
+    console.log("new user", newUser);
     if (!newUser.user) {
-      return next(newUser.message);
+      next(newUser.message);
+      return null;
+    } else {
+      return SlackUsers.addUser({
+        user_id: newUser.user.id,
+        slack_id,
+        team_id,
+      });
     }
-    return SlackUsers.addUser({
-      user_id: newUser.user.id,
-      slack_id,
-      team_id,
-    });
   } catch (e) {
     console.error(e);
     next(e);
