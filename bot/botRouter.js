@@ -10,11 +10,6 @@ const { modals, submissionHandlers } = require("./reducers/");
 
 //let activeViews = [];
 
-router.use(function attachDomain(req, res, next) {
-  req.domain = `${req.protocol}://${req.get("host")}`;
-  next();
-});
-
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
 //Then, convert the raw text body into a more useful form

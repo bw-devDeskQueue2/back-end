@@ -1,6 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const getAdminToken = require("../utils/getAdminToken");
+const { getAdminToken } = require("../utils");
 
 const modal = {
   type: "modal",
