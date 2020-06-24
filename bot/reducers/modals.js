@@ -1,15 +1,16 @@
 const path = require("path");
 const fs = require("fs");
-const { modal: roles } = require("../handlers/roles");
+let modals = {};
 
-let modals = { roles };
 const directory = path.join(__dirname, "..", "handlers");
-fs.readdirSync(directory, (err, files) => {
+fs.readdir(directory, (err, files) => {
   if (err) {
     return console.error("Unable to read " + directory);
   }
   files.forEach(file => {
-    console.log("file", file);
+    const name = file.toString().split(".")[0];
+    const { modal } = require(directory + "/" + file.toString());
+    modals[name] = modal;
   });
 });
 
