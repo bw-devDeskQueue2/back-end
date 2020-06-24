@@ -110,8 +110,9 @@ async function handleSubmission(req, res, next, submission) {
   console.log("Submission", userID, team_id, roles);
   const adminToken = await getAdminToken(req);
   //console.log("admin token", adminToken);
-  const userDatabaseID = await createUserIfNotExists(userID, team_id, next);
-  //console.log("user_id in database", userDatabaseID);
+  const slackUser = { slack_id: userID, team_id, roles };
+  const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
+  console.log("user in database", userInDatabase);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
