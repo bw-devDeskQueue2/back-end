@@ -91,7 +91,7 @@ const modal = {
 
 async function handleSubmission(req, res, next, submission) {
   const {
-    user: { id: userID },
+    user: { id: userID, team_id },
     view: {
       state: {
         values: {
@@ -104,10 +104,9 @@ async function handleSubmission(req, res, next, submission) {
       },
     },
   } = submission;
-  //console.log(userID, roles);
-  console.log("req protocol", req.protocol);
+  console.log("Submission", userID, team_id, roles);
   const adminToken = await getAdminToken(req);
-  console.log("admin token", adminToken);
+  //console.log("admin token", adminToken);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
@@ -125,7 +124,7 @@ async function handleSubmission(req, res, next, submission) {
         .send({
           channel: channelID,
           token: config.BOT_ACCESS_TOKEN,
-          text: `You successfully registered as ${userID} with the role of '${roles}'`,
+          text: `Success! Your roles are now: '${roles}'`,
         })
         .then(({ body }) => {
           if (!body.ok) {
