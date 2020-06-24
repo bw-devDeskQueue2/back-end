@@ -14,7 +14,7 @@ function getAdminToken(req) {
 
 async function createUserIfNotExists(slackUser, req, res, next) {
   try {
-    const { slack_id, team_id, roles } = slackUser;
+    const { slack_id, team_id, roles = ["student", "helper"] } = slackUser;
     const existingUser = await SlackUsers.getUser({ slack_id, team_id });
     //console.log("existing user for slack_id and team_id", existingUser);
     if (existingUser) {
@@ -36,6 +36,7 @@ async function createUserIfNotExists(slackUser, req, res, next) {
       team_id,
     });
   } catch (e) {
+    console.error(e);
     next(e);
   }
 }
