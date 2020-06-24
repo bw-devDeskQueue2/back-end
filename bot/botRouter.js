@@ -51,6 +51,7 @@ router.post(
     const response_message = `Available actions: 'help'${Object.keys(
       modals
     ).map(name => `, '${name}'`)}`;
+    console.log("action length", text.length);
     if (text.length === 0) {
       return res
         .status(200)
