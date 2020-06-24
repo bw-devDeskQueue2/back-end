@@ -103,7 +103,7 @@ async function handleSubmission(submission) {
       },
     },
   } = submission;
-  console.log(id, value);
+  console.log(userID, value);
   // const botID = await request
   //   .get("https://slack.com/api/auth.test")
   //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
