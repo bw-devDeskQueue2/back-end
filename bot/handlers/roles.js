@@ -1,6 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const { getAdminToken } = require("../utils");
+const { getAdminToken, createUserIfNotExists } = require("../utils");
 
 const modal = {
   type: "modal",
@@ -104,10 +104,14 @@ async function handleSubmission(req, res, next, submission) {
       },
     },
   } = submission;
-  if (roles.includes("both")) roles = ["student", "helper"];
+  if (roles.includes("both")) {
+    roles = ["student", "helper"];
+  }
   console.log("Submission", userID, team_id, roles);
   const adminToken = await getAdminToken(req);
   //console.log("admin token", adminToken);
+  const userDatabaseID = await createUserIfNotExists(userID, team_id, next);
+  console.log("user_id in database", userDatabaseID);
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
