@@ -107,11 +107,11 @@ async function handleSubmission(submission) {
   const botID = await request
     .get("https://slack.com/api/auth.test")
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-    .then(r => r.bot_id);
+    .then(r => r.body.bot_id);
   console.log(botID);
   request
     .post("https://slack.com/api/conversations.open")
-    .send({ users: `${id},B015Z14S6JG` })
+    .send({ users: `${id},${botID}` })
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
