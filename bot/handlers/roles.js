@@ -113,7 +113,7 @@ async function handleSubmission(req, res, next, submission) {
   const slackUser = { slack_id: userID, team_id, roles };
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
   //console.log("user in database", userInDatabase);
-  console.log("database id", userInDatabase.user_id);
+  //console.log("database id", userInDatabase.user_id);
   let rolesChangeResult;
   await request
     .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
@@ -121,6 +121,12 @@ async function handleSubmission(req, res, next, submission) {
     .send({ roles })
     .then(r => (rolesChangeResult = r.body))
     .catch(e => (rolesChangeResult = e.response.body));
+  console.log(rolesChangeResult);
+
+  const responseMessage = rolesChangeResult.message
+    ? `An error ocurred: ${rolesChangeResult.message}`
+    : `Success! your roles are now \`${rolesChangeResult.roles}\``;
+
   request
     .post("https://slack.com/api/conversations.open")
     .send({ users: userID })
@@ -138,7 +144,7 @@ async function handleSubmission(req, res, next, submission) {
         .send({
           channel: channelID,
           token: config.BOT_ACCESS_TOKEN,
-          text: `Success! Your roles are now: '${rolesChangeResult}'`,
+          text: responseMessage,
         })
         .then(({ body }) => {
           if (!body.ok) {
