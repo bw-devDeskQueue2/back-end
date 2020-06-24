@@ -90,7 +90,7 @@ const modal = {
 
 async function handleSubmission(submission) {
   const {
-    user: { id },
+    user: { id: userID },
     view: {
       state: {
         values: {
@@ -111,22 +111,22 @@ async function handleSubmission(submission) {
   // console.log(botID);
   request
     .post("https://slack.com/api/conversations.open")
-    .send({ users: id })
+    .send({ users: userID })
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
         return console.log("opening error", body);
       }
       const {
-        channel: { id },
+        channel: { id: channelID },
       } = body;
       return request
         .post("https://slack.com/api/chat.postMessage")
         .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
         .send({
-          channel: id,
+          channel: channelID,
           token: config.BOT_ACCESS_TOKEN,
-          text: `You successfully registered as ${id} with the role of '${value}'`,
+          text: `You successfully registered as ${userID} with the role of '${value}'`,
         })
         .then(({ body }) => {
           if (!body.ok) {
