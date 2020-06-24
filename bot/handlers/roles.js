@@ -71,7 +71,7 @@ const modal = {
               type: "plain_text",
               text: "Both student and helper",
             },
-            value: ["student", "helper"],
+            value: "both",
           },
         ],
       },
@@ -90,7 +90,7 @@ const modal = {
 };
 
 async function handleSubmission(req, res, next, submission) {
-  const {
+  let {
     user: { id: userID, team_id },
     view: {
       state: {
@@ -104,6 +104,7 @@ async function handleSubmission(req, res, next, submission) {
       },
     },
   } = submission;
+  if (roles.includes("both")) roles = ["student", "helper"];
   console.log("Submission", userID, team_id, roles);
   const adminToken = await getAdminToken(req);
   //console.log("admin token", adminToken);
@@ -118,20 +119,20 @@ async function handleSubmission(req, res, next, submission) {
       const {
         channel: { id: channelID },
       } = body;
-      // return request
-      //   .post("https://slack.com/api/chat.postMessage")
-      //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-      //   .send({
-      //     channel: channelID,
-      //     token: config.BOT_ACCESS_TOKEN,
-      //     text: `Success! Your roles are now: '${roles}'`,
-      //   })
-      //   .then(({ body }) => {
-      //     if (!body.ok) {
-      //       console.log("sending error", body);
-      //     }
-      //     //console.log("sent", body);
-      //   });
+      return request
+        .post("https://slack.com/api/chat.postMessage")
+        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+        .send({
+          channel: channelID,
+          token: config.BOT_ACCESS_TOKEN,
+          text: `Success! Your roles are now: '${roles}'`,
+        })
+        .then(({ body }) => {
+          if (!body.ok) {
+            console.log("sending error", body);
+          }
+          //console.log("sent", body);
+        });
     })
     .catch(console.error);
 }
