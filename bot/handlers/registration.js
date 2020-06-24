@@ -104,14 +104,14 @@ async function handleSubmission(submission) {
     },
   } = submission;
   console.log(id, value);
-  const botID = await request
-    .get("https://slack.com/api/auth.test")
-    .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-    .then(r => r.body.bot_id);
-  console.log(botID);
+  // const botID = await request
+  //   .get("https://slack.com/api/auth.test")
+  //   .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+  //   .then(r => r.body.bot_id);
+  // console.log(botID);
   request
     .post("https://slack.com/api/conversations.open")
-    .send({ users: `${id},${botID}` })
+    .send({ users: id })
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
@@ -121,7 +121,7 @@ async function handleSubmission(submission) {
         channel: { id },
       } = body;
       return request
-        .post("https://slack.com/api/conversations.open")
+        .post("https://slack.com/api/chat.postMessage")
         .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
         .send({
           channel: id,
