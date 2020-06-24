@@ -89,7 +89,7 @@ const modal = {
   callback_id: "roles",
 };
 
-async function handleSubmission(submission) {
+async function handleSubmission(req, res, next, submission) {
   const {
     user: { id: userID },
     view: {
@@ -105,7 +105,7 @@ async function handleSubmission(submission) {
     },
   } = submission;
   //console.log(userID, roles);
-  const adminToken = await getAdminToken();
+  const adminToken = await getAdminToken(req, res, next);
   console.log(adminToken);
   request
     .post("https://slack.com/api/conversations.open")

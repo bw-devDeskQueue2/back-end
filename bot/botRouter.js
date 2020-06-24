@@ -73,7 +73,7 @@ router.post(
   })
 );
 
-router.post("/interactive", (req, res) => {
+router.post("/interactive", (req, res, next) => {
   let { payload } = req.body;
   if (!payload) {
     return res.status(400).json({ message: "Malformed request" });
@@ -85,7 +85,7 @@ router.post("/interactive", (req, res) => {
   try {
     if (payload.type === "view_submission") {
       const handler = payload.view.callback_id;
-      submissionHandlers[handler](payload);
+      submissionHandlers[handler](req, res, next, payload);
     }
   } catch (e) {
     next(e);
