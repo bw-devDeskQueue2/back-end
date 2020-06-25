@@ -12,7 +12,7 @@ const {
   blockActionHandlers,
   actionDescriptions,
 } = require("./reducers/");
-const { openView } = require("./utils");
+const { openView } = require("./utils/slackUtils");
 
 //let activeViews = [];
 

@@ -12,9 +12,9 @@ const openView = (trigger_id, view) =>
       }
       //activeViews.push(body);
     });
-    
-function sendDM(users, message) {
-  return request
+
+const sendDM = (users, message) =>
+  request
     .post("https://slack.com/api/conversations.open")
     .send({ users })
     .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
@@ -42,5 +42,5 @@ function sendDM(users, message) {
         });
     })
     .catch(console.error);
-}
+
 module.exports = { openView, sendDM };
