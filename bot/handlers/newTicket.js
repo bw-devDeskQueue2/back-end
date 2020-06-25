@@ -93,4 +93,9 @@ async function handleSubmission(req, res, next, submission) {
   console.log(submission);
 }
 
-module.exports = { modal, handleSubmission, actionName: "new" };
+module.exports = {
+  modal,
+  handleSubmission,
+  actionName: "new",
+  actionDescription: "Creates a new ticket",
+};

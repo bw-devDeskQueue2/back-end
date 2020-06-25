@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 let modals = {};
 let submissionHandlers = {};
+let actionDescriptions = {};
 
 const directory = path.join(__dirname, "..", "handlers");
 fs.readdir(directory, (err, files) => {
@@ -14,6 +15,7 @@ fs.readdir(directory, (err, files) => {
       modal,
       handleSubmission,
       actionName,
+      actionDescription,
     } = require(`${directory}/${file}`);
     if (!actionName) {
       console.log("No actionName for", file);
@@ -24,4 +26,4 @@ fs.readdir(directory, (err, files) => {
   });
 });
 
-module.exports = { modals, submissionHandlers };
+module.exports = { modals, submissionHandlers, actionDescriptions };

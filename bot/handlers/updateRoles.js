@@ -158,4 +158,10 @@ async function handleSubmission(req, res, next, submission) {
     .catch(console.error);
 }
 
-module.exports = { modal, handleSubmission, actionName: "roles" };
+module.exports = {
+  modal,
+  handleSubmission,
+  actionName: "roles",
+  actionDescription:
+    "Changes your roles (you can be a `student`, a `helper` or `both`)",
+};
