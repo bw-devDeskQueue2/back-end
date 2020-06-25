@@ -47,10 +47,9 @@ router.post(
     if (!trigger_id) {
       return res.status(400).json({ message: "Malformed request" });
     }
-    console.log(actionDescriptions);
     const helpMessage =
       "Available actions: " +
-      "`/ddq help`" +
+      "`/ddq help`," +
       Object.keys(modals).map(
         name => `\n \`/ddq ${name}\`: ${actionDescriptions[name]}`
       );

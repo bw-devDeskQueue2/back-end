@@ -21,7 +21,7 @@ fs.readdir(directory, (err, files) => {
       console.log("No actionName for", file);
       return;
     }
-    actionDescriptions[name] = description;
+    actionDescriptions[actionName] = description;
     modals[actionName] = modal;
     submissionHandlers[actionName] = handleSubmission;
   });
