@@ -90,7 +90,10 @@ async function validateUserRoles(req, res, next) {
   if (!roles) {
     return res
       .status(400)
-      .json({ message: "New users must include a 'roles' array." });
+      .json({
+        message:
+          "Your request body must include a 'roles' key - either an array of roles or a string containing one role.",
+      });
   }
   if (!Array.isArray(roles)) {
     roles = [roles];

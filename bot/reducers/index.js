@@ -10,9 +10,7 @@ fs.readdir(directory, (err, files) => {
   }
   files.forEach(file => {
     const name = file.toString().split(".")[0];
-    const { modal, handleSubmission } = require(directory +
-      "/" +
-      file.toString());
+    const { modal, handleSubmission } = require(`${directory}/${file}`);
     modals[name] = modal;
     submissionHandlers[name] = handleSubmission;
   });

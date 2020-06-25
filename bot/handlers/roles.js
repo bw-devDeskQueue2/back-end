@@ -121,11 +121,11 @@ async function handleSubmission(req, res, next, submission) {
     .send({ roles })
     .then(r => (rolesChangeResult = r.body))
     .catch(e => (rolesChangeResult = e.response.body));
-  console.log(rolesChangeResult);
+  //console.log(rolesChangeResult);
 
   const responseMessage = rolesChangeResult.message
     ? `An error ocurred: ${rolesChangeResult.message}`
-    : `Success! your roles are now \`${rolesChangeResult.roles}\``;
+    : `Roles successfully changed: they are now \`${rolesChangeResult.roles}\``;
 
   request
     .post("https://slack.com/api/conversations.open")
