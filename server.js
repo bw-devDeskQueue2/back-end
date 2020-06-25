@@ -1,4 +1,4 @@
-const express = require("express");
+const server = require("express")();
 const cors = require("cors");
 const helmet = require("helmet");
 const bodyParser = require("body-parser");
@@ -11,8 +11,6 @@ const tagsRouter = require("./tags/tagsRouter");
 const botRouter = require("./bot/botRouter");
 const queueRouter = require("./queue/queueRouter");
 const { custom404, errorHandling } = require("./config/errors");
-
-const server = express();
 
 server.use(helmet());
 server.use(cors());

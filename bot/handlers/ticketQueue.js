@@ -102,5 +102,6 @@ module.exports = {
   modal,
   //handleSubmission,
   handleBlockAction,
+  actionName,
   description: "View the open ticket queue and assign tickets to yourself.",
 };

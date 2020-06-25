@@ -5,7 +5,6 @@ const tsscmp = require("tsscmp");
 const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
-const request = require("superagent");
 const {
   modals,
   submissionHandlers,
