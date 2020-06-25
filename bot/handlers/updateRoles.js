@@ -52,9 +52,9 @@ const modal = async () => ({
         initial_option: {
           text: {
             type: "plain_text",
-            text: "Student",
+            text: "Both student and helper",
           },
-          value: "student",
+          value: "both",
         },
         options: [
           {
