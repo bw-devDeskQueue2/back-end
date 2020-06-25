@@ -12,7 +12,7 @@ const {
   blockActionHandlers,
   actionDescriptions,
 } = require("./reducers/");
-const { sendModal } = require("./utils");
+const { openView } = require("./utils");
 
 //let activeViews = [];
 

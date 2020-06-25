@@ -1,19 +1,10 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
 const SlackUsers = require("../slackUserModel");
-const Users = require("../../user/userModel");
-const { generateToken } = require("../../auth/authRouter");
+const { getAdminToken, getUserToken } = require("./tokenUtils");
 const { openView, sendDM } = require("./slackUtils");
 
 const baseURL = req => `${req.protocol}://${req.get("host")}/api`;
-
-function getAdminToken() {
-  return Users.getUser({ username: "test_admin" }).then(generateToken);
-}
-
-function getUserToken(id) {
-  return Users.getUser({ id }).then(generateToken);
-}
 
 async function createUserIfNotExists(slackUser, req) {
   try {
