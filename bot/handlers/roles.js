@@ -1,6 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const { getUserToken, createUserIfNotExists, baseURL } = require("../utils");
+const { getAdminToken, createUserIfNotExists, baseURL } = require("../utils");
 
 const modal = {
   type: "modal",
@@ -107,14 +107,17 @@ async function handleSubmission(req, res, next, submission) {
   if (roles.includes("both")) {
     roles = ["student", "helper"];
   }
+  //console.log("Submission", userID, team_id, roles);
+  const adminToken = await getAdminToken(req);
+  //console.log("admin token", adminToken);
   const slackUser = { slack_id: userID, team_id, roles };
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
-  const userToken = await getUserToken(userInDatabase);
-  
+  //console.log("user in database", userInDatabase);
+  //console.log("database id", userInDatabase.user_id);
   let rolesChangeResult;
   await request
-    .patch("${baseURL(req)}/user/roles")
-    .set("Authorization", `Bearer ${userToken}`)
+    .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
+    .set("Authorization", `Bearer ${adminToken}`)
     .send({ roles })
     .then(r => (rolesChangeResult = r.body))
     .catch(e => (rolesChangeResult = e.response.body));
