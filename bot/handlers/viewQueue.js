@@ -31,39 +31,31 @@ const modal = async req => {
               text: "The queue is currently empty",
             },
           }
-        : ticketQueue.map(
-            ({
-              id,
-              subject,
-              //tags,
-              messages: {
-                [0]: { body },
-              },
-            }) => ({
-              type: "section",
-              block_id: `ticket_${id}`,
+        : ticketQueue.map(({ id, subject, //tags,
+            messages: { [0]: { body } } }) => ({
+            type: "section",
+            block_id: `ticket_${id}`,
+            text: {
+              type: "mrkdwn",
+              text: `*${subject}*\n${body}`,
+            },
+            // fields: [
+            //   { type: "plain_text", text: body },
+            //   {
+            //     type: "plain_text",
+            //     text: tags.reduce((list, next) => list + "\n" + next, " "),
+            //   },
+            // ],
+            accessory: {
+              type: "button",
+              action_id: `ticket_${id}_assign`,
               text: {
-                type: "mrkdwn",
-                text: `*${subject}*`,
+                type: "plain_text",
+                text: "Help Student",
               },
-              fields: [
-                { type: "plain_text", text: body },
-                // {
-                //   type: "plain_text",
-                //   text: tags.reduce((list, next) => list + "\n" + next, " "),
-                // },
-              ],
-              accessory: {
-                type: "button",
-                action_id: `ticket_${id}_assign`,
-                text: {
-                  type: "plain_text",
-                  text: "Help Student",
-                },
-                value: `${id}`,
-              },
-            })
-          ),
+              value: `${id}`,
+            },
+          })),
 
     submit: {
       type: "plain_text",
