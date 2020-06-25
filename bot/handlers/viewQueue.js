@@ -23,16 +23,25 @@ const modal = async req => {
     },
     blocks: ticketQueue.map(({ id, messages: { [0]: { body } } }) => ({
       type: "section",
-      block_id: `ticket_${id}_queue`,
+      block_id: `ticket_${id}`,
       text: {
         type: "mrkdwn",
         text: body,
+      },
+      accessory: {
+        type: "button",
+        action_id: `ticket_${id}_assign`,
+        text: {
+          type: "plain_text",
+          text: "Help Student",
+        },
+        value: id,
       },
     })),
 
     submit: {
       type: "plain_text",
-      text: "Close Queue",
+      text: "Done",
     },
     //private_metadata: user,
     callback_id: "queue",
