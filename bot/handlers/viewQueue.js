@@ -8,7 +8,7 @@ const {
   getAdminToken,
 } = require("../utils");
 
-const modal = async () => {
+const modal = async (req) => {
   const ticketQueue = await request
     .get(`${baseURL(req)}/tickets/queue`)
     .set("Authorization", `Bearer ${getAdminToken}`)
