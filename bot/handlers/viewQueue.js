@@ -21,23 +21,41 @@ const modal = async req => {
       type: "plain_text",
       text: "Ticket Queue",
     },
-    blocks: ticketQueue.map(({ id, messages: { [0]: { body } } }) => ({
-      type: "section",
-      block_id: `ticket_${id}`,
-      text: {
-        type: "mrkdwn",
-        text: body,
-      },
-      accessory: {
-        type: "button",
-        action_id: `ticket_${id}_assign`,
-        text: {
-          type: "plain_text",
-          text: "Help Student",
+    blocks: ticketQueue.map(
+      ({
+        id,
+        subject,
+        tags,
+        messages: {
+          [0]: { body },
         },
-        value: id,
-      },
-    })),
+      }) => ({
+        type: "section",
+        block_id: `ticket_${id}`,
+        text: {
+          type: "mrkdwn",
+          text: `*${subject}*`,
+        },
+        fields: [
+          { type: "mrkdwn", text: "*Details*" },
+          { type: "mrkdwn", text: "*Tags" },
+          { type: "plain_text", text: body },
+          {
+            type: "plain_text",
+            text: tags.reduce((list, next) => list + "\n" + next, ""),
+          },
+        ],
+        accessory: {
+          type: "button",
+          action_id: `ticket_${id}_assign`,
+          text: {
+            type: "plain_text",
+            text: "Help Student",
+          },
+          value: `${id}`,
+        },
+      })
+    ),
 
     submit: {
       type: "plain_text",
