@@ -51,7 +51,7 @@ const modal = {
     text: "Submit Ticket",
   },
   //private_metadata: user,
-  callback_id: "roles",
+  callback_id: "new",
 };
 
 async function handleSubmission(req, res, next, submission) {
