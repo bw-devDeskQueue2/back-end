@@ -31,8 +31,7 @@ const modal = async req => {
               text: "The queue is currently empty",
             },
           }
-        : ticketQueue.map(({ id, subject, //tags,
-            messages: { [0]: { body } } }) => ({
+        : ticketQueue.map(({ id, subject, messages: { [0]: { body } } }) => ({ //tags,
             type: "section",
             block_id: `ticket_${id}`,
             text: {
@@ -53,6 +52,7 @@ const modal = async req => {
                 type: "plain_text",
                 text: "Help Student",
               },
+              style: "danger",
               value: `${id}`,
             },
           })),
@@ -79,9 +79,14 @@ async function handleSubmission(req, res, next, submission) {
     next(e);
   }
 }
+
+async function handleBlockAction(req, res, next, payload) {
+  console.log("queue block action", payload);
+}
 module.exports = {
   modal,
   handleSubmission,
+  handleBlockAction,
   actionName: "queue",
   description: "View the open ticket queue and assign tickets to yourself.",
 };

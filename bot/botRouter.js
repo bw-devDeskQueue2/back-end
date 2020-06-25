@@ -9,6 +9,7 @@ const request = require("superagent");
 const {
   modals,
   submissionHandlers,
+  blockActionHandlers,
   actionDescriptions,
 } = require("./reducers/");
 
@@ -89,8 +90,12 @@ router.post("/interactive", (req, res, next) => {
       const handler = payload.view.callback_id;
       submissionHandlers[handler] &&
         submissionHandlers[handler](req, res, next, payload);
+    } else if (payload.type === "block_actions") {
+      const handler = payload.view.callback_id;
+      blockActionHandlers[handler] &&
+        blockActionHandlers[handler](req, res, next, payload);
     } else {
-      console.log("payload type", payload.type);
+      console.log("unhandled payload of type", payload.type);
     }
   } catch (e) {
     next(e);

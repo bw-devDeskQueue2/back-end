@@ -3,6 +3,7 @@ const fs = require("fs");
 let modals = {};
 let submissionHandlers = {};
 let actionDescriptions = {};
+let blockActionHandlers = {};
 
 const directory = path.join(__dirname, "..", "handlers");
 fs.readdir(directory, (err, files) => {
@@ -14,6 +15,7 @@ fs.readdir(directory, (err, files) => {
     const {
       modal,
       handleSubmission,
+      handleBlockAction,
       actionName,
       description,
     } = require(`${directory}/${file}`);
@@ -24,7 +26,13 @@ fs.readdir(directory, (err, files) => {
     actionDescriptions[actionName] = description;
     modals[actionName] = modal;
     submissionHandlers[actionName] = handleSubmission;
+    blockActionHandlers[actionName] = handleBlockAction;
   });
 });
 
-module.exports = { modals, submissionHandlers, actionDescriptions };
+module.exports = {
+  modals,
+  submissionHandlers,
+  actionDescriptions,
+  blockActionHandlers,
+};
