@@ -11,10 +11,9 @@ const {
   submissionHandlers,
   blockActionHandlers,
   actionDescriptions,
-} = require("./reducers/");
+} = require("./reducers");
 const { openView } = require("./utils/slackUtils");
 
-//let activeViews = [];
 
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
