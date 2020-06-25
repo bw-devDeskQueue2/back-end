@@ -7,6 +7,8 @@ const {
   sendDM,
 } = require("../utils");
 
+const actionName = "new";
+
 const modal = async () => ({
   type: "modal",
   title: {
@@ -57,7 +59,7 @@ const modal = async () => ({
     text: "Submit Ticket",
   },
   //private_metadata: user,
-  callback_id: "new",
+  callback_id: actionName,
 });
 
 async function handleSubmission(req, res, next, submission) {
@@ -104,6 +106,6 @@ async function handleSubmission(req, res, next, submission) {
 module.exports = {
   modal,
   handleSubmission,
-  actionName: "new",
+  actionName,
   description: "Create a new help ticket",
 };

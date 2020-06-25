@@ -8,6 +8,8 @@ const {
   getAdminToken,
 } = require("../utils");
 
+const actionName = "queue";
+
 const modal = async req => {
   const ticketQueue = await request
     .get(`${baseURL(req)}/tickets/queue`)
@@ -63,7 +65,7 @@ const modal = async req => {
       text: "Done",
     },
     //private_metadata: user,
-    callback_id: "queue",
+    callback_id: actionName,
   };
 };
 
@@ -100,6 +102,5 @@ module.exports = {
   modal,
   //handleSubmission,
   handleBlockAction,
-  actionName: "queue",
   description: "View the open ticket queue and assign tickets to yourself.",
 };

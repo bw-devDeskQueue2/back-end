@@ -7,6 +7,8 @@ const {
   sendDM,
 } = require("../utils");
 
+const actionName = "roles";
+
 const modal = async () => ({
   type: "modal",
   title: {
@@ -22,23 +24,6 @@ const modal = async () => ({
       },
       block_id: "info",
     },
-    // {
-    //   type: "input",
-    //   label: {
-    //     type: "plain_text",
-    //     text: "Username",
-    //   },
-    //   element: {
-    //     type: "plain_text_input",
-    //     action_id: "input_username",
-    //     placeholder: {
-    //       type: "plain_text",
-    //       text: "Enter your desired username",
-    //     },
-    //     multiline: false,
-    //   },
-    //   optional: false,
-    // },
     {
       type: "input",
       block_id: "role",
@@ -91,7 +76,7 @@ const modal = async () => ({
     text: "Select Role(s)",
   },
   //private_metadata: user,
-  callback_id: "roles",
+  callback_id: actionName,
 });
 
 async function handleSubmission(req, res, next, submission) {
@@ -140,7 +125,7 @@ async function handleSubmission(req, res, next, submission) {
 module.exports = {
   modal,
   handleSubmission,
-  actionName: "roles",
+  actionName,
   description:
     "Change your roles (you can be a `student`, a `helper` or `both`)",
 };
