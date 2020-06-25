@@ -11,7 +11,7 @@ const {
 const modal = async (req) => {
   const ticketQueue = await request
     .get(`${baseURL(req)}/tickets/queue`)
-    .set("Authorization", `Bearer ${getAdminToken}`)
+    .set("Authorization", `Bearer ${getAdminToken()}`)
     .then(r => r.body)
     .catch(console.log);
   console.log("queue data", ticketQueue);
