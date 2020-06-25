@@ -74,7 +74,7 @@ async function handleSubmission(req, res, next, submission) {
   //console.log(slack_id, team_id, subject, body);
   const slackUser = { slack_id, team_id };
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
-  const userToken = getUserToken(userInDatabase.user_id);
+  const userToken = await getUserToken(userInDatabase.user_id);
   console.log("user token", userToken);
 }
 
