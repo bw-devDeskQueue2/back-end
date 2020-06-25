@@ -6,74 +6,35 @@ const modal = {
   type: "modal",
   title: {
     type: "plain_text",
-    text: "Roles",
+    text: "New Ticket",
   },
   blocks: [
     {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: "Your username and password are tied to your slack account.",
-      },
-      block_id: "info",
-    },
-    // {
-    //   type: "input",
-    //   label: {
-    //     type: "plain_text",
-    //     text: "Username",
-    //   },
-    //   element: {
-    //     type: "plain_text_input",
-    //     action_id: "input_username",
-    //     placeholder: {
-    //       type: "plain_text",
-    //       text: "Enter your desired username",
-    //     },
-    //     multiline: false,
-    //   },
-    //   optional: false,
-    // },
-    {
       type: "input",
-      block_id: "role",
+      block_id: "ticket_subject",
       label: {
         type: "plain_text",
-        text: "Select your role(s)",
+        text: "Subject",
       },
       element: {
-        type: "static_select",
-        action_id: "role_select",
-        initial_option: {
-          text: {
-            type: "plain_text",
-            text: "Student",
-          },
-          value: "student",
+        type: "plain_text_input",
+        action_id: "task-title-value",
+        placeholder: {
+          type: "plain_text",
+          text: "Briefly describe your issue",
         },
-        options: [
-          {
-            text: {
-              type: "plain_text",
-              text: "Student",
-            },
-            value: "student",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "Helper",
-            },
-            value: "helper",
-          },
-          {
-            text: {
-              type: "plain_text",
-              text: "Both student and helper",
-            },
-            value: "both",
-          },
-        ],
+      },
+    },
+    {
+      type: "input",
+      block_id: "Ticket_body",
+      label: {
+        type: "plain_text",
+        text: "Ticket description",
+      },
+      element: {
+        type: "plain_text_input",
+        multiline: true,
       },
     },
   ],
@@ -83,19 +44,33 @@ const modal = {
   },
   submit: {
     type: "plain_text",
-    text: "Select Role(s)",
+    text: "Submit Ticket",
   },
   //private_metadata: user,
   callback_id: "roles",
 };
 
 async function handleSubmission(req, res, next, submission) {
-  console.log(submission);
+  let {
+    user: { id: userID, team_id },
+    view: {
+      state: {
+        values: {
+          role: {
+            role_select: {
+              selected_option: { value: formData },
+            },
+          },
+        },
+      },
+    },
+  } = submission;
+  console.log(formData);
 }
 
 module.exports = {
   modal,
   handleSubmission,
   actionName: "new",
-  description: "Creates a new ticket",
+  description: "Create a new help ticket",
 };

@@ -48,8 +48,8 @@ router.post(
       return res.status(400).json({ message: "Malformed request" });
     }
     const helpMessage =
-      "Available actions: " +
-      "`/ddq help`," +
+      "**DevDesk Queue Actions:**\n" +
+      "`/ddq help`: Shows this help popup," +
       Object.keys(modals).map(
         name => `\n \`/ddq ${name}\`: ${actionDescriptions[name]}`
       );

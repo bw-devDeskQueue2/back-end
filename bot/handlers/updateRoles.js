@@ -163,5 +163,5 @@ module.exports = {
   handleSubmission,
   actionName: "roles",
   description:
-    "Changes your roles (you can be a `student`, a `helper` or `both`)",
+    "Change your roles (you can be a `student`, a `helper` or `both`)",
 };
