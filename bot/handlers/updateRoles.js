@@ -162,6 +162,6 @@ module.exports = {
   modal,
   handleSubmission,
   actionName: "roles",
-  actionDescription:
+  description:
     "Changes your roles (you can be a `student`, a `helper` or `both`)",
 };

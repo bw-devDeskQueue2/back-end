@@ -97,5 +97,5 @@ module.exports = {
   modal,
   handleSubmission,
   actionName: "new",
-  actionDescription: "Creates a new ticket",
+  description: "Creates a new ticket",
 };

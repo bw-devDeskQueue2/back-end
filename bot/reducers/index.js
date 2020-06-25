@@ -15,13 +15,13 @@ fs.readdir(directory, (err, files) => {
       modal,
       handleSubmission,
       actionName,
-      actionDescription,
+      description,
     } = require(`${directory}/${file}`);
     if (!actionName) {
       console.log("No actionName for", file);
       return;
     }
-    actionDescriptions[name] = actionDescription;
+    actionDescriptions[name] = description;
     modals[actionName] = modal;
     submissionHandlers[actionName] = handleSubmission;
   });
