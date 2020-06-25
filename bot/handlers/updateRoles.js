@@ -1,6 +1,11 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const { getAdminToken, createUserIfNotExists, baseURL } = require("../utils");
+const {
+  getAdminToken,
+  createUserIfNotExists,
+  baseURL,
+  sendDM,
+} = require("../utils");
 
 const modal = {
   type: "modal",
@@ -111,7 +116,7 @@ async function handleSubmission(req, res, next, submission) {
   const adminToken = await getAdminToken(req);
   //console.log("admin token", adminToken);
   const slackUser = { slack_id: userID, team_id, roles };
-  const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
+  const userInDatabase = await createUserIfNotExists(slackUser, req);
   //console.log("user in database", userInDatabase);
   //console.log("database id", userInDatabase.user_id);
 
@@ -121,41 +126,15 @@ async function handleSubmission(req, res, next, submission) {
     .set("Authorization", `Bearer ${adminToken}`)
     .send({ roles })
     .then(r => (rolesChangeResult = r.body))
-    .catch(e => (rolesChangeResult = e.response.body));
+    .catch(e => {
+      rolesChangeResult = e.response ? e.response.body : e.message;
+    });
   //console.log(rolesChangeResult);
 
   const responseMessage = rolesChangeResult.message
     ? `An error ocurred: ${rolesChangeResult.message}`
     : `Role(s) successfully changed: you are now \`${rolesChangeResult.roles}\``;
-
-  request
-    .post("https://slack.com/api/conversations.open")
-    .send({ users: userID })
-    .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-    .then(({ body }) => {
-      if (!body.ok) {
-        return console.log("opening error", body);
-      }
-      const {
-        channel: { id: channelID },
-      } = body;
-      return request
-        .post("https://slack.com/api/chat.postMessage")
-        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
-        .send({
-          username: config.BOT_USERNAME,
-          channel: channelID,
-          token: config.BOT_ACCESS_TOKEN,
-          text: responseMessage,
-        })
-        .then(({ body }) => {
-          if (!body.ok) {
-            console.log("sending error", body);
-          }
-          //console.log("sent", body);
-        });
-    })
-    .catch(console.error);
+  await sendDM(userID, responseMessage);
 }
 
 module.exports = {

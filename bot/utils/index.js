@@ -14,7 +14,7 @@ function getUserToken(id) {
   return Users.getUser({ id }).then(generateToken);
 }
 
-async function createUserIfNotExists(slackUser, req, res, next) {
+async function createUserIfNotExists(slackUser, req) {
   try {
     const { slack_id, team_id, roles = ["student", "helper"] } = slackUser;
     const existingUser = await SlackUsers.getUser({ slack_id, team_id });
@@ -48,9 +48,41 @@ async function createUserIfNotExists(slackUser, req, res, next) {
   }
 }
 
+function sendDM(users, message) {
+  return request
+    .post("https://slack.com/api/conversations.open")
+    .send({ users })
+    .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+    .then(({ body }) => {
+      if (!body.ok) {
+        return console.log("opening error", body);
+      }
+      const {
+        channel: { id: channelID },
+      } = body;
+      return request
+        .post("https://slack.com/api/chat.postMessage")
+        .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
+        .send({
+          username: config.BOT_USERNAME,
+          channel: channelID,
+          token: config.BOT_ACCESS_TOKEN,
+          text: message,
+        })
+        .then(({ body }) => {
+          if (!body.ok) {
+            console.log("sending error", body);
+          }
+          //console.log("sent", body);
+        });
+    })
+    .catch(console.error);
+}
+
 module.exports = {
   baseURL,
   getAdminToken,
   getUserToken,
   createUserIfNotExists,
+  sendDM,
 };
