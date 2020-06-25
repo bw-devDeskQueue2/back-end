@@ -7,7 +7,7 @@ const {
   sendDM,
 } = require("../utils");
 
-const modal = () => ({
+const modal = async () => ({
   type: "modal",
   title: {
     type: "plain_text",

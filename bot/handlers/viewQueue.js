@@ -14,7 +14,7 @@ const modal = async req => {
     .set("Authorization", `Bearer ${await getAdminToken()}`)
     .then(r => r.body)
     .catch(console.log);
-  console.log("queue data", ticketQueue);
+  //console.log("queue data", ticketQueue);
   return {
     type: "modal",
     title: {
