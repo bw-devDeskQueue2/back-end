@@ -6,7 +6,7 @@ const { decode } = require("querystring");
 const bodyParser = require("body-parser");
 const { catchAsync } = require("../config/errors");
 const request = require("superagent");
-const { modals, submissionHandlers } = require("./reducers/");
+const { modals, submissionHandlers, actionDescriptions } = require("./reducers/");
 
 //let activeViews = [];
 
@@ -43,10 +43,11 @@ router.post(
     if (!trigger_id) {
       return res.status(400).json({ message: "Malformed request" });
     }
+    Object.keys(modals).forEach(key, idx=>console.log(`[${idx}]: ${key}`))
     const helpMessage = `Available actions: /ddq help${Object.keys(modals).map(
       name => `, /ddq ${name}`
     )}`;
-    const action = text ? text.split(" ")[0] : "new";
+    const action = text ? text.split(" ")[0] : "help";
     const view = modals[action];
     if (action === "help" || !view) {
       return res.status(200).json({

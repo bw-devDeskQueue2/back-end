@@ -10,7 +10,15 @@ fs.readdir(directory, (err, files) => {
   }
   files.forEach(file => {
     const name = file.toString().split(".")[0];
-    const { modal, handleSubmission, actionName } = require(`${directory}/${file}`);
+    const {
+      modal,
+      handleSubmission,
+      actionName,
+    } = require(`${directory}/${file}`);
+    if (!actionName) {
+      console.log("No actionName for", file);
+      return;
+    }
     modals[actionName] = modal;
     submissionHandlers[actionName] = handleSubmission;
   });
