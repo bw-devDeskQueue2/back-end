@@ -6,11 +6,11 @@ function getUser(query) {
     .then(results => (results.length === 0 ? null : results[0]));
 }
 
-function addUser({ slack_id, team_id, user_id }) {
-  //console.log("inside addUser", slack_id, team_id, user_id);
+//user: { slack_id, team_id, user_id }
+function addUser(user) {
   return knex("slack_users")
-    .insert({ slack_id, team_id, user_id })
-    .then(() => getUser({ slack_id, team_id, user_id }));
+    .insert(user)
+    .then(() => getUser(user));
 }
 
 module.exports = { getUser, addUser };

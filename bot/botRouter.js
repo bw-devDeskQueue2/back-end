@@ -13,7 +13,6 @@ const {
 } = require("./reducers");
 const { openView } = require("./utils/slackUtils");
 
-
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
 //Then, convert the raw text body into a more useful form
@@ -31,14 +30,13 @@ router.use(
   }
 );
 
+//Respond to challenges used by slack to verify domain ownership
 router.use(function respondToChallenge(req, res, next) {
   const { challenge } = req.body;
-  //debugging
-  //console.log("body", req.body);
-  //console.log("challenge", challenge);
   challenge ? res.status(200).json({ challenge }) : next();
 });
 
+//This endpoint responds to the slash command '/ddq'
 router.post(
   "/ddq",
   catchAsync(async (req, res) => {
@@ -63,19 +61,10 @@ router.post(
     }
     res.status(200).end();
     await openView(trigger_id, view);
-    // await request
-    //   .post("https://slack.com/api/views.open")
-    //   .send({ trigger_id, view })
-    //   .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
-    //   .then(({ body }) => {
-    //     if (!body.ok) {
-    //       console.log("Error opening view", body);
-    //     }
-    //     //activeViews.push(body);
-    //   });
   })
 );
 
+//This endpoint responds to user interaction with modal views in slack
 router.post("/interactive", (req, res, next) => {
   let { payload } = req.body;
   if (!payload) {
@@ -103,7 +92,10 @@ router.post("/interactive", (req, res, next) => {
   res.status(200).end();
 });
 
+//This endpoint responds to bot events:
+//DMs to the bot and @mentions
 router.post("/events", (req, res) => {
+  //TODO: Make this endpoint do something
   //console.log(req.body);
   res.status(200).end();
 });
