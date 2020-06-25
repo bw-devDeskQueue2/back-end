@@ -10,11 +10,8 @@ function getAdminToken() {
   return Users.getUser({ username: "test_admin" }).then(generateToken);
 }
 
-function getUserToken(slackUser) {
-  const { slack_id, team_id } = slackUser;
-  return Users.getUser({ username: `${team_id}:${slack_id}` }).then(
-    generateToken
-  );
+function getUserToken(id) {
+  return Users.getUser({ id }).then(generateToken);
 }
 
 async function createUserIfNotExists(slackUser, req, res, next) {
@@ -47,7 +44,7 @@ async function createUserIfNotExists(slackUser, req, res, next) {
     }
   } catch (e) {
     console.error(e);
-    next(e);
+    //next(e);
   }
 }
 
