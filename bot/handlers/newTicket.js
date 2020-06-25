@@ -30,23 +30,6 @@ const modal = {
       block_id: "ticket_body",
       label: {
         type: "plain_text",
-        text: "body",
-      },
-      element: {
-        type: "plain_text_input",
-        action_id: "subject",
-        placeholder: {
-          type: "plain_text",
-          text: "Summarize your issue",
-        },
-      },
-    },
-
-    {
-      type: "input",
-      block_id: "ticket_body",
-      label: {
-        type: "plain_text",
         text: "Ticket description",
       },
       element: {
