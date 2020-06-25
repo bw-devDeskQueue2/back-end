@@ -27,10 +27,10 @@ const modal = {
     },
     {
       type: "input",
-      block_id: "ticket_subject",
+      block_id: "ticket_body",
       label: {
         type: "plain_text",
-        text: "Subject",
+        text: "body",
       },
       element: {
         type: "plain_text_input",
