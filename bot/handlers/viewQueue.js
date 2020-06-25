@@ -66,19 +66,19 @@ const modal = async req => {
   };
 };
 
-async function handleSubmission(req, res, next, submission) {
-  try {
-    let {
-      user: { id: slack_id, team_id },
-      view: {
-        state: { values: formData },
-      },
-    } = submission;
-    console.log("queue handler", slack_id, team_id, formData);
-  } catch (e) {
-    next(e);
-  }
-}
+// async function handleSubmission(req, res, next, submission) {
+//   try {
+//     let {
+//       user: { id: slack_id, team_id },
+//       view: {
+//         state: { values: formData },
+//       },
+//     } = submission;
+//     console.log("queue handler", slack_id, team_id, formData);
+//   } catch (e) {
+//     next(e);
+//   }
+// }
 
 async function handleBlockAction(req, res, next, payload) {
   console.log("queue block action", payload);
