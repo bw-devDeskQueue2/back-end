@@ -11,5 +11,5 @@ module.exports = {
   OAUTH_ACCESS_TOKEN: process.env.OAUTH_ACCESS_TOKEN || "no fallback",
   BOT_ACCESS_TOKEN: process.env.BOT_ACCESS_TOKEN || "no fallback",
   GENERIC_PASSWORD: process.env.GENERIC_PASSWORD || "password",
-  BOT_USERNAME: "DevDesk Queue Bot",
+  BOT_USERNAME: "DDQ Bot",
 };

@@ -1,15 +1,20 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
 const SlackUsers = require("../slackUserModel");
+const Users = require("../../user/userModel");
+const { generateToken } = require("../../auth/authRouter");
 
 const baseURL = req => `${req.protocol}://${req.get("host")}/api`;
 
-function getAdminToken(req) {
-  return request
-    .post(`${baseURL(req)}/user/login`)
-    .send({ username: "test_admin", password: config.ADMIN_PASS })
-    .then(r => r.body.token)
-    .catch(console.error);
+function getAdminToken() {
+  return Users.getUser({ username: "test_admin" }).then(generateToken);
+}
+
+function getUserToken(slackUser) {
+  const { slack_id, team_id } = slackUser;
+  return Users.getUser({ username: `${team_id}:${slack_id}` }).then(
+    generateToken
+  );
 }
 
 async function createUserIfNotExists(slackUser, req, res, next) {
@@ -46,4 +51,9 @@ async function createUserIfNotExists(slackUser, req, res, next) {
   }
 }
 
-module.exports = { baseURL, getAdminToken, createUserIfNotExists };
+module.exports = {
+  baseURL,
+  getAdminToken,
+  getUserToken,
+  createUserIfNotExists,
+};
