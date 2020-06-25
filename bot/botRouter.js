@@ -87,7 +87,10 @@ router.post("/interactive", (req, res, next) => {
   try {
     if (payload.type === "view_submission") {
       const handler = payload.view.callback_id;
-      submissionHandlers[handler](req, res, next, payload);
+      submissionHandlers[handler] &&
+        submissionHandlers[handler](req, res, next, payload);
+    } else {
+      console.log("payload type", payload.type);
     }
   } catch (e) {
     next(e);

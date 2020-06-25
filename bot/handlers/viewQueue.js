@@ -21,41 +21,49 @@ const modal = async req => {
       type: "plain_text",
       text: "Ticket Queue",
     },
-    blocks: ticketQueue.map(
-      ({
-        id,
-        subject,
-        tags,
-        messages: {
-          [0]: { body },
-        },
-      }) => ({
-        type: "section",
-        block_id: `ticket_${id}`,
-        text: {
-          type: "mrkdwn",
-          text: `*${subject}*`,
-        },
-        fields: [
-          { type: "mrkdwn", text: "*Details*" },
-          { type: "mrkdwn", text: "*Tags" },
-          { type: "plain_text", text: body },
-          {
-            type: "plain_text",
-            text: tags.reduce((list, next) => list + "\n" + next, " "),
-          },
-        ],
-        accessory: {
-          type: "button",
-          action_id: `ticket_${id}_assign`,
-          text: {
-            type: "plain_text",
-            text: "Help Student",
-          },
-          value: `${id}`,
-        },
-      })
-    ),
+    blocks:
+      ticketQueue.length === 0
+        ? {
+            type: "section",
+            block_id: "empty_block",
+            text: {
+              type: "mrkdwn",
+              text: "The queue is currently empty",
+            },
+          }
+        : ticketQueue.map(
+            ({
+              id,
+              subject,
+              //tags,
+              messages: {
+                [0]: { body },
+              },
+            }) => ({
+              type: "section",
+              block_id: `ticket_${id}`,
+              text: {
+                type: "mrkdwn",
+                text: `*${subject}*`,
+              },
+              fields: [
+                { type: "plain_text", text: body },
+                // {
+                //   type: "plain_text",
+                //   text: tags.reduce((list, next) => list + "\n" + next, " "),
+                // },
+              ],
+              accessory: {
+                type: "button",
+                action_id: `ticket_${id}_assign`,
+                text: {
+                  type: "plain_text",
+                  text: "Help Student",
+                },
+                value: `${id}`,
+              },
+            })
+          ),
 
     submit: {
       type: "plain_text",
