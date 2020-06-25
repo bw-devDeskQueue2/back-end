@@ -54,7 +54,7 @@ router.post(
         name => `\n \`/ddq ${name}\`: ${actionDescriptions[name]}`
       );
     const action = text ? text.split(" ")[0] : "help";
-    const view = modals[action];
+    const view = modals[action]();
     if (action === "help" || !view) {
       return res.status(200).json({
         response_type: "ephemeral",

@@ -7,7 +7,7 @@ const {
   sendDM,
 } = require("../utils");
 
-const modal = {
+const modal = () => ({
   type: "modal",
   title: {
     type: "plain_text",
@@ -58,7 +58,7 @@ const modal = {
   },
   //private_metadata: user,
   callback_id: "new",
-};
+});
 
 async function handleSubmission(req, res, next, submission) {
   try {
