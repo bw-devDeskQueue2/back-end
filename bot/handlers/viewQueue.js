@@ -85,7 +85,7 @@ async function handleBlockAction(req, res, next, payload) {
 }
 module.exports = {
   modal,
-  handleSubmission,
+  //handleSubmission,
   handleBlockAction,
   actionName: "queue",
   description: "View the open ticket queue and assign tickets to yourself.",
