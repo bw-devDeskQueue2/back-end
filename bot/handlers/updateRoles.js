@@ -114,7 +114,7 @@ async function handleSubmission(req, res, next, submission) {
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
   //console.log("user in database", userInDatabase);
   //console.log("database id", userInDatabase.user_id);
-  
+
   let rolesChangeResult;
   await request
     .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
@@ -158,4 +158,4 @@ async function handleSubmission(req, res, next, submission) {
     .catch(console.error);
 }
 
-module.exports = { modal, handleSubmission };
+module.exports = { modal, handleSubmission, actionName: "roles" };
