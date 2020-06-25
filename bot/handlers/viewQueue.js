@@ -31,7 +31,8 @@ const modal = async req => {
               text: "The queue is currently empty",
             },
           }
-        : ticketQueue.map(({ id, subject, messages: { [0]: { body } } }) => ({ //tags,
+        : ticketQueue.map(({ id, subject, messages: { [0]: { body } } }) => ({
+            //tags,
             type: "section",
             block_id: `ticket_${id}`,
             text: {
@@ -81,7 +82,17 @@ const modal = async req => {
 // }
 
 async function handleBlockAction(req, res, next, payload) {
-  console.log("queue block action", payload);
+  try {
+    let {
+      user: { id: slack_id, team_id },
+      actions: {
+        [0]: { value: ticket_id },
+      },
+    } = payload;
+    console.log("queue block action", slack_id, team_id, ticket_id);
+  } catch (e) {
+    next(e);
+  }
 }
 module.exports = {
   modal,
