@@ -42,7 +42,7 @@ const modal = async req => {
           { type: "plain_text", text: body },
           {
             type: "plain_text",
-            text: tags.reduce((list, next) => list + "\n" + next, ""),
+            text: tags.reduce((list, next) => list + "\n" + next, " "),
           },
         ],
         accessory: {
