@@ -36,7 +36,7 @@ async function createUserIfNotExists(slackUser, req, res, next) {
     //Successful creation returns an object with a user key
     //Errors return an object with a message key
     if (!newUser.user) {
-      next(newUser.message);
+      //console.error(newUser.message);
       return null;
     } else {
       return SlackUsers.addUser({
