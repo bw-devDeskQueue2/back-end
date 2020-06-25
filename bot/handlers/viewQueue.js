@@ -5,60 +5,31 @@ const {
   createUserIfNotExists,
   baseURL,
   sendDM,
+  getAdminToken,
 } = require("../utils");
 
-const modal = () => ({
-  type: "modal",
-  title: {
-    type: "plain_text",
-    text: "New Ticket",
-  },
-  blocks: [
-    {
-      type: "input",
-      block_id: "ticket_subject",
-      label: {
-        type: "plain_text",
-        text: "Subject",
-      },
-      element: {
-        type: "plain_text_input",
-        action_id: "subject",
-        placeholder: {
-          type: "plain_text",
-          text: "Summarize your issue",
-        },
-      },
+const modal = async () => {
+  const ticketQueue = await request
+    .get(`${baseURL(req)}/tickets/queue`)
+    .set("Authorization", `Bearer ${getAdminToken}`)
+    .then(r => r.body)
+    .catch(console.log);
+  console.log("queue data", ticketQueue);
+  return {
+    type: "modal",
+    title: {
+      type: "plain_text",
+      text: "Ticket Queue",
     },
-    {
-      type: "input",
-      block_id: "ticket_body",
-      label: {
-        type: "plain_text",
-        text: "Ticket description",
-      },
-      element: {
-        action_id: "body",
-        type: "plain_text_input",
-        multiline: true,
-        placeholder: {
-          type: "plain_text",
-          text: "Describe your issue in more depth",
-        },
-      },
+    blocks: [],
+    submit: {
+      type: "plain_text",
+      text: "Close Queue",
     },
-  ],
-  close: {
-    type: "plain_text",
-    text: "Cancel",
-  },
-  submit: {
-    type: "plain_text",
-    text: "Submit Ticket",
-  },
-  //private_metadata: user,
-  callback_id: "queue",
-});
+    //private_metadata: user,
+    callback_id: "queue",
+  };
+};
 
 async function handleSubmission(req, res, next, submission) {
   try {
