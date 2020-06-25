@@ -8,10 +8,10 @@ const {
   getAdminToken,
 } = require("../utils");
 
-const modal = async (req) => {
+const modal = async req => {
   const ticketQueue = await request
     .get(`${baseURL(req)}/tickets/queue`)
-    .set("Authorization", `Bearer ${getAdminToken()}`)
+    .set("Authorization", `Bearer ${await getAdminToken()}`)
     .then(r => r.body)
     .catch(console.log);
   console.log("queue data", ticketQueue);
@@ -21,7 +21,16 @@ const modal = async (req) => {
       type: "plain_text",
       text: "Ticket Queue",
     },
-    blocks: [],
+    blocks: [
+      ticketQueue.map(({ id, messages: { [0]: { body } } }) => ({
+        type: "section",
+        block_id: `ticket_${id}_queue`,
+        text: {
+          type: "mrkdwn",
+          text: body,
+        },
+      })),
+    ],
     submit: {
       type: "plain_text",
       text: "Close Queue",
