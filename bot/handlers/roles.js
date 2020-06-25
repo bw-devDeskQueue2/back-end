@@ -142,6 +142,7 @@ async function handleSubmission(req, res, next, submission) {
         .post("https://slack.com/api/chat.postMessage")
         .set("Authorization", `Bearer ${config.BOT_ACCESS_TOKEN}`)
         .send({
+          username: config.BOT_USERNAME,
           channel: channelID,
           token: config.BOT_ACCESS_TOKEN,
           text: responseMessage,
