@@ -1,6 +1,6 @@
 const config = require("../../config/serverInfo");
 const request = require("superagent");
-const { getAdminToken, createUserIfNotExists, baseURL } = require("../utils");
+const { getUserToken, createUserIfNotExists, baseURL } = require("../utils");
 
 const modal = {
   type: "modal",
@@ -21,7 +21,7 @@ const modal = {
         action_id: "task-title-value",
         placeholder: {
           type: "plain_text",
-          text: "Briefly describe your issue",
+          text: "Summarize your issue",
         },
       },
     },
@@ -35,6 +35,10 @@ const modal = {
       element: {
         type: "plain_text_input",
         multiline: true,
+        placeholder: {
+          type: "plain_text",
+          text: "Describe your issue in more depth",
+        },
       },
     },
   ],
@@ -54,15 +58,7 @@ async function handleSubmission(req, res, next, submission) {
   let {
     user: { id: userID, team_id },
     view: {
-      state: {
-        values: {
-          role: {
-            role_select: {
-              selected_option: { value: formData },
-            },
-          },
-        },
-      },
+      state: { values: formData },
     },
   } = submission;
   console.log(formData);
