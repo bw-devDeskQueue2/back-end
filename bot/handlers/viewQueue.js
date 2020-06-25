@@ -84,12 +84,14 @@ const modal = async req => {
 async function handleBlockAction(req, res, next, payload) {
   try {
     let {
+      trigger_id,
       user: { id: slack_id, team_id },
       actions: {
-        [0]: { value: ticket_id },
+        [0]: { value: ticket_id, action_id },
       },
     } = payload;
-    console.log("queue block action", slack_id, team_id, ticket_id);
+    console.log("queue block action", slack_id, team_id, action_id);
+    console.log("trigger", trigger_id);
   } catch (e) {
     next(e);
   }

@@ -12,6 +12,7 @@ const {
   blockActionHandlers,
   actionDescriptions,
 } = require("./reducers/");
+const { sendModal } = require("./utils");
 
 //let activeViews = [];
 
@@ -63,16 +64,17 @@ router.post(
       });
     }
     res.status(200).end();
-    await request
-      .post("https://slack.com/api/views.open")
-      .send({ trigger_id, view })
-      .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
-      .then(({ body }) => {
-        if (!body.ok) {
-          console.log("Error opening view", body);
-        }
-        //activeViews.push(body);
-      });
+    await openView(trigger_id, view);
+    // await request
+    //   .post("https://slack.com/api/views.open")
+    //   .send({ trigger_id, view })
+    //   .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+    //   .then(({ body }) => {
+    //     if (!body.ok) {
+    //       console.log("Error opening view", body);
+    //     }
+    //     //activeViews.push(body);
+    //   });
   })
 );
 
