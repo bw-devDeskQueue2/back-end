@@ -8,7 +8,7 @@ function getUser(query) {
 
 function addUser(user) {
   const { slack_id, team_id, user_id } = user;
-  if (!slack_id && team_id && user_id) {
+  if (!(slack_id && team_id && user_id)) {
     console.log("Error: Cannot add a slack user without all required fields");
     return null;
   }
