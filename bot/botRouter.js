@@ -44,7 +44,7 @@ router.post(
       return res.status(400).json({ message: "Malformed request" });
     }
     const helpMessage = `Available actions: 'help'${Object.keys(modals).map(
-      name => `, '${name}'`
+      name => `, /ddq '${name}'`
     )}`;
     const action = text ? text.split(" ")[0] : "new";
     const view = modals[action];

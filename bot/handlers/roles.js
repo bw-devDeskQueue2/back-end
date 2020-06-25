@@ -114,6 +114,7 @@ async function handleSubmission(req, res, next, submission) {
   const userInDatabase = await createUserIfNotExists(slackUser, req, res, next);
   //console.log("user in database", userInDatabase);
   //console.log("database id", userInDatabase.user_id);
+  
   let rolesChangeResult;
   await request
     .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
@@ -125,7 +126,7 @@ async function handleSubmission(req, res, next, submission) {
 
   const responseMessage = rolesChangeResult.message
     ? `An error ocurred: ${rolesChangeResult.message}`
-    : `Roles successfully changed: they are now \`${rolesChangeResult.roles}\``;
+    : `Role(s) successfully changed: you are now \`${rolesChangeResult.roles}\``;
 
   request
     .post("https://slack.com/api/conversations.open")
