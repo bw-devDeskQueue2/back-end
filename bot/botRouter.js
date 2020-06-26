@@ -65,9 +65,8 @@ router.post(
 );
 
 //This endpoint responds to user interaction with modal views in slack
-router.post(
-  "/interactive",
-  catchAsync(async (req, res, next) => {
+router.post("/interactive", (req, res, next) => {
+  try {
     let { payload } = req.body;
     if (!payload) {
       return res.status(400).json({ message: "Malformed request" });
@@ -76,27 +75,24 @@ router.post(
     if (!payload.type) {
       return res.status(400).json({ message: "Malformed request" });
     }
-    let responseAction;
-    try {
-      if (payload.type === "view_submission") {
-        const handler = payload.view.callback_id;
-        responseAction =
-          submissionHandlers[handler] &&
-          (await submissionHandlers[handler](req, res, next, payload));
-      } else if (payload.type === "block_actions") {
-        const handler = payload.view.callback_id;
-        responseAction =
-          blockActionHandlers[handler] &&
-          (await blockActionHandlers[handler](req, res, next, payload));
-      } else {
-        console.log("unhandled payload of type", payload.type);
-      }
-    } catch (e) {
-      next(e);
+    if (payload.type === "view_submission") {
+      const handler = payload.view.callback_id;
+      submissionHandlers[handler] &&
+        submissionHandlers[handler](req, res, next, payload);
+    } else if (payload.type === "block_actions") {
+      const handler = payload.view.callback_id;
+      blockActionHandlers[handler] &&
+        blockActionHandlers[handler](req, res, next, payload);
+    } else {
+      console.log("unhandled payload of type", payload.type);
     }
-    res.status(200).end(responseAction || {});
-  })
-);
+  } catch (e) {
+    next(e);
+  }
+  res.status(200).json({
+    response_action: "clear",
+  });
+});
 
 //This endpoint responds to bot events:
 //DMs to the bot and @mentions
