@@ -1,11 +1,11 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
 
-const slackRequest = (body, endpoint) =>
+const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
   request
     .post(`https://slack.com/api/${endpoint}`)
     .send(body)
-    .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+    .set("Authorization", `Bearer ${token}`)
     .then(({ body }) => {
       if (!body.ok) {
         console.log("Error opening view", body);
@@ -21,20 +21,19 @@ const pushView = (trigger_id, view) =>
   slackRequest({ trigger_id, view }, "views.push");
 
 const sendDM = (users, message) =>
-  slackRequest({ users }, "conversations.open").then(body => {
-    const {
-      channel: { id: channelID },
-    } = body;
-    return slackRequest(
-      {
-        username: config.BOT_USERNAME,
-        channel: channelID,
-        token: config.BOT_ACCESS_TOKEN,
-        text: message,
-      },
-      "chat.postMessage"
-    );
-  });
+  slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
+    ({ channel: { id: channelID } }) =>
+      slackRequest(
+        {
+          username: config.BOT_USERNAME,
+          channel: channelID,
+          token: config.BOT_ACCESS_TOKEN,
+          text: message,
+        },
+        "chat.postMessage",
+        config.BOT_ACCESS_TOKEN
+      )
+  );
 // request
 //   .post("https://slack.com/api/conversations.open")
 //   .send({ users })
