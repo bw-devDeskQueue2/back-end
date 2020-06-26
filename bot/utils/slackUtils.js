@@ -55,4 +55,4 @@ const sendDM = (users, message) =>
     })
     .catch(console.error);
 
-module.exports = { openView, sendDM };
+module.exports = { openView, pushView, sendDM };
