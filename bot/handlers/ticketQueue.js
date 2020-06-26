@@ -92,21 +92,43 @@ async function followUpModal(ticket_id, req) {
           text: `*${subject}*`,
         },
       },
-    ].concat(
-      messages.map(({ body, sender: { username, id } }, idx) => {
-        const slackUser = await SlackUsers.getUser({user_id: id});
-        return {
-          type: "section",
-          block_id: `ticket_${id}_message_${idx}`,
-          text: {
-            type: "mrkdwn",
-            text: `*${
-              slackUser ? `<@${slackUser.slack_id}>` : username
-            }*\n${body}`,
+    ]
+      .concat(
+        await Promise.all(
+          messages.map(async ({ body, sender: { username, id } }, idx) => {
+            const slackUser = await SlackUsers.getUser({ user_id: id });
+            return {
+              type: "section",
+              block_id: `ticket_${id}_message_${idx}`,
+              text: {
+                type: "mrkdwn",
+                text: `*${
+                  slackUser ? `<@${slackUser.slack_id}>` : username
+                }*\n${body}`,
+              },
+            };
+          })
+        )
+      )
+      .concat([
+        {
+          type: "input",
+          block_id: "message_body",
+          label: {
+            type: "plain_text",
+            text: "Your Response",
           },
-        };
-      })
-    ),
+          element: {
+            action_id: "body",
+            type: "plain_text_input",
+            multiline: true,
+            placeholder: {
+              type: "plain_text",
+              text: "Respond to help this user with their issue",
+            },
+          },
+        },
+      ]),
     close: {
       type: "plain_text",
       text: "Cancel",
