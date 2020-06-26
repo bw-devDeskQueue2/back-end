@@ -194,7 +194,7 @@ async function handleSubmission(req, res, next, submission) {
       .concat(
         `*This is the conversation for the ticket _${assignedTicket.subject}_*\n`
       )
-      .concat("-----------------------------------\n *Message History*\n")
+      .concat("-----------------------------------\n *Message History*")
       .concat(
         messages.map(
           msg =>
@@ -205,7 +205,7 @@ async function handleSubmission(req, res, next, submission) {
             }:* ${msg.body}`
         )
       )
-      .concat("-----------------------------------\n")
+      .concat("\n-----------------------------------\n")
       .concat(
         "Type in this channel to discuss the ticket, or type `!close` at any time to close the ticket."
       )
