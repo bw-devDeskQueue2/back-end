@@ -169,11 +169,13 @@ async function handleSubmission(req, res, next, submission) {
     const studentSlackUser = await SlackUsers.getUser({
       user_id: assignedTicket.student.id,
     });
-    await request
+    const newMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${userToken}`)
       .send({ body: message })
+      .then(r => r.body[0])
       .catch(console.log);
+    assignedTicket.messages.push(newMessage);
     const messages = await Promise.all(
       assignedTicket.messages.map(async msg => ({
         ...msg,
