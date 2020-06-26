@@ -145,9 +145,9 @@ async function followUpModal(ticket_id, req) {
 async function handleSubmission(req, res, next, submission) {
   try {
     let {
-      private_metadata: ticket_id,
       user: { id: slack_id, team_id },
       view: {
+        private_metadata: ticket_id,
         state: {
           values: {
             message_body: {
