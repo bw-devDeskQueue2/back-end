@@ -37,7 +37,7 @@ const sendDM = (users, message) =>
 
 const openChannel = (user_ids, message, name) =>
   slackRequest(
-    { user_ids, name, is_private_true },
+    { user_ids, name, is_private: true },
     "conversations.create",
     config.BOT_ACCESS_TOKEN
   ).then(({ channel: { id: channelID } }) =>
