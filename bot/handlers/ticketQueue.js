@@ -177,12 +177,13 @@ async function handleSubmission(req, res, next, submission) {
       .set("Authorization", `Bearer ${userToken}`)
       .send({ body: message })
       .catch(console.log);
-      //retrieve updated messages list
+    //retrieve updated messages list
     let messages = await request
-      .get(`${baseURL(request)}/api/tickets/${ticket_id}/messages`)
+      .get(`${baseURL(req)}/api/tickets/${ticket_id}/messages`)
+      .set("Authorization", `Bearer ${userToken}`)
       .then(r => r.body)
       .catch(console.log);
-      //add slack info to messages
+    //add slack info to messages
     messages = await Promise.all(
       messages.map(async msg => ({
         ...msg,
