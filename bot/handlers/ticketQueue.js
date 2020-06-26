@@ -81,9 +81,18 @@ async function followUpModal(ticket_id, req) {
     type: "modal",
     title: {
       type: "plain_text",
-      text: subject,
+      text: "Help with Ticket",
     },
-    blocks: []
+    blocks: [
+      {
+        type: "section",
+        block_id: `ticket_${id}_subject`,
+        text: {
+          type: "mrkdwn",
+          text: `*Subject:* ${subject}`,
+        },
+      },
+    ]
       .concat(
         await Promise.all(
           messages.map(async ({ body, sender: { username, id } }, idx) => {
