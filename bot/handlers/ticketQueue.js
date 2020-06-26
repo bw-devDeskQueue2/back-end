@@ -179,7 +179,7 @@ async function handleSubmission(req, res, next, submission) {
       .catch(console.log);
     //retrieve updated messages list
     let messages = await request
-      .get(`${baseURL(req)}/api/tickets/${ticket_id}/messages`)
+      .get(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${userToken}`)
       .then(r => r.body)
       .catch(console.log);
