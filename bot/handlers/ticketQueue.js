@@ -207,7 +207,7 @@ async function handleSubmission(req, res, next, submission) {
       )
       .concat("\n-----------------------------------\n")
       .concat(
-        "Type in this channel to discuss the ticket, or type `!close` at any time to close the ticket."
+        "Type in this channel to discuss the ticket.\nType `!close` at any time to close the ticket."
       )
       .concat(
         !studentSlackUser
