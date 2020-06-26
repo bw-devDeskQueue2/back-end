@@ -8,6 +8,7 @@ const {
   getAdminToken,
   pushView,
 } = require("../utils");
+const SlackUsers = require("../slackUserModel");
 
 const actionName = "queue";
 
@@ -88,19 +89,19 @@ async function followUpModal(ticket_id, req) {
         block_id: `ticket_${id}_subject`,
         text: {
           type: "mrkdwn",
-          text: `*${subject}`,
+          text: `*${subject}*`,
         },
       },
     ].concat(
-      messages.map(({ body, sender: { username } }, idx) => {
-        const splitUsername = username.split(":");
+      messages.map(({ body, sender: { username, id } }, idx) => {
+        const slackUser = await SlackUsers.getUser({user_id: id});
         return {
           type: "section",
           block_id: `ticket_${id}_message_${idx}`,
           text: {
             type: "mrkdwn",
             text: `*${
-              splitUsername[1] ? `<@${splitUsername[1]}>` : username
+              slackUser ? `<@${slackUser.slack_id}>` : username
             }*\n${body}`,
           },
         };
