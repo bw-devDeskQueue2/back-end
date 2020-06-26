@@ -180,8 +180,9 @@ async function handleSubmission(req, res, next, submission) {
         : "";
     const channelUsers =
       userInDatabase.slack_id +
+      `,${"B016CNYA6CR"}` +
       (studentSlackUser ? `,${studentSlackUser.slack_id}` : "");
-    openChannel(channelUsers, channelMessage, `ddq-ticket-${ticket_id}`);
+    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`);
   } catch (e) {
     next(e);
   }
