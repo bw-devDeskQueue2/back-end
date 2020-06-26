@@ -198,11 +198,11 @@ async function handleSubmission(req, res, next, submission) {
       .concat(
         messages.map(
           msg =>
-            `*${
+            `\n*${
               msg.slackUser
                 ? `<@${msg.slackUser.slack_id}>`
                 : msg.sender.username
-            }:* ${msg.body}\n`
+            }:* ${msg.body}`
         )
       )
       .concat("-----------------------------------\n")
