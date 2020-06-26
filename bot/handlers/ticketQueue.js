@@ -150,6 +150,7 @@ async function handleBlockAction(req, res, next, payload) {
   } catch (e) {
     next(e);
   }
+  return { response_action: "clear" };
 }
 module.exports = {
   modal,

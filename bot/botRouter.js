@@ -65,32 +65,38 @@ router.post(
 );
 
 //This endpoint responds to user interaction with modal views in slack
-router.post("/interactive", (req, res, next) => {
-  let { payload } = req.body;
-  if (!payload) {
-    return res.status(400).json({ message: "Malformed request" });
-  }
-  payload = JSON.parse(payload);
-  if (!payload.type) {
-    return res.status(400).json({ message: "Malformed request" });
-  }
-  try {
-    if (payload.type === "view_submission") {
-      const handler = payload.view.callback_id;
-      submissionHandlers[handler] &&
-        submissionHandlers[handler](req, res, next, payload);
-    } else if (payload.type === "block_actions") {
-      const handler = payload.view.callback_id;
-      blockActionHandlers[handler] &&
-        blockActionHandlers[handler](req, res, next, payload);
-    } else {
-      console.log("unhandled payload of type", payload.type);
+router.post(
+  "/interactive",
+  catchAsync(async (req, res, next) => {
+    let { payload } = req.body;
+    if (!payload) {
+      return res.status(400).json({ message: "Malformed request" });
     }
-  } catch (e) {
-    next(e);
-  }
-  res.status(200).end();
-});
+    payload = JSON.parse(payload);
+    if (!payload.type) {
+      return res.status(400).json({ message: "Malformed request" });
+    }
+    try {
+      let responseAction;
+      if (payload.type === "view_submission") {
+        const handler = payload.view.callback_id;
+        responseAction =
+          submissionHandlers[handler] &&
+          (await submissionHandlers[handler](req, res, next, payload));
+      } else if (payload.type === "block_actions") {
+        const handler = payload.view.callback_id;
+        responseAction =
+          blockActionHandlers[handler] &&
+          (await blockActionHandlers[handler](req, res, next, payload));
+      } else {
+        console.log("unhandled payload of type", payload.type);
+      }
+    } catch (e) {
+      next(e);
+    }
+    res.status(200).end(responseAction || {});
+  })
+);
 
 //This endpoint responds to bot events:
 //DMs to the bot and @mentions
