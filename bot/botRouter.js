@@ -76,8 +76,8 @@ router.post(
     if (!payload.type) {
       return res.status(400).json({ message: "Malformed request" });
     }
+    let responseAction;
     try {
-      let responseAction;
       if (payload.type === "view_submission") {
         const handler = payload.view.callback_id;
         responseAction =
