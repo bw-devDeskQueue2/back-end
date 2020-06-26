@@ -47,17 +47,16 @@ const sendDM = (users, message) =>
       )
   );
 
-const openChannel = (user_ids, message, name) =>
+const openChannel = (users, message, name) =>
   slackUrlEncodedRequest(
     { name, token: config.BOT_ACCESS_TOKEN },
-    "conversations.create",
-    config.BOT_ACCESS_TOKEN
+    "conversations.create"
   )
     .then(({ channel: { id: channelID } }) =>
       slackUrlEncodedRequest(
         {
           channel: channelID,
-          user_ids,
+          users,
           token: config.BOT_ACCESS_TOKEN,
         },
         "conversations.invite"
