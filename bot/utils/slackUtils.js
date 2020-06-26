@@ -35,4 +35,22 @@ const sendDM = (users, message) =>
       )
   );
 
-module.exports = { openView, pushView, sendDM };
+const openChannel = (user_ids, message, name) =>
+  slackRequest(
+    { user_ids, name, is_private_true },
+    "conversations.create",
+    config.BOT_ACCESS_TOKEN
+  ).then(({ channel: { id: channelID } }) =>
+    slackRequest(
+      {
+        username: config.BOT_USERNAME,
+        channel: channelID,
+        token: config.BOT_ACCESS_TOKEN,
+        text: message,
+      },
+      "chat.postMessage",
+      config.BOT_ACCESS_TOKEN
+    )
+  );
+
+module.exports = { openView, pushView, sendDM, openChannel };
