@@ -1,10 +1,10 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
 
-const openView = (trigger_id, view) =>
+const slackRequest = (body, endpoint) =>
   request
-    .post("https://slack.com/api/views.open")
-    .send({ trigger_id, view })
+    .post(`https://slack.com/api/${endpoint}`)
+    .send(body)
     .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
     .then(({ body }) => {
       if (!body.ok) {
@@ -13,17 +13,11 @@ const openView = (trigger_id, view) =>
     })
     .catch(console.error);
 
+const openView = (trigger_id, view) =>
+  slackRequest({ trigger_id, view }, "views.open");
+
 const pushView = (trigger_id, view) =>
-  request
-    .post("https://slack.com/api/views.push")
-    .send({ trigger_id, view })
-    .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
-    .then(({ body }) => {
-      if (!body.ok) {
-        console.log("Error opening view", body);
-      }
-    })
-    .catch(console.error);
+  slackRequest({ trigger_id, view }, "views.push");
 
 const sendDM = (users, message) =>
   request
