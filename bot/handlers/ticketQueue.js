@@ -146,7 +146,9 @@ async function handleBlockAction(req, res, next, payload) {
     } = payload;
     console.log("queue block action", slack_id, team_id, action_id);
     console.log("trigger", trigger_id);
-    openView(trigger_id, await followUpModal(ticket_id, req));
+    const fuModal = await followUpModal(ticket_id, req);
+    console.log(modal);
+    openView(trigger_id, fuModal);
   } catch (e) {
     next(e);
   }

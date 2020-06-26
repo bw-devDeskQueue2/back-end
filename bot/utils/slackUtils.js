@@ -10,7 +10,8 @@ const openView = (trigger_id, view) =>
       if (!body.ok) {
         console.log("Error opening view", body);
       }
-    });
+    })
+    .catch(console.error);
 
 const sendDM = (users, message) =>
   request
