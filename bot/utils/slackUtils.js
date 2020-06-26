@@ -72,6 +72,7 @@ const openChannel = (users, message, name) =>
         },
         "chat.postMessage"
       )
-    );
+    )
+    .catch(console.log);
 
 module.exports = { openView, pushView, sendDM, openChannel };
