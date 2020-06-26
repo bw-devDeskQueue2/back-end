@@ -169,6 +169,11 @@ async function handleSubmission(req, res, next, submission) {
     const studentSlackUser = await SlackUsers.getUser({
       user_id: assignedTicket.student.id,
     });
+    await request
+      .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({ body: message })
+      .catch(console.log);
     const messages = await Promise.all(
       assignedTicket.messages.map(async msg => ({
         ...msg,
@@ -192,11 +197,11 @@ async function handleSubmission(req, res, next, submission) {
       )
       .concat("-----------------------------------\n")
       .concat(
-        "Reply in this channel to discuss the ticket, or type `!close` at any time to close the ticket."
+        "Type in this channel to discuss the ticket, or type `!close` at any time to close the ticket."
       )
       .concat(
         !studentSlackUser
-          ? `\nUser *${assignedTicket.student.username}* will have any new messages sent to them automatically, and you'll see their replies in this channel.`
+          ? `\n-----------------------------------\nAny messages you type here will be sent to *${assignedTicket.student.username}*, and you'll see their replies in this channel.`
           : ""
       );
     const channelUsers =
