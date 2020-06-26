@@ -10,7 +10,6 @@ const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
       if (!body.ok) {
         console.log("Error with request to " + endpoint, body);
       }
-      console.log(body);
       return body;
     })
     .catch(console.error);
