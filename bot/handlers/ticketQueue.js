@@ -85,10 +85,10 @@ async function followUpModal(ticket_id, req) {
     blocks: [
       {
         type: "section",
-        block_id: `ticket_${id}_message_0`,
+        block_id: `ticket_${id}_subject`,
         text: {
           type: "mrkdwn",
-          text: `*${subject}*`,
+          text: `*${subject}`,
         },
       },
     ].concat(
@@ -100,10 +100,8 @@ async function followUpModal(ticket_id, req) {
           text: {
             type: "mrkdwn",
             text: `*${
-              splitUsername[1] && splitUsername[1].contains("U0")
-                ? `<@${splitUsername[1]}>`
-                : username
-            }*\n${messages[0].body}`,
+              splitUsername[1] ? `<@${splitUsername[1]}>` : username
+            }*\n${body}`,
           },
         };
       })
