@@ -161,23 +161,30 @@ async function handleSubmission(req, res, next, submission) {
     console.log("queue handler", ticket_id, message);
     const userInDatabase = await createUserIfNotExists(slackUser, req);
     const userToken = await getUserToken(userInDatabase.user_id);
+    //assign ticket to self
     const assignedTicket = await request
       .patch(`${baseURL(req)}/tickets/${ticket_id}/assign`)
       .set("Authorization", `Bearer ${userToken}`)
       .then(r => r.body)
       .catch(console.log);
+    //see if student is a slack user
     const studentSlackUser = await SlackUsers.getUser({
       user_id: assignedTicket.student.id,
     });
-    const newMessage = await request
+    //add the message reply
+    await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${userToken}`)
       .send({ body: message })
-      .then(r => r.body[0])
       .catch(console.log);
-    assignedTicket.messages.push(newMessage);
-    const messages = await Promise.all(
-      assignedTicket.messages.map(async msg => ({
+      //retrieve updated messages list
+    let messages = await request
+      .get(`${baseURL(request)}/api/tickets/${id}/messages`)
+      .then(r => r.body)
+      .catch(console.log);
+      //add slack info to messages
+    messages = await Promise.all(
+      messages.map(async msg => ({
         ...msg,
         slackUser: await SlackUsers.getUser({ user_id: msg.sender.id }),
       }))
