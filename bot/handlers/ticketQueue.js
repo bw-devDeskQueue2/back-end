@@ -86,7 +86,7 @@ async function followUpModal(ticket_id, req) {
     type: "modal",
     title: {
       type: "plain_text",
-      text: "Ticket Queue",
+      text: "Help with Ticket #" + ticket_id,
     },
     blocks: [
       {
@@ -121,19 +121,19 @@ async function followUpModal(ticket_id, req) {
   };
 }
 
-// async function handleSubmission(req, res, next, submission) {
-//   try {
-//     let {
-//       user: { id: slack_id, team_id },
-//       view: {
-//         state: { values: formData },
-//       },
-//     } = submission;
-//     console.log("queue handler", slack_id, team_id, formData);
-//   } catch (e) {
-//     next(e);
-//   }
-// }
+async function handleSubmission(req, res, next, submission) {
+  try {
+    let {
+      user: { id: slack_id, team_id },
+      view: {
+        state: { values: formData },
+      },
+    } = submission;
+    console.log("queue handler", slack_id, team_id, formData);
+  } catch (e) {
+    next(e);
+  }
+}
 
 async function handleBlockAction(req, res, next, payload) {
   try {
@@ -153,7 +153,7 @@ async function handleBlockAction(req, res, next, payload) {
 }
 module.exports = {
   modal,
-  //handleSubmission,
+  handleSubmission,
   handleBlockAction,
   actionName,
   description: "View the open ticket queue and assign tickets to yourself",
