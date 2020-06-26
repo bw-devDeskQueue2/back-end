@@ -6,6 +6,7 @@ const {
   baseURL,
   sendDM,
   getAdminToken,
+  openView,
 } = require("../utils");
 
 const actionName = "queue";
@@ -69,6 +70,57 @@ const modal = async req => {
   };
 };
 
+async function followUpModal(ticket_id, req) {
+  const {
+    id,
+    subject,
+    messages: {
+      [0]: { body },
+    },
+  } = await request
+    .get(`${baseURL(req)}/tickets/${ticket_id}`)
+    .set("Authorization", `Bearer ${await getAdminToken()}`)
+    .then(r => r.body)
+    .catch(console.log);
+  return {
+    type: "modal",
+    title: {
+      type: "plain_text",
+      text: "Ticket Queue",
+    },
+    blocks: [
+      {
+        type: "section",
+        block_id: `ticket_${id}`,
+        text: {
+          type: "mrkdwn",
+          text: `*${subject}*\n${body}`,
+        },
+        accessory: {
+          type: "button",
+          action_id: `ticket_${id}_claim`,
+          text: {
+            type: "plain_text",
+            text: "Help Student",
+          },
+          style: "danger",
+          value: `${id}`,
+        },
+      },
+    ],
+    close: {
+      type: "plain_text",
+      text: "Cancel",
+    },
+    submit: {
+      type: "plain_text",
+      text: "Submit Response",
+    },
+    //private_metadata: user,
+    callback_id: actionName,
+  };
+}
+
 // async function handleSubmission(req, res, next, submission) {
 //   try {
 //     let {
@@ -94,6 +146,7 @@ async function handleBlockAction(req, res, next, payload) {
     } = payload;
     console.log("queue block action", slack_id, team_id, action_id);
     console.log("trigger", trigger_id);
+    openView(trigger_id, await followUpModal(ticket_id, req));
   } catch (e) {
     next(e);
   }
@@ -103,5 +156,5 @@ module.exports = {
   //handleSubmission,
   handleBlockAction,
   actionName,
-  description: "View the open ticket queue and assign tickets to yourself.",
+  description: "View the open ticket queue and assign tickets to yourself",
 };

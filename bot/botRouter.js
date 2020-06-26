@@ -22,9 +22,9 @@ router.use(
       r.headers["content-type"] === "application/x-www-form-urlencoded",
   }),
   verifySignature,
-  function convertURLEncodedToObject(r, res, next) {
-    if (r.headers["content-type"] === "application/x-www-form-urlencoded") {
-      r.body = decode(r.body);
+  function convertURLEncodedToObject(req, res, next) {
+    if (req.headers["content-type"] === "application/x-www-form-urlencoded") {
+      req.body = decode(req.body);
     }
     next();
   }

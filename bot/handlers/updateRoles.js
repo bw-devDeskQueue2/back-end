@@ -20,7 +20,7 @@ const modal = async () => ({
       type: "section",
       text: {
         type: "mrkdwn",
-        text: "Your username and password are tied to your slack account.",
+        text: "Edit the roles associated with your account. `student`s open tickets, while `helper`s respond to tickets.",
       },
       block_id: "info",
     },
