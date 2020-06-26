@@ -71,13 +71,7 @@ const modal = async req => {
 };
 
 async function followUpModal(ticket_id, req) {
-  const {
-    id,
-    subject,
-    messages: {
-      [0]: { body },
-    },
-  } = await request
+  const { id, subject, messages } = await request
     .get(`${baseURL(req)}/tickets/${ticket_id}`)
     .set("Authorization", `Bearer ${await getAdminToken()}`)
     .then(r => r.body)
@@ -94,20 +88,24 @@ async function followUpModal(ticket_id, req) {
         block_id: `ticket_${id}`,
         text: {
           type: "mrkdwn",
-          text: `*${subject}*\n${body}`,
-        },
-        accessory: {
-          type: "button",
-          action_id: `ticket_${id}_claim`,
-          text: {
-            type: "plain_text",
-            text: "Help Student",
-          },
-          style: "danger",
-          value: `${id}`,
+          text: `*${subject}*\n${messages[0].body}`,
         },
       },
-    ],
+    ].concat(
+      messages.map(({ body, sender: { username } }) => {
+        const splitUsername = username.split(":");
+        return {
+          type: "section",
+          block_id: `ticket_${id}`,
+          text: {
+            type: "mrkdwn",
+            text: `*${
+              splitUsername[1] ? `<@${splitUsername[1]}>` : username
+            }*\n${messages[0].body}`,
+          },
+        };
+      })
+    ),
     close: {
       type: "plain_text",
       text: "Cancel",
