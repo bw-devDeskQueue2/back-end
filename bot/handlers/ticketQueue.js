@@ -137,7 +137,7 @@ async function followUpModal(ticket_id, req) {
       type: "plain_text",
       text: "Submit Response",
     },
-    //private_metadata: user,
+    private_metadata: `${id}`,
     callback_id: actionName,
   };
 }
@@ -145,12 +145,20 @@ async function followUpModal(ticket_id, req) {
 async function handleSubmission(req, res, next, submission) {
   try {
     let {
+      private_metadata: ticket_id,
       user: { id: slack_id, team_id },
       view: {
-        state: { values: formData },
+        state: {
+          values: {
+            message_body: {
+              body: { value: message },
+            },
+          },
+        },
       },
     } = submission;
-    console.log("queue handler", slack_id, team_id, formData);
+    const slackUser = { slack_id, team_id };
+    console.log("queue handler", ticket_id, message);
   } catch (e) {
     next(e);
   }
