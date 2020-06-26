@@ -169,18 +169,29 @@ async function handleSubmission(req, res, next, submission) {
     const studentSlackUser = await SlackUsers.getUser({
       user_id: assignedTicket.student.id,
     });
-    const channelMessage = `This is the conversation for the ticket *${assignedTicket.subject}\n`
+    messages = await Promise.all(
+      messages.map(async msg => ({
+        ...msg,
+        slackUser: await SlackUsers.getUser({ user_id: message.sender.id }),
+      }))
+    );
+    const channelMessage = `*This is the conversation for the ticket _${assignedTicket.subject}_*\n`
       .concat(
-        `Message history:\n${assignedTicket.messages.map(
-          msg => msg.body + "\n"
-        )}`
+        assignedTicket.messages.map(
+          msg =>
+            `*${
+              msg.slackUser
+                ? `<@${msg.slackUser.slack_id}>`
+                : msg.sender.username
+            }:* msg.body\n`
+        )
       )
       .concat(
         "Reply in this channel to discuss the ticket, or type `!close` at any time to close the ticket."
       )
       .concat(
         !studentSlackUser
-          ? `\nUser *${assignedTicket.student.username}* will have any new messages send to them automatically, and you'll see their replies in this channel.`
+          ? `\nUser *${assignedTicket.student.username}* will have any new messages sent to them automatically, and you'll see their replies in this channel.`
           : ""
       );
     const channelUsers =
