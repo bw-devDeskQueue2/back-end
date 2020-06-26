@@ -133,6 +133,7 @@ async function handleSubmission(req, res, next, submission) {
   } catch (e) {
     next(e);
   }
+  return { response_action: "clear" };
 }
 
 async function handleBlockAction(req, res, next, payload) {
@@ -150,7 +151,6 @@ async function handleBlockAction(req, res, next, payload) {
   } catch (e) {
     next(e);
   }
-  return { response_action: "clear" };
 }
 module.exports = {
   modal,
