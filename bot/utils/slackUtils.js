@@ -13,6 +13,18 @@ const openView = (trigger_id, view) =>
     })
     .catch(console.error);
 
+const pushView = (trigger_id, view) =>
+  request
+    .post("https://slack.com/api/views.push")
+    .send({ trigger_id, view })
+    .set("Authorization", `Bearer ${config.OAUTH_ACCESS_TOKEN}`)
+    .then(({ body }) => {
+      if (!body.ok) {
+        console.log("Error opening view", body);
+      }
+    })
+    .catch(console.error);
+
 const sendDM = (users, message) =>
   request
     .post("https://slack.com/api/conversations.open")

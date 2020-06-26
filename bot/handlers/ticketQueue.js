@@ -6,7 +6,7 @@ const {
   baseURL,
   sendDM,
   getAdminToken,
-  openView,
+  pushView,
 } = require("../utils");
 
 const actionName = "queue";
@@ -146,9 +146,7 @@ async function handleBlockAction(req, res, next, payload) {
     } = payload;
     console.log("queue block action", slack_id, team_id, action_id);
     console.log("trigger", trigger_id);
-    const fuModal = await followUpModal(ticket_id, req);
-    console.log(modal);
-    openView(trigger_id, fuModal);
+    await pushView(trigger_id, await followUpModal(ticket_id, req));
   } catch (e) {
     next(e);
   }
