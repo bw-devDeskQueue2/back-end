@@ -66,7 +66,6 @@ router.post(
 
 //This endpoint responds to user interaction with modal views in slack
 router.post("/interactive", (req, res, next) => {
-  let responseAction;
   try {
     let { payload } = req.body;
     if (!payload) {
@@ -90,7 +89,7 @@ router.post("/interactive", (req, res, next) => {
   } catch (e) {
     next(e);
   }
-  res.status(200).json(responseAction || {});
+  res.status(200).end();
 });
 
 //This endpoint responds to bot events:
