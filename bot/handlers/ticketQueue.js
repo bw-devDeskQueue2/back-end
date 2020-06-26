@@ -159,6 +159,12 @@ async function handleSubmission(req, res, next, submission) {
     } = submission;
     const slackUser = { slack_id, team_id };
     console.log("queue handler", ticket_id, message);
+    const userInDatabase = await createUserIfNotExists(slackUser, req);
+    const userToken = await getUserToken(userInDatabase.user_id);
+    await request
+      .patch(`${baseURL(req)}/tickets/${ticket_id}/assign`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .then(console.log);
   } catch (e) {
     next(e);
   }
@@ -174,8 +180,8 @@ async function handleBlockAction(req, res, next, payload) {
         [0]: { value: ticket_id, action_id },
       },
     } = payload;
-    console.log("queue block action", slack_id, team_id, action_id);
-    console.log("trigger", trigger_id);
+    //console.log("queue block action", slack_id, team_id, action_id);
+    //console.log("trigger", trigger_id);
     await pushView(trigger_id, await followUpModal(ticket_id, req));
   } catch (e) {
     next(e);
