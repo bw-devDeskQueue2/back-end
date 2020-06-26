@@ -169,15 +169,15 @@ async function handleSubmission(req, res, next, submission) {
     const studentSlackUser = await SlackUsers.getUser({
       user_id: assignedTicket.student.id,
     });
-    messages = await Promise.all(
-      messages.map(async msg => ({
+    const messages = await Promise.all(
+      assignedTicket.messages.map(async msg => ({
         ...msg,
         slackUser: await SlackUsers.getUser({ user_id: message.sender.id }),
       }))
     );
     const channelMessage = `*This is the conversation for the ticket _${assignedTicket.subject}_*\n`
       .concat(
-        assignedTicket.messages.map(
+        messages.map(
           msg =>
             `*${
               msg.slackUser
