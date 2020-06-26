@@ -179,7 +179,7 @@ async function handleSubmission(req, res, next, submission) {
       .catch(console.log);
       //retrieve updated messages list
     let messages = await request
-      .get(`${baseURL(request)}/api/tickets/${id}/messages`)
+      .get(`${baseURL(request)}/api/tickets/${ticket_id}/messages`)
       .then(r => r.body)
       .catch(console.log);
       //add slack info to messages
