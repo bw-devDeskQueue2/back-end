@@ -23,16 +23,16 @@ async function messageEvent(messageText, channel, slackUser, req) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
         .set("Authorization", `Bearer ${await getAdminToken()}`)
-        .send({ initiated_by_slackbot: true });
-      const channelMembers = await getMembers(
-        channel.id
-      ).then(({ ok, members }) => (ok ? members : []));
-      const channelResponse = await closeChannel(channel.id);
-      channelMembers.map(id =>
-        sendDM(id, `Ticket #${ticket_id} was successfully closed.`).catch(
-          () => null
-        )
-      );
+        .send({ channel_id: channel.id });
+      // const channelMembers = await getMembers(
+      //   channel.id
+      // ).then(({ ok, members }) => (ok ? members : []));
+      // const channelResponse = await closeChannel(channel.id);
+      // channelMembers.map(id =>
+      //   sendDM(id, `Ticket #${ticket_id} was successfully closed.`).catch(
+      //     () => null
+      //   )
+      // );
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
