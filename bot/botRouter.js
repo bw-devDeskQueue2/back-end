@@ -107,7 +107,7 @@ router.post(
     if (bot_id) {
       return; //console.log("Bot event");
     }
-    console.log("Message", req.body.event);
+    //console.log("Message", req.body.event);
     if (type !== "message") {
       return; //console.log("Not message event");
     }
