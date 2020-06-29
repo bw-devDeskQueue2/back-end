@@ -120,7 +120,7 @@ router.post(
     //console.log("Message event", text, channelName, channel, slackUser);
     messageEvent(
       text,
-      { id: channel, name: channelName || "noname" },
+      { id: channel, name: channelName || "noname", team_id },
       slackUser,
       req
     );

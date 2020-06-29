@@ -103,9 +103,19 @@ async function postSlackMessageIfNecessary(req, res, next) {
       slackHelper && slackStudent
         ? `${slackHelper.slack_id},${slackStudent.slack_id}`
         : slackHelper
-          ? slackHelper.slack_id
-          : slackStudent.slack_id;
-    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`);
+        ? slackHelper.slack_id
+        : slackStudent.slack_id;
+    const team_id = slackStudent
+      ? slackStudent.team_id
+      : slackHelper
+      ? slackHelper.team_id
+      : null;
+    openChannel(
+      channelUsers,
+      channelMessage,
+      `ddq_ticket_${ticket_id}`,
+      team_id
+    );
     return next();
   }
 

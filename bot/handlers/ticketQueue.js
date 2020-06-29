@@ -148,6 +148,7 @@ async function handleSubmission(req, res, next, submission) {
       user: { id: slack_id, team_id },
       view: {
         private_metadata: ticket_id,
+        team_id,
         state: {
           values: {
             message_body: {
@@ -157,7 +158,7 @@ async function handleSubmission(req, res, next, submission) {
         },
       },
     } = submission;
-    console.log(submission);
+    //console.log(submission);
     const slackUser = { slack_id, team_id };
     //console.log("queue handler", ticket_id, message);
     const userInDatabase = await createUserIfNotExists(slackUser, req);
@@ -221,7 +222,7 @@ async function handleSubmission(req, res, next, submission) {
     const channelUsers =
       userInDatabase.slack_id +
       (studentSlackUser ? `,${studentSlackUser.slack_id}` : "");
-    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`);
+    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`, team_id);
   } catch (e) {
     next(e);
   }

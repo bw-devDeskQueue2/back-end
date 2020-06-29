@@ -95,7 +95,7 @@ const sendDM = (users, message) =>
     }
   );
 
-const openChannel = (users, message, name) =>
+const openChannel = (users, message, name, team_id) =>
   slackUrlEncodedRequest(
     {
       name,
@@ -137,7 +137,7 @@ const openChannel = (users, message, name) =>
         // const targetChannel = channelsList.channels.find(
         //   channel => channel.name === name
         // );
-        const targetChannel = await OpenChannels.findChannel({name});
+        const targetChannel = await OpenChannels.findChannel({ name, team_id });
         if (!targetChannel) {
           return console.log("Error finding channel.");
         }
