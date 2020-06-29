@@ -7,6 +7,7 @@ const {
   sendDM,
   pushView,
   openChannel,
+  closeChannel,
   getChannelInfo,
 } = require("./slackUtils");
 
@@ -55,5 +56,6 @@ module.exports = {
   openView,
   pushView,
   openChannel,
+  closeChannel,
   getChannelInfo,
 };

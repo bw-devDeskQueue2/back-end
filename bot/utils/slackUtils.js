@@ -38,6 +38,12 @@ const getChannelInfo = channel =>
     "conversations.info"
   );
 
+const closeChannel = channel =>
+  slackUrlEncodedRequest(
+    { channel, token: config.BOT_ACCESS_TOKEN },
+    "conversations.close"
+  );
+
 const sendDM = (users, message) =>
   slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
     ({ channel: { id: channelID } }) =>
@@ -81,4 +87,11 @@ const openChannel = (users, message, name) =>
     )
     .catch(console.log);
 
-module.exports = { openView, pushView, sendDM, openChannel, getChannelInfo };
+module.exports = {
+  openView,
+  pushView,
+  sendDM,
+  openChannel,
+  closeChannel,
+  getChannelInfo,
+};

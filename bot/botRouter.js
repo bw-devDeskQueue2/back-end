@@ -111,8 +111,8 @@ router.post(
     const channelInfo = await getChannelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
     const slackUser = { team_id, slack_id: user };
-    messageEvent(text, { id: channel, name: channelName }, slackUser);
     res.status(200).end();
+    messageEvent(text, { id: channel, name: channelName }, slackUser);
   })
 );
 process.env.NODE_ENV === "test" &&
