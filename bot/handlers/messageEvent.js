@@ -24,16 +24,6 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
         .set("Authorization", `Bearer ${await getAdminToken()}`)
         .send({ channel_id: channel.id });
-      // const channelMembers = await getMembers(
-      //   channel.id
-      // ).then(({ ok, members }) => (ok ? members : []));
-      // const channelResponse = await closeChannel(channel.id);
-      // channelMembers.map(id =>
-      //   sendDM(id, `Ticket #${ticket_id} was successfully closed.`).catch(
-      //     () => null
-      //   )
-      // );
-      //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
 
@@ -43,7 +33,6 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .patch(`${baseURL(req)}/tickets/${ticket_id}/unassign`)
         .set("Authorization", `Bearer ${await getAdminToken()}`)
         .send({ channel_id: channel.id });
-      //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
 

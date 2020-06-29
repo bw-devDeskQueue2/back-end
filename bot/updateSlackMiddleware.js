@@ -1,4 +1,9 @@
-const { closeChannel, findChannelByName, getMembers } = require("./utils");
+const {
+  closeChannel,
+  findChannelByName,
+  getMembers,
+  sendDM,
+} = require("./utils");
 const SlackUsers = require("./slackUserModel");
 
 async function closeSlackChannelIfNecessary(req, res, next) {
@@ -20,7 +25,9 @@ async function closeSlackChannelIfNecessary(req, res, next) {
       sendDM(
         id,
         `Ticket #${ticketId} was ${
-          req.originalUrl.includes("close") ? "closed" : "unassigned and returned to the queue"
+          req.originalUrl.includes("unassign")
+            ? "unassigned and returned to the queue"
+            : "closed"
         }.`
       ).catch(() => null)
     );
