@@ -65,28 +65,35 @@ const openChannel = (users, message, name) =>
     "conversations.create"
   )
     .then(async ({ ok, channel }) => {
+      let channelID;
       if (ok) {
-        const channelID = channel.id;
-        return slackUrlEncodedRequest(
-          {
-            channel: channelID,
-            users,
-            token: config.BOT_ACCESS_TOKEN,
-          },
-          "conversations.invite"
-        );
+        channelID = channel.id;
       } else {
         const channelsList = await slackUrlEncodedRequest(
           { token: config.BOT_ACCESS_TOKEN },
           "conversations.list"
         );
-        console.log(channelsList);
+        //console.log(channelsList);
         const targetChannel = channelsList.channels.find(
           channel => channel.name === name
         );
-        console.log("found channel", targetChannel);
-        return { channel: targetChannel };
+        if (!targetChannel) {
+          return console.log("Error finding channel.");
+        }
+        await slackUrlEncodedRequest(
+          { token: config.BOT_ACCESS_TOKEN },
+          "conversations.join"
+        );
+        channelID = targetChannel.id;
       }
+      return slackUrlEncodedRequest(
+        {
+          channel: channelID,
+          users,
+          token: config.BOT_ACCESS_TOKEN,
+        },
+        "conversations.invite"
+      );
     })
     .then(({ channel: { id: channelID } }) =>
       slackUrlEncodedRequest(
