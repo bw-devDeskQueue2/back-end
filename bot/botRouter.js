@@ -98,6 +98,7 @@ router.post("/interactive", (req, res, next) => {
 router.post(
   "/events",
   catchAsync(async (req, res) => {
+    res.status(200).end();
     let {
       team_id,
       event: { type, text, user, bot_id, channel },
@@ -112,7 +113,6 @@ router.post(
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
     const slackUser = { team_id, slack_id: user };
     //console.log("Message event", text, channelName, channel, slackUser);
-    res.status(200).end();
     messageEvent(
       text,
       { id: channel, name: channelName || "noname" },

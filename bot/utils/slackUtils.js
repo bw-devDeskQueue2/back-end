@@ -9,7 +9,7 @@ const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
     .set("Authorization", `Bearer ${token}`)
     .then(({ body }) => {
       if (!body.ok) {
-        console.log("Error with request to " + endpoint, body);
+        console.log(`Error with request to ${endpoint}: ${body.error}`);
       }
       return body;
     })
@@ -20,7 +20,7 @@ const slackUrlEncodedRequest = (body, endpoint) =>
     .post(`https://slack.com/api/${endpoint}?${encode(body)}`)
     .then(({ body }) => {
       if (!body.ok) {
-        console.log("Error with request to " + endpoint, body);
+        console.log(`Error with request to ${endpoint}: ${body.error}`);
       }
       return body;
     })
