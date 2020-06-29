@@ -96,7 +96,7 @@ router.post("/interactive", (req, res, next) => {
 //DMs to the bot and @mentions
 router.post("/events", (req, res) => {
   //TODO: Make this endpoint do something
-  //console.log(req.body);
+  console.log(req.body);
   res.status(200).end();
 });
 process.env.NODE_ENV === "test" &&
