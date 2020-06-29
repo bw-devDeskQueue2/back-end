@@ -116,7 +116,8 @@ router.post(
     messageEvent(
       text,
       { id: channel, name: channelName || "noname" },
-      slackUser
+      slackUser,
+      req
     );
   })
 );

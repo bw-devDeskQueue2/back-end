@@ -1,11 +1,26 @@
-async function messageEvent(messageText, channel, slackUser) {
+const request = require("superagent");
+const {
+  baseURL,
+  closeChannel,
+  getAdminToken,
+  getUserToken,
+} = require("../utils");
+const SlackUsers = require("../slackUserModel");
+
+async function messageEvent(messageText, channel, slackUser, req) {
   try {
     const channelSplit = channel.name ? channel.name.split("_") : ["no", "no"];
     if (!(channelSplit[0] === "ddq" && channelSplit[1] === "ticket")) {
       return; //console.log("Message not in a ticket channel");
     }
     const ticket_id = channelSplit[2];
-    if (messageText === "!close"||messageText==="`!close`") {
+    if (messageText.includes("!close")) {
+      const ticketResponse = await request
+        .delete(`${baseURL(req)}/tickets/${ticket_id}`)
+        .set("Authorization", `Bearer ${await getAdminToken()}`);
+      console.log(response.status);
+      const channelResponse = await closeChannel(channel.id);
+      console.log("ticket:", ticketResponse, "channel: ", channelResponse);
       return console.log("Close command sent");
     }
     console.log(messageText);
