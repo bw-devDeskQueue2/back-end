@@ -18,9 +18,14 @@ async function messageEvent(messageText, channel, slackUser, req) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
         .set("Authorization", `Bearer ${await getAdminToken()}`);
-      console.log(response.status);
       const channelResponse = await closeChannel(channel.id);
-      console.log("ticket:", ticketResponse, "channel: ", channelResponse);
+      console.log(
+        "ticket:",
+        ticketResponse.status,
+        ticketResponse.body,
+        "channel: ",
+        channelResponse
+      );
       return console.log("Close command sent");
     }
     console.log(messageText);
