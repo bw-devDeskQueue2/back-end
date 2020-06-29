@@ -4,7 +4,7 @@ const {
   getAdminToken,
   getUserToken,
   createUserIfNotExists,
- // postEphemeral,
+ postEphemeral,
 } = require("../utils");
 
 async function messageEvent(messageText, channel, slackUser, req) {
@@ -35,11 +35,11 @@ async function messageEvent(messageText, channel, slackUser, req) {
     }
 
     //Give feedback to the user
-    // postEphemeral(
-    //   channel.id,
-    //   "Message received and added to the ticket.",
-    //   slackUser.slack_id,
-    // );
+    postEphemeral(
+      channel.id,
+      "Message received and added to the ticket.",
+      slackUser.slack_id,
+    );
     //Add ticket-related messages to the database
 
     const user = await createUserIfNotExists(slackUser, req);
