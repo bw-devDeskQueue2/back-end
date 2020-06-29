@@ -106,7 +106,6 @@ async function handleSubmission(req, res, next, submission) {
   //console.log("database id", userInDatabase.user_id);
 
   let rolesChangeResult;
-  await request.get(`localhost:${process.env.PORT}/api/tags`).then(res => console.log("Tags",res.body));
   await request
     .patch(`${baseURL(req)}/user/${userInDatabase.user_id}/roles`)
     .set("Authorization", `Bearer ${adminToken}`)

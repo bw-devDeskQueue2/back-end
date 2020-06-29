@@ -165,10 +165,25 @@ describe("ticketRouter", () => {
         .set("Authorization", "Bearer " + studentToken)
         .expect(403)
         .then(r => expect(r.body.message).toBeDefined()));
-    it("Correctly updates information", async () => {
+    it("Forbids closing tickets", async () => {
       const updates = {
         subject: "New subject",
         status: "closed",
+        rating: 10,
+        tags: ["web", "account"],
+      };
+      const response = await request(server)
+        .patch(`${bU}/1/update`)
+        .send(updates)
+        .set("Authorization", "Bearer " + studentToken)
+        .expect(400)
+        .then(r => r.body);
+      expect(response.message).toContain("close");
+    });
+    it("Correctly updates information", async () => {
+      const updates = {
+        subject: "New subject",
+        status: "open",
         rating: 10,
         tags: ["web", "account"],
       };
