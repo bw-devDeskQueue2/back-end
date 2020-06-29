@@ -57,6 +57,12 @@ async function postSlackMessageIfNecessary(req, res, next) {
   if (!(slackHelper || slackStudent)) {
     return next();
   }
+  const channel = await findChannelByName(`ddq_ticket_${ticket_id}`);
+  //TODO: Open a student-only channel if a non-slack helper responds
+  if (!channel || channel.is_archived) {
+    return next();
+  }
+  //Establish message sender info
   const sender =
     sender_id == student.id
       ? student
@@ -67,11 +73,8 @@ async function postSlackMessageIfNecessary(req, res, next) {
   const senderName = slackSender
     ? `<@${slackSender.slack_id}>`
     : sender.username;
-  const channel = await findChannelByName(`ddq_ticket_${ticket_id}`);
-  //TODO: Open a student-only channel if a non-slack helper responds
-  if (!channel || channel.is_archived) {
-    return next();
-  }
+  //Post message from sender
+  console.log(channel.id, `*${senderName}:* ${body}`);
   postInChannel(channel.id, `*${senderName}:* ${body}`);
   console.log(ticket_id, body, sender_id);
   next();
