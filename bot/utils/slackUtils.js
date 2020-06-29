@@ -35,6 +35,18 @@ const openView = (trigger_id, view) =>
 const pushView = (trigger_id, view) =>
   slackRequest({ trigger_id, view }, "views.push");
 
+const findChannelByName = async name => {
+  const channelsList = await slackUrlEncodedRequest(
+    { token: config.BOT_ACCESS_TOKEN },
+    "conversations.list"
+  );
+  //Find the conversation with the name we want
+  const targetChannel = channelsList.channels.find(
+    channel => channel.name === name
+  );
+  return targetChannel || null;
+};
+
 const getChannelInfo = channel =>
   slackUrlEncodedRequest(
     { channel, token: config.BOT_ACCESS_TOKEN },
@@ -152,6 +164,7 @@ module.exports = {
   openView,
   pushView,
   sendDM,
+  findChannelByName,
   openChannel,
   closeChannel,
   getChannelInfo,

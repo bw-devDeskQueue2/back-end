@@ -6,13 +6,14 @@ const {
   openView,
   sendDM,
   pushView,
+  findChannelByName,
   openChannel,
   closeChannel,
   getChannelInfo,
   getMembers,
 } = require("./slackUtils");
 
-const baseURL = req => `localhost:${config.PORT}/api`//`${req.protocol}://${req.get("host")}/api`;
+const baseURL = req => `localhost:${config.PORT}/api`; //`${req.protocol}://${req.get("host")}/api`;
 
 async function createUserIfNotExists(slackUser, req) {
   try {
@@ -56,6 +57,7 @@ module.exports = {
   sendDM,
   openView,
   pushView,
+  findChannelByName,
   openChannel,
   closeChannel,
   getChannelInfo,
