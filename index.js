@@ -1,6 +1,6 @@
 const server = require('./server.js');
+const config = require("./config/serverInfo");
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(config.PORT, () => {
   console.log(`\n=== Server listening on port ${PORT} ===\n`);
 });
