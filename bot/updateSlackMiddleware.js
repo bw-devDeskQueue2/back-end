@@ -5,6 +5,7 @@ const {
   sendDM,
 } = require("./utils");
 const SlackUsers = require("./slackUserModel");
+const Tickets = require("../tickets/ticketsModel");
 
 async function closeSlackChannelIfNecessary(req, res, next) {
   const { channel_id } = req.body;
@@ -38,11 +39,13 @@ async function closeSlackChannelIfNecessary(req, res, next) {
 }
 
 async function postSlackMessageIfNecessary(req, res, next) {
-  const { initiated_by_slackbot } = req.body;
+  const { initiated_by_slackbot, body } = req.body;
+  const { id: user_id } = req.data;
   const { ticketId } = req.params;
   if (initiated_by_slackbot) {
     return next();
   }
+  console.log(ticketId, body, user_id);
   next();
 }
 
