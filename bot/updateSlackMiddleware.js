@@ -2,7 +2,6 @@ const {
   closeChannel,
   findChannelByName,
   openChannel,
-  postInChannel,
   getMembers,
   sendDM,
 } = require("./utils");
@@ -15,17 +14,28 @@ async function closeSlackChannelIfNecessary(req, res, next) {
   const { channel_id } = req.body;
   const { ticketId } = req.params;
   try {
+    const { helper, student } = await Tickets.getTicketById(ticketId);
+    const slackHelper = await SlackUsers.getUser({ user_id: helper.id });
+    const slackStudent = await SlackUsers.getUser({ user_id: student.id });
+    const team_id = slackStudent
+      ? slackStudent.team_id
+      : slackHelper
+      ? slackHelper.team_id
+      : null;
     const channel = channel_id
-      ? { id: channel_id }
-      : await findChannelByName(`ddq_ticket_${ticketId}`);
+      ? { channel_id }
+      : await OpenChannels.findChannel({
+          name: `ddq_ticket_${ticketId}`,
+          team_id,
+        });
     //console.log("Slack channel to close\n", channel);
-    if (!channel || channel.is_archived) {
+    if (!channel) {
       return next();
     }
     const channelMembers = await getMembers(
-      channel.id
+      channel.channel_id
     ).then(({ ok, members }) => (ok ? members : []));
-    await closeChannel(channel.id);
+    await closeChannel(channel.channel_id);
     channelMembers.map(id =>
       sendDM(
         id,
