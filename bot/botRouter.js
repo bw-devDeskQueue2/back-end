@@ -107,7 +107,7 @@ router.post(
     if (type !== "message") {
       return; //console.log("Not message event");
     }
-    const channelInfo = await channelInfo(channel);
+    const channelInfo = await getChannelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
     const slackUser = { team_id, slack_id: user };
     console.log("User event", text, channelName, slackUser);

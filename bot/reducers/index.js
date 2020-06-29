@@ -20,8 +20,7 @@ fs.readdir(directory, (err, files) => {
       description,
     } = require(`${directory}/${file}`);
     if (!actionName) {
-      console.log("No actionName for", file);
-      return;
+      return console.log("No actionName for", file);
     }
     actionDescriptions[actionName] = description;
     modals[actionName] = modal;
