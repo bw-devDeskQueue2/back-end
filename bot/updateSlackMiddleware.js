@@ -1,10 +1,12 @@
 const {
   closeChannel,
   findChannelByName,
+  postInChannel,
   getMembers,
   sendDM,
 } = require("./utils");
 const SlackUsers = require("./slackUserModel");
+const Users = require("../user/userModel");
 const Tickets = require("../tickets/ticketsModel");
 
 async function closeSlackChannelIfNecessary(req, res, next) {
@@ -39,13 +41,39 @@ async function closeSlackChannelIfNecessary(req, res, next) {
 }
 
 async function postSlackMessageIfNecessary(req, res, next) {
+  //Making the key "body" in body was probably a mistake
+  //But this isn't a typo
   const { initiated_by_slackbot, body } = req.body;
-  const { id: user_id } = req.data;
-  const { ticketId } = req.params;
+  const { id: sender_id } = req.data;
+  const { id: ticket_id } = req.ticket;
+  //Do nothing if slackbot sent the message
   if (initiated_by_slackbot) {
     return next();
   }
-  console.log(ticketId, body, user_id);
+  let { helper, student, messages } = await Tickets.getTicketById(ticket_id);
+  const slackHelper = await SlackUsers.getUser({ user_id: helper.id });
+  const slackStudent = await SlackUsers.getUser({ user_id: student.id });
+  //Do nothing if neither the helper nor the student is in slack
+  if (!(slackHelper || slackStudent)) {
+    return next();
+  }
+  const sender =
+    sender_id == student.id
+      ? student
+      : sender_id == helper.id
+      ? helper
+      : await Users.getUser({ id: sender_id });
+  const slackSender = await SlackUsers.getUser({ user_id: sender.id });
+  const senderName = slackSender
+    ? `<@${slackSender.slack_id}>`
+    : sender.username;
+  const channel = await findChannelByName(`ddq_ticket_${ticket_id}`);
+  //TODO: Open a student-only channel if a non-slack helper responds
+  if (!channel || channel.is_archived) {
+    return next();
+  }
+  postInChannel(channel.id, `*${senderName}:* ${body}`);
+  console.log(ticket_id, body, sender_id);
   next();
 }
 

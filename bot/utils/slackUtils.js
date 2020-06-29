@@ -65,6 +65,17 @@ const closeChannel = channel =>
     "conversations.archive"
   );
 
+const postInChannel = (channel, text) =>
+  slackUrlEncodedRequest(
+    {
+      username: config.BOT_USERNAME,
+      channel,
+      token: config.BOT_ACCESS_TOKEN,
+      text,
+    },
+    "chat.postMessage"
+  );
+
 const sendDM = (users, message) =>
   //Open the DM, if not already open
   slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
@@ -167,6 +178,7 @@ module.exports = {
   findChannelByName,
   openChannel,
   closeChannel,
+  postInChannel,
   getChannelInfo,
   getMembers,
 };

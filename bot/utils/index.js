@@ -9,6 +9,7 @@ const {
   findChannelByName,
   openChannel,
   closeChannel,
+  postInChannel,
   getChannelInfo,
   getMembers,
 } = require("./slackUtils");
@@ -60,6 +61,7 @@ module.exports = {
   findChannelByName,
   openChannel,
   closeChannel,
+  postInChannel,
   getChannelInfo,
   getMembers,
 };
