@@ -2,7 +2,8 @@
 exports.up = function(knex) {
   return knex.schema.createTable("open_private_channels", tbl=>{
     tbl.increments();
-    tbl.string("id").notNullable();
+    tbl.string("channel_id").notNullable();
+    tbl.string("team_id").notNullable();
     tbl.string("name").notNullable();
   })
 };

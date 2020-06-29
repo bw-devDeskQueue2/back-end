@@ -1,7 +1,7 @@
 const request = require("superagent");
 const config = require("../../config/serverInfo");
 const { encode } = require("querystring");
-
+const OpenChannels = require("../slackChannelsModel");
 //Slack requests for endpoints that support a JSON body
 //Some endpoints that claim to support JSON don't so be wary
 const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
@@ -100,7 +100,7 @@ const openChannel = (users, message, name) =>
     {
       name,
       token: config.BOT_ACCESS_TOKEN,
-      // is_private: true,
+      is_private: true,
     },
     "conversations.create"
   )
@@ -109,6 +109,15 @@ const openChannel = (users, message, name) =>
       //If the channel didn't exist, we're gucci
       if (ok) {
         channelID = channel.id;
+        const teamID = channel.shared_team_ids
+          ? channel.shared_team_ids[0]
+          : null;
+        const addedChannel = await OpenChannels.addChannel({
+          channel_id: channelID,
+          team_id: teamID,
+          name,
+        });
+        console.log("New channel created", addedChannel);
         return slackUrlEncodedRequest(
           {
             channel: channelID,
@@ -120,30 +129,31 @@ const openChannel = (users, message, name) =>
         //If the channel already exists:
       } else {
         //Get a list of all conversations
-        const channelsList = await slackUrlEncodedRequest(
-          { token: config.BOT_ACCESS_TOKEN },
-          "conversations.list"
-        );
-        //Find the conversation with the name we want
-        const targetChannel = channelsList.channels.find(
-          channel => channel.name === name
-        );
+        // const channelsList = await slackUrlEncodedRequest(
+        //   { token: config.BOT_ACCESS_TOKEN },
+        //   "conversations.list"
+        // );
+        // //Find the conversation with the name we want
+        // const targetChannel = channelsList.channels.find(
+        //   channel => channel.name === name
+        // );
+        const targetChannel = await OpenChannels.findChannel({name});
         if (!targetChannel) {
           return console.log("Error finding channel.");
         }
+        console.log("Found channel", targetChannel);
+
         //Unarchive the channel
-        //This didn't work with the bot token
-        //So it uses the OAuth token, and adds the workspace admin to the channel too
         await slackUrlEncodedRequest(
-          { token: config.OAUTH_ACCESS_TOKEN, channel: targetChannel.id },
+          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.channel_id },
           "conversations.unarchive"
         );
         //Join the channel
         await slackUrlEncodedRequest(
-          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
+          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.channel_id },
           "conversations.join"
         );
-        channelID = targetChannel.id;
+        channelID = targetChannel.channel_id;
         //Invite additional users to the channel
         await slackUrlEncodedRequest(
           {

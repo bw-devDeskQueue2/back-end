@@ -10,10 +10,10 @@ function addChannel(channel) {
     .then(() => findChannel({ channel_id, team_id, name }));
 }
 
-function findChannelByName(name) {
+function findChannel(query) {
   return knex("open_private_channels")
-    .where({ name })
+    .where(query)
     .then(r => (r.length === 0 ? null : r[0]));
 }
 
-module.exports = { addChannel, findChannelByName };
+module.exports = { addChannel, findChannel };
