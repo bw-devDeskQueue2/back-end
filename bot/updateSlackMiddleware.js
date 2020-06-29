@@ -1,6 +1,7 @@
 const {
   closeChannel,
   findChannelByName,
+  openChannel,
   postInChannel,
   getMembers,
   sendDM,
@@ -50,7 +51,10 @@ async function postSlackMessageIfNecessary(req, res, next) {
   if (initiated_by_slackbot) {
     return next();
   }
-  let { helper, student, messages } = await Tickets.getTicketById(ticket_id);
+  //Get data from the existing ticket
+  let { helper, student, messages, subject } = await Tickets.getTicketById(
+    ticket_id
+  );
   const slackHelper = await SlackUsers.getUser({ user_id: helper.id });
   const slackStudent = await SlackUsers.getUser({ user_id: student.id });
   //Do nothing if neither the helper nor the student is in slack
@@ -58,10 +62,55 @@ async function postSlackMessageIfNecessary(req, res, next) {
     return next();
   }
   const channel = await findChannelByName(`ddq_ticket_${ticket_id}`);
-  //TODO: Open a student-only channel if a non-slack helper responds
+  //If no channel is open but a slack user is on the ticket, open a channel
   if (!channel || channel.is_archived) {
+    //Push the new message onto the messages object
+    messages.push({ body, sender: await Users.getUser({ id: sender_id }) });
+    //Add slack info to messages
+    messages = await Promise.all(
+      messages.map(async msg => ({
+        ...msg,
+        slackUser: await SlackUsers.getUser({ user_id: msg.sender.id }),
+      }))
+    );
+    //Compose a welcome message
+    const channelMessage = "-----------------------------------\n"
+      .concat(`*This is the conversation for the ticket _${subject}_*\n`)
+      .concat("-----------------------------------\n *Message History*\n")
+      .concat(
+        messages.map(
+          msg =>
+            `\n*${
+              msg.slackUser
+                ? `<@${msg.slackUser.slack_id}>`
+                : msg.sender.username
+            }:* ${msg.body}`
+        )
+      )
+      .concat("\n-----------------------------------")
+      .concat(
+        "\nType in this channel to discuss the ticket.\nType `!close` to close the ticket."
+      )
+      .concat(
+        "\nType `!unassign` to remove the assigned `helper` and place the ticket back in the queue."
+      )
+      .concat(
+        !slackHelper
+          ? `\n-----------------------------------\nAny messages you type here will be sent to *${helper.username}*, and you'll see their replies in this channel.`
+          : ""
+      );
+    const channelUsers =
+      slackHelper && slackStudent
+        ? `${slackHelper.slack_id},${slackStudent.slack_id}`
+        : slackHelper
+          ? slackHelper.slack_id
+          : slackStudent.slack_id;
+    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`);
     return next();
   }
+
+  //If a channel is open, post the message in it:
+
   //Establish message sender info
   const sender =
     sender_id == student.id
@@ -73,6 +122,7 @@ async function postSlackMessageIfNecessary(req, res, next) {
   const senderName = slackSender
     ? `<@${slackSender.slack_id}>`
     : sender.username;
+  //Build message
   const slackPost = `*New Message from ${senderName}:*\n${body}\n`
     .concat(
       "--------------------\nType in this channel to send them a reply.\n"
