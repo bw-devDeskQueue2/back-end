@@ -66,7 +66,7 @@ const sendDM = (users, message) =>
 
 const openChannel = (users, message, name) =>
   slackUrlEncodedRequest(
-    { name, token: config.BOT_ACCESS_TOKEN },
+    { name, token: config.BOT_ACCESS_TOKEN, is_private: true },
     "conversations.create"
   )
     .then(async ({ ok, channel }) => {
@@ -88,7 +88,9 @@ const openChannel = (users, message, name) =>
         if (!targetChannel) {
           return console.log("Error finding channel.");
         }
-        //Unarchive the channel (currently bugged)
+        //Unarchive the channel
+        //This didn't work with the bot token
+        //So it uses the OAuth token, and adds the workspace admin to the channel too
         await slackUrlEncodedRequest(
           { token: config.OAUTH_ACCESS_TOKEN, channel: targetChannel.id },
           "conversations.unarchive"
