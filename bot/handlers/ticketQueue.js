@@ -205,9 +205,12 @@ async function handleSubmission(req, res, next, submission) {
             }:* ${msg.body}`
         )
       )
-      .concat("\n-----------------------------------\n")
+      .concat("\n-----------------------------------")
       .concat(
-        "Type in this channel to discuss the ticket.\nType `!close` at any time to close the ticket."
+        "\nType in this channel to discuss the ticket.\nType `!close` to close the ticket."
+      )
+      .concat(
+        "\nType `!unassign` to remove the assigned `helper` and place the ticket back in the queue."
       )
       .concat(
         !studentSlackUser
