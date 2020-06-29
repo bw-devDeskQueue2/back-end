@@ -102,12 +102,11 @@ router.patch(
   })
 );
 
-//When tickets are unassigned or closed, any corresponding slack channel should be closed as well
-router.use(closeSlackChannelIfNecessary);
 
 router.patch(
   "/:ticketId/unassign",
   catchAsync(validateTicketPermissions),
+  catchAsync(closeSlackChannelIfNecessary),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res
@@ -119,6 +118,7 @@ router.patch(
 router.delete(
   "/:ticketId",
   catchAsync(validateTicketPermissions),
+  catchAsync(closeSlackChannelIfNecessary),
   catchAsync(async (req, res) => {
     const { ticketId } = req.params;
     res.status(200).json(
