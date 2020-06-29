@@ -79,9 +79,7 @@ const openChannel = (users, message, name) =>
         const channelsList = await slackUrlEncodedRequest(
           { token: config.BOT_ACCESS_TOKEN },
           "conversations.list"
-        )
-          .then(r => r.body)
-          .catch(console.log);
+        );
         console.log(channelsList);
         const targetChannel = channelsList.channels.find(
           channel => channel.name === name
