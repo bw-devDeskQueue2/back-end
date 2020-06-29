@@ -60,7 +60,10 @@ const getMembers = channel =>
   );
 
 const kickUser = (channel, user) =>
-  slackUrlEncodedRequest({ token: config.BOT_ACCESS_TOKEN, channel, user });
+  slackUrlEncodedRequest(
+    { token: config.BOT_ACCESS_TOKEN, channel, user },
+    "conversations.kick"
+  );
 
 const closeChannel = async channel => {
   const members = await getMembers(channel).then(({ ok, members }) =>
