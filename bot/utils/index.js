@@ -7,7 +7,7 @@ const {
   sendDM,
   pushView,
   openChannel,
-  channelInfo,
+  getChannelInfo,
 } = require("./slackUtils");
 
 const baseURL = req => `${req.protocol}://${req.get("host")}/api`;
@@ -55,5 +55,5 @@ module.exports = {
   openView,
   pushView,
   openChannel,
-  channelInfo,
+  getChannelInfo,
 };

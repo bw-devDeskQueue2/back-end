@@ -11,7 +11,7 @@ const {
   blockActionHandlers,
   actionDescriptions,
 } = require("./reducers");
-const { openView, channelInfo } = require("./utils/slackUtils");
+const { openView, getChannelInfo } = require("./utils/slackUtils");
 
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
@@ -102,10 +102,10 @@ router.post(
       event: { type, text, user, bot_id, channel },
     } = req.body;
     if (bot_id) {
-      return console.log("Bot event");
+      return; //console.log("Bot event");
     }
     if (type !== "message") {
-      return console.log("Not message event");
+      return; //console.log("Not message event");
     }
     const channelInfo = await channelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
