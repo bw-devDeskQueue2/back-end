@@ -27,14 +27,16 @@ const modal = async req => {
     },
     blocks:
       ticketQueue.length === 0
-        ? {
-            type: "section",
-            block_id: "empty_block",
-            text: {
-              type: "mrkdwn",
-              text: "The queue is currently empty",
+        ? [
+            {
+              type: "section",
+              block_id: "empty_block",
+              text: {
+                type: "mrkdwn",
+                text: "The queue is currently empty",
+              },
             },
-          }
+          ]
         : ticketQueue.map(({ id, subject, messages: { [0]: { body } } }) => ({
             //tags,
             type: "section",
@@ -221,7 +223,12 @@ async function handleSubmission(req, res, next, submission) {
     const channelUsers =
       userInDatabase.slack_id +
       (studentSlackUser ? `,${studentSlackUser.slack_id}` : "");
-    openChannel(channelUsers, channelMessage, `ddq_ticket_${ticket_id}`, team_id);
+    openChannel(
+      channelUsers,
+      channelMessage,
+      `ddq_ticket_${ticket_id}`,
+      team_id
+    );
   } catch (e) {
     next(e);
   }
