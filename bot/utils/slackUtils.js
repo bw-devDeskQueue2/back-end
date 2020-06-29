@@ -96,6 +96,7 @@ const postEphemeral = (channel, text, user) =>
       channel,
       token: config.BOT_ACCESS_TOKEN,
       text,
+      user,
     },
     "chat.postEphemeral"
   );
@@ -141,7 +142,7 @@ const openChannel = (users, message, name, team_id) =>
           team_id: teamID,
           name,
         });
-        console.log("New channel created", addedChannel);
+        //console.log("New channel created", addedChannel);
         return slackUrlEncodedRequest(
           {
             channel: channelID,
