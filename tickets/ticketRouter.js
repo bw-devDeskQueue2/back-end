@@ -3,7 +3,9 @@ const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
 const messagesRouter = require("../messages/messagesRouter");
-const { closeSlackChannelIfNecessary } = require("../bot/updateSlackMiddleware");
+const {
+  closeSlackChannelIfNecessary,
+} = require("../bot/updateSlackMiddleware");
 const Validator = require("jsonschema").Validator;
 
 router.use(
@@ -76,6 +78,11 @@ router.patch(
           "You must supply something to update. Valid keys include 'status', 'rating', 'tags', and 'subject'.",
       });
     }
+    if (status === "closed") {
+      return res.status(400).json({
+        message: `This endpoint cannot be used to close tickets. Use /tickets/${ticketId}/close instead.`,
+      });
+    }
     res
       .status(200)
       .json(
@@ -95,7 +102,7 @@ router.patch(
   })
 );
 
-//When tickets are unassigned or closed, any corresponding slack channel should be closed
+//When tickets are unassigned or closed, any corresponding slack channel should be closed as well
 router.use(closeSlackChannelIfNecessary);
 
 router.patch(
