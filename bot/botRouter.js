@@ -11,7 +11,7 @@ const {
   blockActionHandlers,
   actionDescriptions,
 } = require("./reducers");
-const { openView } = require("./utils/slackUtils");
+const { openView, channelInfo } = require("./utils/slackUtils");
 
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
@@ -94,21 +94,26 @@ router.post("/interactive", (req, res, next) => {
 
 //This endpoint responds to bot events:
 //DMs to the bot and @mentions
-router.post("/events", (req, res) => {
-  let {
-    team_id,
-    event: { type, text, user, bot_id, channel },
-  } = req.body;
-  if (bot_id) {
-    return console.log("Bot event");
-  }
-  if (type !== "message") {
-    return console.log("Not message event");
-  }
-  const slackUser = { team_id, slack_id: user };
-  console.log("User event", text, channel, slackUser);
-  res.status(200).end();
-});
+router.post(
+  "/events",
+  catchAsync(async (req, res) => {
+    let {
+      team_id,
+      event: { type, text, user, bot_id, channel },
+    } = req.body;
+    if (bot_id) {
+      return console.log("Bot event");
+    }
+    if (type !== "message") {
+      return console.log("Not message event");
+    }
+    const channelInfo = await channelInfo(channel);
+    const channelName = channelInfo.ok ? channelInfo.channel.name : null;
+    const slackUser = { team_id, slack_id: user };
+    console.log("User event", text, channelName, slackUser);
+    res.status(200).end();
+  })
+);
 process.env.NODE_ENV === "test" &&
   router.post("/testing", (req, res) => {
     res.status(204).end();

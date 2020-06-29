@@ -2,7 +2,13 @@ const request = require("superagent");
 const config = require("../../config/serverInfo");
 const SlackUsers = require("../slackUserModel");
 const { getAdminToken, getUserToken } = require("./tokenUtils");
-const { openView, sendDM, pushView, openChannel } = require("./slackUtils");
+const {
+  openView,
+  sendDM,
+  pushView,
+  openChannel,
+  channelInfo,
+} = require("./slackUtils");
 
 const baseURL = req => `${req.protocol}://${req.get("host")}/api`;
 
@@ -49,4 +55,5 @@ module.exports = {
   openView,
   pushView,
   openChannel,
+  channelInfo,
 };

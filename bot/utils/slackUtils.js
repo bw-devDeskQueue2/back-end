@@ -32,6 +32,12 @@ const openView = (trigger_id, view) =>
 const pushView = (trigger_id, view) =>
   slackRequest({ trigger_id, view }, "views.push");
 
+const channelInfo = channel =>
+  slackUrlEncodedRequest(
+    { channel, token: config.BOT_ACCESS_TOKEN },
+    "conversations.info"
+  );
+
 const sendDM = (users, message) =>
   slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
     ({ channel: { id: channelID } }) =>
@@ -75,4 +81,4 @@ const openChannel = (users, message, name) =>
     )
     .catch(console.log);
 
-module.exports = { openView, pushView, sendDM, openChannel };
+module.exports = { openView, pushView, sendDM, openChannel, channelInfo };
