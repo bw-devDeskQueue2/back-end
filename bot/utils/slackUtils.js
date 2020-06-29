@@ -90,7 +90,7 @@ const openChannel = (users, message, name) =>
         }
         //Unarchive the channel (currently bugged)
         await slackUrlEncodedRequest(
-          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
+          { token: config.OAUTH_ACCESS_TOKEN, channel: targetChannel.id },
           "conversations.unarchive"
         );
         //Join the channel
