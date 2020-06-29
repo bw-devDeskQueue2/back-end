@@ -4,9 +4,6 @@ const SlackUsers = require("./slackUserModel");
 async function closeSlackChannelIfNecessary(req, res, next) {
   const { channel_id } = req.body;
   const { ticketId } = req.params;
-  if (initiated_by_slackbot) {
-    return next();
-  }
   try {
     const channel = channel_id
       ? { id: channel_id }
