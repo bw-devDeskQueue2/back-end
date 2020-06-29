@@ -65,8 +65,10 @@ router.post(
   })
 );
 
+
 //This endpoint responds to user interaction with modal views in slack
 router.post("/interactive", (req, res, next) => {
+  res.status(200).end();
   try {
     let { payload } = req.body;
     if (!payload) {
@@ -90,15 +92,13 @@ router.post("/interactive", (req, res, next) => {
   } catch (e) {
     next(e);
   }
-  res.status(200).end();
 });
 
 //This endpoint responds to bot events:
 //DMs to the bot and @mentions
 router.post(
   "/events",
-  catchAsync(async (req, res) => {
-    res.status(200).end();
+  catchAsync(async (req, res) => { 
     let {
       team_id,
       event: { type, subtype, text, user, bot_id, channel },
@@ -124,6 +124,7 @@ router.post(
       slackUser,
       req
     );
+    res.status(200).end();
   })
 );
 process.env.NODE_ENV === "test" &&
