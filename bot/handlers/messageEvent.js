@@ -35,7 +35,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
     const addedMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${await getUserToken(user.user_id)}`)
-      .send({ body: message })
+      .send({ body: messageText })
       .catch(console.log);
     console.log("Added message\n", addedMessage.body);
   } catch (e) {
