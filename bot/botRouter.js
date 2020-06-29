@@ -99,6 +99,7 @@ router.post("/interactive", (req, res, next) => {
 router.post(
   "/events",
   catchAsync(async (req, res) => { 
+    res.status(200).end();
     let {
       team_id,
       event: { type, subtype, text, user, bot_id, channel },
@@ -124,7 +125,6 @@ router.post(
       slackUser,
       req
     );
-    res.status(200).end();
   })
 );
 process.env.NODE_ENV === "test" &&
