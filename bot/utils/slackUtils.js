@@ -82,7 +82,8 @@ const openChannel = (users, message, name) =>
         )
           .then(r => r.body)
           .catch(console.log);
-        const targetChannel = channelsList.find(
+        console.log(channelsList);
+        const targetChannel = channelsList.channels.find(
           channel => channel.name === name
         );
         console.log("found channel", targetChannel);

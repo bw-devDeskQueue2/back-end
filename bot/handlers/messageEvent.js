@@ -15,7 +15,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
     }
     const ticket_id = channelSplit[2];
     if (messageText.includes("has joined the channel")) {
-      return console.log("Person joining message");
+      return; //console.log("Person joining message");
     }
     if (messageText.includes("!close")) {
       const ticketResponse = await request
@@ -29,7 +29,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
         "channel: ",
         channelResponse
       );
-      return console.log("Close command sent");
+      return; //console.log("Close command sent");
     }
     console.log(messageText);
   } catch (e) {
