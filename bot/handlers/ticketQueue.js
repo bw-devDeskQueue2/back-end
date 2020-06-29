@@ -148,7 +148,6 @@ async function handleSubmission(req, res, next, submission) {
       user: { id: slack_id, team_id },
       view: {
         private_metadata: ticket_id,
-        team_id,
         state: {
           values: {
             message_body: {
