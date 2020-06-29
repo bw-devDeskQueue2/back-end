@@ -28,7 +28,11 @@ async function messageEvent(messageText, channel, slackUser, req) {
         channel.id
       ).then(({ ok, members }) => (ok ? members : []));
       const channelResponse = await closeChannel(channel.id);
-      channelMembers.map(id => sendDM(id, `Ticket #${ticket_id} was successfully closed.`));
+      channelMembers.map(id =>
+        sendDM(id, `Ticket #${ticket_id} was successfully closed.`).catch(
+          () => null
+        )
+      );
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
@@ -43,7 +47,11 @@ async function messageEvent(messageText, channel, slackUser, req) {
         channel.id
       ).then(({ ok, members }) => (ok ? members : []));
       const channelResponse = await closeChannel(channel.id);
-      channelMembers.map(id => sendDM(id, `Ticket #${ticket_id} was successfully unassigned.`));
+      channelMembers.map(id =>
+        sendDM(id, `Ticket #${ticket_id} was successfully unassigned.`).catch(
+          () => null
+        )
+      );
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }

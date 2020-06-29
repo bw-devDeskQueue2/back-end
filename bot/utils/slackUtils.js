@@ -11,7 +11,7 @@ const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
     .set("Authorization", `Bearer ${token}`)
     .then(({ body }) => {
       if (!body.ok) {
-        console.log(`Error with request to ${endpoint}: ${body.error}`);
+        console.trace(`Error with request to ${endpoint}: ${body.error}`);
       }
       return body;
     })
@@ -23,7 +23,7 @@ const slackUrlEncodedRequest = (body, endpoint) =>
     .post(`https://slack.com/api/${endpoint}?${encode(body)}`)
     .then(({ body }) => {
       if (!body.ok) {
-        console.log(`Error with request to ${endpoint}: ${body.error}`);
+        console.trace(`Error with request to ${endpoint}: ${body.error}`);
       }
       return body;
     })
@@ -56,18 +56,20 @@ const closeChannel = channel =>
 const sendDM = (users, message) =>
   //Open the DM, if not already open
   slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
-    ({ channel: { id: channelID } }) =>
+    body => {
+      if (!body.channel) return;
       //Send the message
-      slackRequest(
+      return slackRequest(
         {
           username: config.BOT_USERNAME,
-          channel: channelID,
+          channel: body.channel.id,
           token: config.BOT_ACCESS_TOKEN,
           text: message,
         },
         "chat.postMessage",
         config.BOT_ACCESS_TOKEN
-      )
+      );
+    }
   );
 
 const openChannel = (users, message, name) =>
