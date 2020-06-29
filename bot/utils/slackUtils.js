@@ -113,6 +113,7 @@ const openChannel = (users, message, name) =>
           "conversations.join"
         );
         channelID = targetChannel.id;
+        //Invite additional users to the channel
         await slackUrlEncodedRequest(
           {
             channel: channelID,
@@ -121,9 +122,9 @@ const openChannel = (users, message, name) =>
           },
           "conversations.invite"
         );
+        //Regardless of whether invite threw an error or not, return enough info to post a message
         return { channel: { id: channelID } };
       }
-      //Regardless of what happened before, invite the users to our channel
     })
     .then(({ channel: { id: channelID } }) =>
       //Post the intro message in the channel

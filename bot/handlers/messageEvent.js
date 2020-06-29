@@ -18,6 +18,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
     const ticket_id = channelSplit[2];
 
     //Ignore automated messages about channel actions
+    //Messages start with a mention, hence the ">"
     if (
       messageText.includes("> has joined the") ||
       messageText.includes("> joined") ||
@@ -28,7 +29,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
       return; //console.log("Person joining message");
     }
 
-    //Handle the !close command independently
+    //Handle the !close command
     if (messageText.includes("!close")) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
@@ -38,6 +39,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
       return; //console.log("Close command sent");
     }
 
+    //Handle the !unassign command
     if (messageText.includes("!unassign")) {
       const ticketResponse = await request
         .patch(`${baseURL(req)}/tickets/${ticket_id}/unassign`)
@@ -54,7 +56,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
       .set("Authorization", `Bearer ${await getUserToken(user.user_id)}`)
       .send({ body: messageText })
       .catch(console.log);
-    console.log("Added message\n", addedMessage.body);
+    //console.log("Added message\n", addedMessage.body);
   } catch (e) {
     console.log(e);
   }
