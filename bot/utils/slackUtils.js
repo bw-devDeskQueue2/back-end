@@ -66,7 +66,11 @@ const sendDM = (users, message) =>
 
 const openChannel = (users, message, name) =>
   slackUrlEncodedRequest(
-    { name, token: config.BOT_ACCESS_TOKEN, is_private: true },
+    {
+      name,
+      token: config.BOT_ACCESS_TOKEN,
+      // is_private: true,
+    },
     "conversations.create"
   )
     .then(async ({ ok, channel }) => {
