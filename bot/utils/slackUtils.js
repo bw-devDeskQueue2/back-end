@@ -41,6 +41,12 @@ const getChannelInfo = channel =>
     "conversations.info"
   );
 
+const getMembers = channel =>
+  slackUrlEncodedRequest(
+    { channel, token: config.BOT_ACCESS_TOKEN },
+    "conversations.members"
+  );
+
 const closeChannel = channel =>
   slackUrlEncodedRequest(
     { channel, token: config.BOT_ACCESS_TOKEN },
@@ -147,4 +153,5 @@ module.exports = {
   openChannel,
   closeChannel,
   getChannelInfo,
+  getMembers,
 };

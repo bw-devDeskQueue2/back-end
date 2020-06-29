@@ -5,8 +5,9 @@ const {
   getAdminToken,
   getUserToken,
   createUserIfNotExists,
+  getMembers,
+  sendDM,
 } = require("../utils");
-const SlackUsers = require("../slackUserModel");
 
 async function messageEvent(messageText, channel, slackUser, req) {
   try {
@@ -23,7 +24,11 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
         .set("Authorization", `Bearer ${await getAdminToken()}`)
         .send({ initiated_by_slackbot: true });
+      const channelMembers = await getMembers(
+        channel.id
+      ).then(({ ok, members }) => (ok ? members : []));
       const channelResponse = await closeChannel(channel.id);
+      channelMembers.map(id => sendDM(id, `Ticket #${ticket_id} was successfully closed.`));
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
@@ -34,7 +39,11 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .patch(`${baseURL(req)}/tickets/${ticket_id}/unassign`)
         .set("Authorization", `Bearer ${await getAdminToken()}`)
         .send({ initiated_by_slackbot: true });
+      const channelMembers = await getMembers(
+        channel.id
+      ).then(({ ok, members }) => (ok ? members : []));
       const channelResponse = await closeChannel(channel.id);
+      channelMembers.map(id => sendDM(id, `Ticket #${ticket_id} was successfully unassigned.`));
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
