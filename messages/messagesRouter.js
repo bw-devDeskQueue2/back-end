@@ -12,7 +12,6 @@ router.get(
 );
 router.post(
   "/",
-  catchAsync(postSlackMessageIfNecessary),
   catchAsync(async (req, res) => {
     const { id: ticket_id } = req.ticket;
     const { id: sender_id } = req.data;
@@ -24,7 +23,8 @@ router.post(
         .status(201)
         .json(await Messages.addMessage({ sender_id, ticket_id, body }));
     }
-  })
+  }),
+  catchAsync(postSlackMessageIfNecessary),
 );
 
 module.exports = router;
