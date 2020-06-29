@@ -9,6 +9,7 @@ const {
 const SlackUsers = require("./slackUserModel");
 const Users = require("../user/userModel");
 const Tickets = require("../tickets/ticketsModel");
+const OpenChannels = require("./slackChannelsModel");
 
 async function closeSlackChannelIfNecessary(req, res, next) {
   const { channel_id } = req.body;
@@ -57,13 +58,35 @@ async function postSlackMessageIfNecessary(req, res, next) {
   );
   const slackHelper = await SlackUsers.getUser({ user_id: helper.id });
   const slackStudent = await SlackUsers.getUser({ user_id: student.id });
+  //Establish message sender info
+  const sender =
+    sender_id == student.id
+      ? student
+      : sender_id == helper.id
+      ? helper
+      : await Users.getUser({ id: sender_id });
+  const slackSender = await SlackUsers.getUser({ user_id: sender.id });
   //Do nothing if neither the helper nor the student is in slack
   if (!(slackHelper || slackStudent)) {
     return next();
   }
-  const channel = await findChannelByName(`ddq_ticket_${ticket_id}`);
+  const channelUsers =
+    slackHelper && slackStudent
+      ? `${slackHelper.slack_id},${slackStudent.slack_id}`
+      : slackHelper
+      ? slackHelper.slack_id
+      : slackStudent.slack_id;
+  const team_id = slackStudent
+    ? slackStudent.team_id
+    : slackHelper
+    ? slackHelper.team_id
+    : null;
+  const channel = await OpenChannels.findChannel({
+    name: `ddq_ticket_${ticket_id}`,
+    team_id,
+  });
   //If no channel is open but a slack user is on the ticket, open a channel
-  if (!channel || channel.is_archived) {
+  if (!channel) {
     //Push the new message onto the messages object
     messages.push({ body, sender: await Users.getUser({ id: sender_id }) });
     //Add slack info to messages
@@ -99,17 +122,6 @@ async function postSlackMessageIfNecessary(req, res, next) {
           ? `\n-----------------------------------\nAny messages you type here will be sent to *${helper.username}*, and you'll see their replies in this channel.`
           : ""
       );
-    const channelUsers =
-      slackHelper && slackStudent
-        ? `${slackHelper.slack_id},${slackStudent.slack_id}`
-        : slackHelper
-        ? slackHelper.slack_id
-        : slackStudent.slack_id;
-    const team_id = slackStudent
-      ? slackStudent.team_id
-      : slackHelper
-      ? slackHelper.team_id
-      : null;
     openChannel(
       channelUsers,
       channelMessage,
@@ -120,15 +132,6 @@ async function postSlackMessageIfNecessary(req, res, next) {
   }
 
   //If a channel is open, post the message in it:
-
-  //Establish message sender info
-  const sender =
-    sender_id == student.id
-      ? student
-      : sender_id == helper.id
-      ? helper
-      : await Users.getUser({ id: sender_id });
-  const slackSender = await SlackUsers.getUser({ user_id: sender.id });
   const senderName = slackSender
     ? `<@${slackSender.slack_id}>`
     : sender.username;
@@ -141,7 +144,7 @@ async function postSlackMessageIfNecessary(req, res, next) {
       "Type `!close` or `!unassign` at any time to close or unassign the ticket."
     );
   //Post message from sender
-  postInChannel(channel.id, slackPost);
+  openChannel(channelUsers, slackPost, `ddq_ticket_${ticket_id}`, team_id);
   console.log(ticket_id, body, sender_id);
   next();
 }
