@@ -59,11 +59,19 @@ const getMembers = channel =>
     "conversations.members"
   );
 
-const closeChannel = channel =>
-  slackUrlEncodedRequest(
+const kickUser = (channel, user) =>
+  slackUrlEncodedRequest({ token: config.BOT_ACCESS_TOKEN, channel, user });
+
+const closeChannel = async channel => {
+  const members = await getMembers(channel);
+  await Promise.all(
+    members.map(async member => await kickUser(channel, member))
+  );
+  return slackUrlEncodedRequest(
     { channel, token: config.BOT_ACCESS_TOKEN },
     "conversations.archive"
   );
+};
 
 const postInChannel = (channel, text) =>
   slackUrlEncodedRequest(
@@ -128,20 +136,11 @@ const openChannel = (users, message, name, team_id) =>
         );
         //If the channel already exists:
       } else {
-        //Get a list of all conversations
-        // const channelsList = await slackUrlEncodedRequest(
-        //   { token: config.BOT_ACCESS_TOKEN },
-        //   "conversations.list"
-        // );
-        // //Find the conversation with the name we want
-        // const targetChannel = channelsList.channels.find(
-        //   channel => channel.name === name
-        // );
         const targetChannel = await OpenChannels.findChannel({ name, team_id });
         if (!targetChannel) {
           return console.log("Error finding channel.");
         }
-        console.log("Found channel", targetChannel);
+        //console.log("Found channel", targetChannel);
 
         //Unarchive the channel
         await slackUrlEncodedRequest(
