@@ -103,17 +103,21 @@ router.post(
       event: { type, text, user, bot_id, channel },
     } = req.body;
     if (bot_id) {
-      return console.log("Bot event");
+      return; //console.log("Bot event");
     }
     if (type !== "message") {
-      return console.log("Not message event");
+      return; //console.log("Not message event");
     }
     const channelInfo = await getChannelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
     const slackUser = { team_id, slack_id: user };
     console.log("Message event", text, channelName, channel, slackUser);
     res.status(200).end();
-    messageEvent(text, { id: channel, name: channelName }, slackUser);
+    messageEvent(
+      text,
+      { id: channel, name: channelName || "noname" },
+      slackUser
+    );
   })
 );
 process.env.NODE_ENV === "test" &&
