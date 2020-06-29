@@ -4,6 +4,7 @@ const {
   closeChannel,
   getAdminToken,
   getUserToken,
+  createUserIfNotExists,
 } = require("../utils");
 const SlackUsers = require("../slackUserModel");
 
@@ -22,15 +23,14 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
         .set("Authorization", `Bearer ${await getAdminToken()}`);
       const channelResponse = await closeChannel(channel.id);
-      console.log(
-        "ticket:",
-        ticketResponse.status,
-        ticketResponse.body,
-        "channel: ",
-        channelResponse
-      );
+      //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
+    let user = await SlackUsers.getUser(slackUser);
+    if (!user) {
+      user = await createUserIfNotExists(slackUser);
+    }
+    console.log(user.user_id);
     console.log(messageText);
   } catch (e) {
     console.log(e);
