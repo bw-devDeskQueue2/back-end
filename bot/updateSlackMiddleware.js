@@ -73,11 +73,12 @@ async function postSlackMessageIfNecessary(req, res, next) {
   const senderName = slackSender
     ? `<@${slackSender.slack_id}>`
     : sender.username;
-  const slackPost = "*New Message:*\n--------------------\n"
-    .concat(`*${senderName}:* ${body}\n`)
-    .concat("--------------------\nType in this channel to send them a reply.")
+  const slackPost = `*New Message from ${senderName}:*\n${body}\n`
     .concat(
-      "\nYou can also type `!close` or `!unassign` to close or unassign the ticket."
+      "--------------------\nType in this channel to send them a reply.\n"
+    )
+    .concat(
+      "Type `!close` or `!unassign` at any time to close or unassign the ticket."
     );
   //Post message from sender
   postInChannel(channel.id, slackPost);
