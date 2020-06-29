@@ -13,6 +13,7 @@ function getDetailedMessages(query = {}) {
     .where(query)
     .join("users as u", "m.sender_id", "u.id")
     .select("u.username", "u.id as user_id", "m.id", "m.created_at", "m.body")
+    .orderBy("m.id")
     .then(messages =>
       messages.map(({ username, user_id: id, ...message }) => ({
         ...message,
