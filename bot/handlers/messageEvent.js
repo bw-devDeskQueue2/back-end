@@ -42,11 +42,6 @@ async function messageEvent(messageText, channel, slackUser, req) {
     // );
     //Add ticket-related messages to the database
 
-    postInChannel(
-      channel.id,
-      "Message received and added to the ticket!"
-    );
-
     const user = await createUserIfNotExists(slackUser, req);
     const addedMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
