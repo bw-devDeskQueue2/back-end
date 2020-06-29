@@ -33,7 +33,8 @@ async function messageEvent(messageText, channel, slackUser, req) {
     if (messageText.includes("!close")) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
-        .set("Authorization", `Bearer ${await getAdminToken()}`);
+        .set("Authorization", `Bearer ${await getAdminToken()}`)
+        .send({ initiated_by_slackbot: true });
       const channelResponse = await closeChannel(channel.id);
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
@@ -43,7 +44,8 @@ async function messageEvent(messageText, channel, slackUser, req) {
     if (messageText.includes("!unassign")) {
       const ticketResponse = await request
         .patch(`${baseURL(req)}/tickets/${ticket_id}/unassign`)
-        .set("Authorization", `Bearer ${await getAdminToken()}`);
+        .set("Authorization", `Bearer ${await getAdminToken()}`)
+        .send({ initiated_by_slackbot: true });
       const channelResponse = await closeChannel(channel.id);
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
@@ -54,7 +56,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
     const addedMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${await getUserToken(user.user_id)}`)
-      .send({ body: messageText })
+      .send({ body: messageText, initiated_by_slackbot: true })
       .catch(console.log);
     //console.log("Added message\n", addedMessage.body);
   } catch (e) {

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Messages = require("./messagesModel");
 const { catchAsync } = require("../config/errors");
+const { postSlackMessageIfNecessary } = require("../bot/updateSlackMiddleware");
 
 router.get(
   "/",
@@ -11,6 +12,7 @@ router.get(
 );
 router.post(
   "/",
+  postSlackMessageIfNecessary,
   catchAsync(async (req, res) => {
     const { id: ticket_id } = req.ticket;
     const { id: sender_id } = req.data;

@@ -3,6 +3,7 @@ const Tickets = require("./ticketsModel");
 const { catchAsync, AppError } = require("../config/errors");
 const Users = require("../user/userModel");
 const messagesRouter = require("../messages/messagesRouter");
+const { closeSlackChannelIfNecessary } = require("../bot/updateSlackMiddleware");
 const Validator = require("jsonschema").Validator;
 
 router.use(
@@ -93,6 +94,9 @@ router.patch(
     res.status(200).json(await Tickets.updateTicket(ticketId, { helper_id }));
   })
 );
+
+//When tickets are unassigned or closed, any corresponding slack channel should be closed
+router.use(closeSlackChannelIfNecessary);
 
 router.patch(
   "/:ticketId/unassign",
