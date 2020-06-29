@@ -95,7 +95,7 @@ async function handleSubmission(req, res, next, submission) {
     sendDM(
       slack_id,
       ticketID
-        ? `Your ticket "${subject}" was successfully created`
+        ? `Your ticket "${subject}" was successfully created. When a \`helper\` is assigned you'll see updates in Slack.`
         : "There was an error while creating the ticket"
     );
   } catch (e) {
