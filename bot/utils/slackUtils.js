@@ -59,11 +59,11 @@ const getMembers = channel =>
     "conversations.members"
   );
 
-const kickUser = (channel, user) =>
-  slackUrlEncodedRequest({ token: config.BOT_ACCESS_TOKEN, channel, user });
-
 const closeChannel = async channel => {
-  const members = await getMembers(channel);
+  const members = await getMembers(channel).then(({ ok, members }) =>
+    ok ? members : []
+  );
+  console.log(members);
   await Promise.all(
     members.map(async member => await kickUser(channel, member))
   );
