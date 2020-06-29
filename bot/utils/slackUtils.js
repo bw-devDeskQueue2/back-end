@@ -81,7 +81,11 @@ const openChannel = (users, message, name) =>
           return console.log("Error finding channel.");
         }
         await slackUrlEncodedRequest(
-          { token: config.BOT_ACCESS_TOKEN },
+          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
+          "conversations.unarchive"
+        );
+        await slackUrlEncodedRequest(
+          { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
           "conversations.join"
         );
         channelID = targetChannel.id;
