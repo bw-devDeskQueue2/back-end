@@ -10,7 +10,7 @@ const {
   openChannel,
   closeChannel,
   postInChannel,
-  postEphemeral,
+ // postEphemeral,
   getChannelInfo,
   getMembers,
 } = require("./slackUtils");
@@ -63,7 +63,7 @@ module.exports = {
   openChannel,
   closeChannel,
   postInChannel,
-  postEphemeral,
+  //postEphemeral,
   getChannelInfo,
   getMembers,
 };

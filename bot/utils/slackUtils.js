@@ -89,16 +89,16 @@ const postInChannel = (channel, text) =>
     "chat.postMessage"
   );
 
-const postEphemeral = (channel, text, user) =>
-  slackUrlEncodedRequest(
-    {
-      username: config.BOT_USERNAME,
-      channel,
-      token: config.BOT_ACCESS_TOKEN,
-      text,
-    },
-    "chat.postEphemeral"
-  );
+// const postEphemeral = (channel, text, user) =>
+//   slackUrlEncodedRequest(
+//     {
+//       username: config.BOT_USERNAME,
+//       channel,
+//       token: config.BOT_ACCESS_TOKEN,
+//       text,
+//     },
+//     "chat.postEphemeral"
+//   );
 
 const sendDM = (users, message) =>
   //Open the DM, if not already open
@@ -204,7 +204,7 @@ module.exports = {
   openChannel,
   closeChannel,
   postInChannel,
-  postEphemeral,
+ // postEphemeral,
   getChannelInfo,
   getMembers,
 };
