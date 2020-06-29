@@ -47,7 +47,6 @@ async function messageEvent(messageText, channel, slackUser, req) {
         .set("Authorization", `Bearer ${await getAdminToken()}`)
         .send({ initiated_by_slackbot: true });
       const channelResponse = await closeChannel(channel.id);
-      console.log("Unassigned:", channelResponse);
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
