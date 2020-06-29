@@ -1,12 +1,10 @@
 const request = require("superagent");
 const {
   baseURL,
-  closeChannel,
   getAdminToken,
   getUserToken,
   createUserIfNotExists,
-  getMembers,
-  sendDM,
+  postInChannel,
 } = require("../utils");
 
 async function messageEvent(messageText, channel, slackUser, req) {
@@ -37,6 +35,10 @@ async function messageEvent(messageText, channel, slackUser, req) {
     }
 
     //Add ticket-related messages to the database
+    postInChannel(
+      channel.id,
+      "Your message was sent to the user! You'll see their reply in this channel."
+    );
     const user = await createUserIfNotExists(slackUser, req);
     const addedMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
