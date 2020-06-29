@@ -38,6 +38,15 @@ async function messageEvent(messageText, channel, slackUser, req) {
       return; //console.log("Close command sent");
     }
 
+    if (messageText.includes("!unassign")) {
+      const ticketResponse = await request
+        .patch(`${baseURL(req)}/tickets/${ticket_id}/unassign`)
+        .set("Authorization", `Bearer ${await getAdminToken()}`);
+      const channelResponse = await closeChannel(channel.id);
+      //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
+      return; //console.log("Close command sent");
+    }
+
     //Add ticket-related messages to the database
     const user = await createUserIfNotExists(slackUser, req);
     const addedMessage = await request

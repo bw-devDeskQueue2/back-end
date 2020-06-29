@@ -78,6 +78,14 @@ const openChannel = (users, message, name) =>
       //If the channel didn't exist, we're gucci
       if (ok) {
         channelID = channel.id;
+        return slackUrlEncodedRequest(
+          {
+            channel: channelID,
+            users,
+            token: config.BOT_ACCESS_TOKEN,
+          },
+          "conversations.invite"
+        );
         //If the channel already exists:
       } else {
         //Get a list of all conversations
@@ -105,16 +113,17 @@ const openChannel = (users, message, name) =>
           "conversations.join"
         );
         channelID = targetChannel.id;
+        await slackUrlEncodedRequest(
+          {
+            channel: channelID,
+            users,
+            token: config.BOT_ACCESS_TOKEN,
+          },
+          "conversations.invite"
+        );
+        return { channel: { id: channelID } };
       }
       //Regardless of what happened before, invite the users to our channel
-      return slackUrlEncodedRequest(
-        {
-          channel: channelID,
-          users,
-          token: config.BOT_ACCESS_TOKEN,
-        },
-        "conversations.invite"
-      );
     })
     .then(({ channel: { id: channelID } }) =>
       //Post the intro message in the channel
