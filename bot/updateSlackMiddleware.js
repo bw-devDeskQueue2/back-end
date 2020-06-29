@@ -22,14 +22,14 @@ async function closeSlackChannelIfNecessary(req, res, next) {
       : slackHelper
       ? slackHelper.team_id
       : null;
-    console.log("Info on channel to close", team_id, ticketId);
+    //console.log("Info on channel to close", team_id, ticketId);
     const channel = channel_id
       ? { channel_id }
       : await OpenChannels.findChannel({
           name: `ddq_ticket_${ticketId}`,
           team_id,
         });
-    console.log("Slack channel to close", channel);
+    //console.log("Slack channel to close", channel);
     if (!channel) {
       return next();
     }
