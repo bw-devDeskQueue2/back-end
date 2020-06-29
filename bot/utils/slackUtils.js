@@ -41,7 +41,7 @@ const getChannelInfo = channel =>
 const closeChannel = channel =>
   slackUrlEncodedRequest(
     { channel, token: config.BOT_ACCESS_TOKEN },
-    "conversations.close"
+    "conversations.archive"
   );
 
 const sendDM = (users, message) =>
@@ -64,16 +64,31 @@ const openChannel = (users, message, name) =>
     { name, token: config.BOT_ACCESS_TOKEN },
     "conversations.create"
   )
-    .then(({ channel: { id: channelID } }) =>
-      slackUrlEncodedRequest(
-        {
-          channel: channelID,
-          users,
-          token: config.BOT_ACCESS_TOKEN,
-        },
-        "conversations.invite"
-      )
-    )
+    .then(async ({ ok, channel }) => {
+      if (ok) {
+        const channelID = channel.id;
+        return slackUrlEncodedRequest(
+          {
+            channel: channelID,
+            users,
+            token: config.BOT_ACCESS_TOKEN,
+          },
+          "conversations.invite"
+        );
+      } else {
+        const channelsList = await slackUrlEncodedRequest(
+          { token: config.BOT_ACCESS_TOKEN },
+          "conversations.list"
+        )
+          .then(r => r.body)
+          .catch(console.log);
+        const targetChannel = channelsList.find(
+          channel => channel.name === name
+        );
+        console.log("found channel", targetChannel);
+        return { channel: targetChannel };
+      }
+    })
     .then(({ channel: { id: channelID } }) =>
       slackUrlEncodedRequest(
         {

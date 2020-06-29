@@ -14,6 +14,9 @@ async function messageEvent(messageText, channel, slackUser, req) {
       return; //console.log("Message not in a ticket channel");
     }
     const ticket_id = channelSplit[2];
+    if (messageText.includes("has joined the channel")) {
+      return console.log("Person joining message");
+    }
     if (messageText.includes("!close")) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
