@@ -6,7 +6,13 @@ async function closeSlackChannelIfNecessary(req, res, next) {
   if (initiated_by_slackbot) {
     return next();
   }
-  next();
+  try {
+    const channel = await findChannelByName(`ddq_ticket_${ticketId}`);
+    console.log("Slack channel to close\n", channel);
+    next();
+  } catch (e) {
+    next(e);
+  }
 }
 
 async function postSlackMessageIfNecessary(req, res, next) {
@@ -15,13 +21,7 @@ async function postSlackMessageIfNecessary(req, res, next) {
   if (initiated_by_slackbot) {
     return next();
   }
-  try {
-    const channel = await findChannelByName(`ddq_ticket_${ticketId}`);
-    console.log("Slack channel to close\n",channel);
-    next();
-  } catch (e) {
-    next(e);
-  }
+  next();
 }
 
 module.exports = { closeSlackChannelIfNecessary, postSlackMessageIfNecessary };
