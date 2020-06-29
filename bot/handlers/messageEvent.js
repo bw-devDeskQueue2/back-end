@@ -19,7 +19,7 @@ async function messageEvent(messageText, channel, slackUser, req) {
 
     //Ignore "person joined" and "person un-archived" automated messages
     if (
-      messageText.includes("has joined the channel") ||
+      messageText.includes("has joined the") ||
       messageText.includes("un-archived")
     ) {
       return; //console.log("Person joining message");
