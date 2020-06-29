@@ -175,7 +175,7 @@ async function handleSubmission(req, res, next, submission) {
     await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${userToken}`)
-      .send({ body: message })
+      .send({ body: message, initiated_by_slackbot: true })
       .catch(console.log);
     //retrieve updated messages list
     let messages = await request
