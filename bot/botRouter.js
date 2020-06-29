@@ -101,15 +101,18 @@ router.post(
     res.status(200).end();
     let {
       team_id,
-      event: { type, text, user, bot_id, channel },
+      event: { type, subtype, text, user, bot_id, channel },
     } = req.body;
     //console.log(req.body);
     if (bot_id) {
       return; //console.log("Bot event");
     }
-    console.log("Message", req.body.event );
+    console.log("Message", req.body.event);
     if (type !== "message") {
       return; //console.log("Not message event");
+    }
+    if (subtype) {
+      return; //console.log("Automated message")
     }
     const channelInfo = await getChannelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
