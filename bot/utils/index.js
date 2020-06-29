@@ -13,7 +13,7 @@ const {
   getMembers,
 } = require("./slackUtils");
 
-const baseURL = req => `localhost:${config.PORT}/api`; //`${req.protocol}://${req.get("host")}/api`;
+const baseURL = req => `${req.protocol}://${req.get("host")}/api`; //`localhost:${config.PORT}/api`;
 
 async function createUserIfNotExists(slackUser, req) {
   try {

@@ -22,8 +22,8 @@ async function closeSlackChannelIfNecessary(req, res, next) {
     channelMembers.map(id =>
       sendDM(
         id,
-        `Ticket #${ticketId} was successfully ${
-          req.originalUrl.includes("close") ? "closed" : "unassigned"
+        `Ticket #${ticketId} was ${
+          req.originalUrl.includes("close") ? "closed" : "unassigned and returned to the queue"
         }.`
       ).catch(() => null)
     );
