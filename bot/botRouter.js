@@ -12,6 +12,7 @@ const {
   actionDescriptions,
 } = require("./reducers");
 const { openView, getChannelInfo } = require("./utils/slackUtils");
+const { messageEvent } = require("./handlers/messageEvent");
 
 //First, extract body as raw text for non-JSON requests
 //Then, verify the signature using that body
@@ -110,7 +111,7 @@ router.post(
     const channelInfo = await getChannelInfo(channel);
     const channelName = channelInfo.ok ? channelInfo.channel.name : null;
     const slackUser = { team_id, slack_id: user };
-    console.log("User event", text, channelName, slackUser);
+    messageEvent(text, { id: channel, name: channelName }, slackUser);
     res.status(200).end();
   })
 );
