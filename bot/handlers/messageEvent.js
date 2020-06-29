@@ -17,10 +17,13 @@ async function messageEvent(messageText, channel, slackUser, req) {
     }
     const ticket_id = channelSplit[2];
 
-    //Ignore "person joined" and "person un-archived" automated messages
+    //Ignore automated messages about channel actions
     if (
-      messageText.includes("has joined the") ||
-      messageText.includes("un-archived")
+      messageText.includes("> has joined the") ||
+      messageText.includes("> joined") ||
+      messageText.includes("> was added to the") ||
+      messageText.includes("> archived the") ||
+      messageText.includes("> un-archived the")
     ) {
       return; //console.log("Person joining message");
     }
