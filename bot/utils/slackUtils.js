@@ -2,6 +2,8 @@ const request = require("superagent");
 const config = require("../../config/serverInfo");
 const { encode } = require("querystring");
 
+//Slack requests for endpoints that support a JSON body
+//Some endpoints that claim to support JSON don't so be wary
 const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
   request
     .post(`https://slack.com/api/${endpoint}`)
@@ -15,6 +17,7 @@ const slackRequest = (body, endpoint, token = config.OAUTH_ACCESS_TOKEN) =>
     })
     .catch(console.error);
 
+//Slack request for endpoints that don't support a JSON body
 const slackUrlEncodedRequest = (body, endpoint) =>
   request
     .post(`https://slack.com/api/${endpoint}?${encode(body)}`)
@@ -45,8 +48,10 @@ const closeChannel = channel =>
   );
 
 const sendDM = (users, message) =>
+  //Open the DM, if not already open
   slackRequest({ users }, "conversations.open", config.BOT_ACCESS_TOKEN).then(
     ({ channel: { id: channelID } }) =>
+      //Send the message
       slackRequest(
         {
           username: config.BOT_USERNAME,
@@ -66,30 +71,36 @@ const openChannel = (users, message, name) =>
   )
     .then(async ({ ok, channel }) => {
       let channelID;
+      //If the channel didn't exist, we're gucci
       if (ok) {
         channelID = channel.id;
+        //If the channel already exists:
       } else {
+        //Get a list of all conversations
         const channelsList = await slackUrlEncodedRequest(
           { token: config.BOT_ACCESS_TOKEN },
           "conversations.list"
         );
-        //console.log(channelsList);
+        //Find the conversation with the name we want
         const targetChannel = channelsList.channels.find(
           channel => channel.name === name
         );
         if (!targetChannel) {
           return console.log("Error finding channel.");
         }
+        //Unarchive the channel (currently bugged)
         await slackUrlEncodedRequest(
           { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
           "conversations.unarchive"
         );
+        //Join the channel
         await slackUrlEncodedRequest(
           { token: config.BOT_ACCESS_TOKEN, channel: targetChannel.id },
           "conversations.join"
         );
         channelID = targetChannel.id;
       }
+      //Regardless of what happened before, invite the users to our channel
       return slackUrlEncodedRequest(
         {
           channel: channelID,
@@ -100,6 +111,7 @@ const openChannel = (users, message, name) =>
       );
     })
     .then(({ channel: { id: channelID } }) =>
+      //Post the intro message in the channel
       slackUrlEncodedRequest(
         {
           username: config.BOT_USERNAME,

@@ -10,14 +10,19 @@ const SlackUsers = require("../slackUserModel");
 
 async function messageEvent(messageText, channel, slackUser, req) {
   try {
+    //Confirm the message is in a ticket-related channel
     const channelSplit = channel.name ? channel.name.split("_") : ["no", "no"];
     if (!(channelSplit[0] === "ddq" && channelSplit[1] === "ticket")) {
       return; //console.log("Message not in a ticket channel");
     }
     const ticket_id = channelSplit[2];
+
+    //Ignore "person joined" automated messages
     if (messageText.includes("has joined the channel")) {
       return; //console.log("Person joining message");
     }
+
+    //Handle the !close command independently
     if (messageText.includes("!close")) {
       const ticketResponse = await request
         .delete(`${baseURL(req)}/tickets/${ticket_id}`)
@@ -26,12 +31,9 @@ async function messageEvent(messageText, channel, slackUser, req) {
       //console.log("ticket:", ticketResponse.status, ticketResponse.body, "channel: ", channelResponse);
       return; //console.log("Close command sent");
     }
-    let user = await SlackUsers.getUser(slackUser);
-    if (!user) {
-      user = await createUserIfNotExists(slackUser);
-    }
-    //console.log(user.user_id);
-    //console.log(messageText);
+
+    //Add ticket-related messages to the database
+    const user = await createUserIfNotExists(slackUser);
     const addedMessage = await request
       .post(`${baseURL(req)}/tickets/${ticket_id}/messages`)
       .set("Authorization", `Bearer ${await getUserToken(user.user_id)}`)
